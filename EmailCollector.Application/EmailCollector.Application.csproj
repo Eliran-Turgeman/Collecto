@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="DnsClient" Version="1.8.0" />
   </ItemGroup>
 
   <ItemGroup>

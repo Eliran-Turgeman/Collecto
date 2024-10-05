@@ -11,7 +11,7 @@ public class SignupForm
 
     public required string FormName { get; set; }
 
-    public required int CreatedBy { get; set; }
+    public required Guid CreatedBy { get; set; }
 
     public FormStatus Status { get; set; } = FormStatus.Active;
 }

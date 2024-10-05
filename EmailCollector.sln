@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailCollector.Api", "EmailCollector.Api\EmailCollector.Api.csproj", "{4B242316-70E3-49FA-97C2-A11CAAD237C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Api", "EmailCollector.Api\EmailCollector.Api.csproj", "{4B242316-70E3-49FA-97C2-A11CAAD237C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailCollector.Domain", "EmailCollector.Domain\EmailCollector.Domain.csproj", "{A9040496-E40D-4B82-B2D8-09E3CD30BEDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Domain", "EmailCollector.Domain\EmailCollector.Domain.csproj", "{A9040496-E40D-4B82-B2D8-09E3CD30BEDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailCollector.Application", "EmailCollector.Application\EmailCollector.Application.csproj", "{45840F88-DB58-43DB-A6D4-19375E93BFC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailCollector.Tests", "EmailCollector.Tests\EmailCollector.Tests.csproj", "{ED099161-7E0E-4A4A-92FC-527CFADB4A50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{A9040496-E40D-4B82-B2D8-09E3CD30BEDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9040496-E40D-4B82-B2D8-09E3CD30BEDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9040496-E40D-4B82-B2D8-09E3CD30BEDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45840F88-DB58-43DB-A6D4-19375E93BFC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45840F88-DB58-43DB-A6D4-19375E93BFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45840F88-DB58-43DB-A6D4-19375E93BFC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45840F88-DB58-43DB-A6D4-19375E93BFC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

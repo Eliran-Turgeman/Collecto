@@ -1,103 +1,118 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using EmailCollector.Api.Data;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using EmailCollector.Api.Interfaces;
+using EmailCollector.Api.DTOs;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace EmailCollector.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class SignupFormsController : ControllerBase
 {
-    private readonly EmailCollectorApiContext _context;
+    private readonly IFormService _formService;
+    private readonly ILogger<SignupFormsController> _logger;
 
-    public SignupFormsController(EmailCollectorApiContext context)
+    public SignupFormsController(IFormService formService, ILogger<SignupFormsController> logger)
     {
-        _context = context;
+        _formService = formService;
+        _logger = logger;
     }
 
     // GET: api/SignupForms
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SignupForm>>> GetSignupForms()
     {
-        return await _context.SignupForms.ToListAsync();
+        _logger.LogInformation("Getting signup forms.");
+        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        {
+            return BadRequest();
+        }
+
+        return Ok(await _formService.GetFormsByUserAsync(userId));
     }
 
     // GET: api/SignupForms/5
     [HttpGet("{id}")]
     public async Task<ActionResult<SignupForm>> GetSignupForm(int id)
     {
-        var signupForm = await _context.SignupForms.FindAsync(id);
+        _logger.LogInformation($"Getting signup form {id}.");
+        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        {
+            return BadRequest();
+        }
 
+        var signupForm = await _formService.GetFormByIdAsync(id, userId);
         if (signupForm == null)
         {
             return NotFound();
         }
 
-        return signupForm;
-    }
+        _logger.LogInformation($"Found signup form {id}.");
 
-    // PUT: api/SignupForms/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutSignupForm(int id, SignupForm signupForm)
-    {
-        if (id != signupForm.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(signupForm).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!SignupFormExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        return Ok(signupForm);
     }
 
     // POST: api/SignupForms
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<SignupForm>> PostSignupForm(SignupForm signupForm)
+    public async Task<ActionResult<SignupForm>> PostSignupForm(CreateFormDto signupForm)
     {
-        _context.SignupForms.Add(signupForm);
-        await _context.SaveChangesAsync();
+        _logger.LogInformation("Creating signup form.");
+        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        {
+            return BadRequest();
+        }
 
-        return CreatedAtAction("GetSignupForm", new { id = signupForm.Id }, signupForm);
+        var formsDetails = await _formService.CreateFormAsync(userId, signupForm);
+        _logger.LogInformation($"Created signup form {formsDetails.Id}.");
+        return CreatedAtAction("GetSignupForm", new { id = formsDetails.Id }, signupForm);
     }
 
     // DELETE: api/SignupForms/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSignupForm(int id)
     {
-        var signupForm = await _context.SignupForms.FindAsync(id);
-        if (signupForm == null)
+        _logger.LogInformation($"Deleting signup form {id}.");
+
+        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        {
+            return BadRequest();
+        }
+
+        if (await _formService.GetFormByIdAsync(id, userId) == null)
         {
             return NotFound();
         }
 
-        _context.SignupForms.Remove(signupForm);
-        await _context.SaveChangesAsync();
+        await _formService.GetFormByIdAsync(id, userId);
+
+        _logger.LogInformation($"Deleted signup form {id}.");
 
         return NoContent();
     }
 
-    private bool SignupFormExists(int id)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutSignupForm(int id, CreateFormDto signupForm)
     {
-        return _context.SignupForms.Any(e => e.Id == id);
+        _logger.LogInformation($"Updating signup form {id}.");
+
+        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        {
+            return BadRequest();
+        }
+
+        if (await _formService.GetFormByIdAsync(id, userId) == null)
+        {
+            return NotFound();
+        }
+
+        await _formService.UpdateFormAsync(id, userId, signupForm);
+
+        _logger.LogInformation($"Updated signup form {id}.");
+
+        return NoContent();
     }
 }

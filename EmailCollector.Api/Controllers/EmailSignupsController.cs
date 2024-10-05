@@ -1,118 +1,72 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using EmailCollector.Api.Data;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using EmailCollector.Api.Interfaces;
+using EmailCollector.Api.DTOs;
+using EmailCollector.Domain.Enums;
 
 namespace EmailCollector.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class EmailSignupsController : ControllerBase
 {
-    private readonly EmailCollectorApiContext _context;
+    private readonly IEmailSignupService _emailSignupService;
+    private readonly ILogger<EmailSignupsController> _logger;
 
-    public EmailSignupsController(EmailCollectorApiContext context)
+    public EmailSignupsController(IEmailSignupService emailSignupService,
+        ILogger<EmailSignupsController> logger)
     {
-        _context = context;
-    }
-
-    // GET: api/EmailSignups
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<EmailSignup>>> GetEmailSignups()
-    {
-        return await _context.EmailSignups.ToListAsync();
-    }
-
-    // GET: api/EmailSignups/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<EmailSignup>> GetEmailSignup(int id)
-    {
-        var emailSignup = await _context.EmailSignups.FindAsync(id);
-
-        if (emailSignup == null)
-        {
-            return NotFound();
-        }
-
-        return emailSignup;
+        _emailSignupService = emailSignupService;
+        _logger = logger;
     }
 
     // GET: api/FormEmailSignups/5
-    [HttpGet("form/{formId}")]
-    public async Task<ActionResult<IEnumerable<EmailSignup>>> GetFormEmailSignups(int formId)
+    [HttpGet("form/{formId}"), Authorize]
+    public async Task<ActionResult<IEnumerable<EmailSignupDto>>> GetFormEmailSignups(int formId)
     {
-        var emailSignups = await _context.EmailSignups.Where(signup => signup.SignupFormId == formId).ToListAsync();
-
-        if (emailSignups == null || emailSignups.Count == 0)
+        _logger.LogInformation($"Getting email signups for form {formId}.");
+        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
         {
-            return NotFound();
-        }
-
-        return emailSignups;
-    }
-
-    // PUT: api/EmailSignups/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutEmailSignup(int id, EmailSignup emailSignup)
-    {
-        if (id != emailSignup.Id)
-        {
+            _logger.LogError("Invalid user ID.");
             return BadRequest();
         }
 
-        _context.Entry(emailSignup).State = EntityState.Modified;
-
-        try
+        var emailSignups = await _emailSignupService.GetSignupsByFormIdAsync(formId, userId);
+        if (emailSignups == null)
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!EmailSignupExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return NotFound("Form not found.");
         }
 
-        return NoContent();
+        _logger.LogInformation($"Found {emailSignups.Count()} signups for form {formId}.");
+
+        return Ok(emailSignups);
     }
 
     // POST: api/EmailSignups
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<EmailSignup>> PostEmailSignup(EmailSignup emailSignup)
+    public async Task<ActionResult<EmailSignup>> PostEmailSignup(EmailSignupDto emailSignup)
     {
-        _context.EmailSignups.Add(emailSignup);
-        await _context.SaveChangesAsync();
+        _logger.LogInformation($"Submitting email signup for form {emailSignup.FormId}.");
+        var result = await _emailSignupService.SubmitEmailAsync(emailSignup);
 
-        return CreatedAtAction("GetEmailSignup", new { id = emailSignup.Id }, emailSignup);
-    }
-
-    // DELETE: api/EmailSignups/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEmailSignup(int id)
-    {
-        var emailSignup = await _context.EmailSignups.FindAsync(id);
-        if (emailSignup == null)
+        if (!result.Success)
         {
-            return NotFound();
+            switch (result.ErrorCode)
+            {
+                case EmailSignupErrorCode.InvalidEmail:
+                    return BadRequest(result.Message);
+
+                case EmailSignupErrorCode.FormNotFound:
+                    return NotFound(result.Message);
+
+                case EmailSignupErrorCode.FormNotActive:
+                    return Conflict(result.Message);
+            } 
         }
 
-        _context.EmailSignups.Remove(emailSignup);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private bool EmailSignupExists(int id)
-    {
-        return _context.EmailSignups.Any(e => e.Id == id);
+        _logger.LogInformation($"Email signup submitted for form {emailSignup.FormId}.");
+        return Ok(emailSignup);
     }
 }

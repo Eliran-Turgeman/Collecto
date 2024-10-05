@@ -7,9 +7,7 @@ namespace EmailCollector.Domain.Interfaces.Repositories;
 /// </summary>
 public interface ISignupFormRepository : IRepository<SignupForm>
 {
-    Task<IEnumerable<SignupForm>> GetByUserIdAsync(string userId);
+    Task<IEnumerable<SignupForm>> GetByUserIdAsync(Guid userId);
 
-    Task<SignupForm> GetByFormIdentifierAsync(string formIdentifier);
-
-    Task<bool> IsDomainAllowedAsync(int formId, string domain);
+    Task<SignupForm?> GetByFormIdentifierAsync(int formIdentifier, Guid userId);
 }

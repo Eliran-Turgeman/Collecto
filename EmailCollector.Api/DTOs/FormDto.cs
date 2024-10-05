@@ -1,4 +1,4 @@
-﻿namespace EmailCollector.Application.DTOs;
+﻿namespace EmailCollector.Api.DTOs;
 
 /// <summary>
 /// DTO for displaying basic form information.
