@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "sqlite1": {
+      "secretStore": "LocalSecretsFile",
+      "type": "sqlite.local",
+      "connectionId": "ConnectionStrings:EmailCollectorDB"
+    }
+  }
+}
