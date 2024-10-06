@@ -21,8 +21,22 @@ public class EmailSignupsController : ControllerBase
         _logger = logger;
     }
 
-    // GET: api/FormEmailSignups/5
+    /// <summary>
+    /// Get email signups for a specific form.
+    /// </summary>
+    /// <param name="formId">Form id to get email signups for.</param>
+    /// <returns>All emails signups for formId.</returns>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     GET /api/EmailSignups/form/5
+    ///     
+    /// </remarks>
+    /// <response code="200">Returns all email signups for the form.</response>
+    /// <response code="400">If the user is not authenticated.</response>
+    /// <response code="404">If the form is not found.</response>
     [HttpGet("form/{formId}"), Authorize]
+    [Produces("application/json")]
     public async Task<ActionResult<IEnumerable<EmailSignupDto>>> GetFormEmailSignups(int formId)
     {
         _logger.LogInformation($"Getting email signups for form {formId}.");
@@ -43,9 +57,26 @@ public class EmailSignupsController : ControllerBase
         return Ok(emailSignups);
     }
 
-    // POST: api/EmailSignups
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Signup for an email form.
+    /// </summary>
+    /// <param name="emailSignup">Email signup definition</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     POST /api/EmailSignups
+    ///     {
+    ///         "FormId": "5",
+    ///         "Email": "example@email.com"
+    ///     }
+    /// </remarks>
+    /// <response code="200">Email signup to form was successful</response>
+    /// <response code="400">If the email is invalid</response>
+    /// <response code="404">If the form is not found</response>
+    /// <response code="409">If the form is not active</response>
     [HttpPost]
+    [Produces("application/json")]
     public async Task<ActionResult<EmailSignup>> PostEmailSignup(EmailSignupDto emailSignup)
     {
         _logger.LogInformation($"Submitting email signup for form {emailSignup.FormId}.");

@@ -6,10 +6,9 @@ using Swashbuckle.AspNetCore.Filters;
 using EmailCollector.Api.Middlewares;
 using EmailCollector.Api.Interfaces;
 using EmailCollector.Api.Services;
-using Microsoft.Build.Framework;
 using EmailCollector.Domain.Interfaces.Repositories;
 using EmailCollector.Api.Repositories;
-using EmailCollector.Api.Repositories;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +31,27 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.ApiKey
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Email Collection API",
+        Description = "API for managing email collection forms.",
+        TermsOfService = new Uri("https://example.com/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "Example Contact",
+            Url = new Uri("https://example.com/contact")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://example.com/license")
+        }
+    });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 builder.Services.AddScoped<ISignupFormRepository, SignupFormRepository>();
@@ -39,6 +59,8 @@ builder.Services.AddScoped<IFormService, FormService>();
 
 builder.Services.AddScoped<IEmailSignupRepository, EmailSignupRepository>();
 builder.Services.AddScoped<IEmailSignupService, EmailSignupService>();
+
+builder.Services.AddSingleton<IDnsLookupService, DnsLookupService>();
 
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));
@@ -50,11 +72,16 @@ builder.Services.AddIdentityApiEndpoints<EmailCollectorApiUser>(options => optio
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmailCollectorApi");
+        c.InjectStylesheet("/swagger-ui/darkMode.css");
+    });
 }
 app.MapIdentityApi<EmailCollectorApiUser>();
 app.UseMiddleware<UserMiddleware>();

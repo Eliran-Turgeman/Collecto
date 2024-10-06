@@ -21,8 +21,20 @@ public class SignupFormsController : ControllerBase
         _logger = logger;
     }
 
-    // GET: api/SignupForms
+    /// <summary>
+    /// Get all signup forms for the current user.
+    /// </summary>
+    /// <returns>All signup forms the current user has created.</returns>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     Get /api/SignupForms
+    /// 
+    /// </remarks>
+    /// <response code="200">Returns all signup forms the current user has created.</response>
+    /// <response code="400">If the user is not authenticated</response>
     [HttpGet]
+    [Produces("application/json")]
     public async Task<ActionResult<IEnumerable<SignupForm>>> GetSignupForms()
     {
         _logger.LogInformation("Getting signup forms.");
@@ -34,8 +46,22 @@ public class SignupFormsController : ControllerBase
         return Ok(await _formService.GetFormsByUserAsync(userId));
     }
 
-    // GET: api/SignupForms/5
+    /// <summary>
+    /// Get a specific signup form.
+    /// </summary>
+    /// <param name="id">Signup form id</param>
+    /// <returns>Details of the signup form matching the id.</returns>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     Get /api/SignupForms/5
+    /// </remarks>
+    /// <response code="200">Returns the signup form matching the id.</response>
+    /// <response code="404">If the signup form is not found.</response>
+    /// <response code="400">If the user is not authenticated.</response>
     [HttpGet("{id}")]
+    [Produces("application/json")]
+
     public async Task<ActionResult<SignupForm>> GetSignupForm(int id)
     {
         _logger.LogInformation($"Getting signup form {id}.");
@@ -55,9 +81,33 @@ public class SignupFormsController : ControllerBase
         return Ok(signupForm);
     }
 
-    // POST: api/SignupForms
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Creates a new signup form.
+    /// </summary>
+    /// <param name="signupForm">Definition of the form.</param>
+    /// <returns>Newly created form.</returns>
+    /// <remarks>
+    /// Sample Requests:
+    /// 
+    /// Create a new form:
+    /// 
+    ///     POST /api/SignupForms
+    ///     {
+    ///         "FormName": "My Form"
+    ///     }
+    ///     
+    /// Create a new inactive form:
+    ///     
+    ///     POST /api/SignupForms
+    ///     {
+    ///         "FormName": "My Form",
+    ///         "Status": "Inactive"
+    ///     }
+    /// </remarks>
+    /// <response code="201">Returns the newly created form.</response>
+    /// <response code="400">If the user is not authenticated.</response>
     [HttpPost]
+    [Produces("application/json")]
     public async Task<ActionResult<SignupForm>> PostSignupForm(CreateFormDto signupForm)
     {
         _logger.LogInformation("Creating signup form.");
@@ -71,7 +121,20 @@ public class SignupFormsController : ControllerBase
         return CreatedAtAction("GetSignupForm", new { id = formsDetails.Id }, signupForm);
     }
 
-    // DELETE: api/SignupForms/5
+    /// <summary>
+    /// Deletes a signup form.
+    /// </summary>
+    /// <param name="id">Id of form to delete.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     DELETE /api/SignupForms/5
+    ///     
+    /// </remarks>
+    /// <response code="204">If the form is deleted successfully.</response>
+    /// <response code="404">If the form is not found.</response>
+    /// <response code="400">If the user is not authenticated.</response>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSignupForm(int id)
     {
@@ -94,6 +157,30 @@ public class SignupFormsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates a signup form.
+    /// </summary>
+    /// <param name="id">Id of a form to update</param>
+    /// <param name="signupForm">Definition of the form.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// Sample requests:
+    /// 
+    /// Updating all info:
+    /// 
+    ///     PUT /api/SignupForms/5
+    ///     {
+    ///         "FormName": "Updated Form Name",
+    ///         "Status": "Inactive"
+    ///     }
+    ///     
+    /// Updating only status:
+    /// 
+    ///     PUT /api/SignupForms/5
+    ///     {
+    ///         "Status": "Active"
+    ///     }
+    /// </remarks>
     [HttpPut("{id}")]
     public async Task<IActionResult> PutSignupForm(int id, CreateFormDto signupForm)
     {
