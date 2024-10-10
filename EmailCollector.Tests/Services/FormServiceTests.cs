@@ -1,5 +1,4 @@
 using EmailCollector.Api.DTOs;
-using EmailCollector.Api.Interfaces;
 using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;

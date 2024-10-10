@@ -1,5 +1,4 @@
 ﻿using EmailCollector.Api.DTOs;
-using EmailCollector.Api.Interfaces;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Interfaces.Repositories;
 
@@ -36,6 +35,7 @@ public class FormService : IFormService
         {
             Id = signupForm.Id,
             FormName = signupForm.FormName,
+            Status = signupForm.Status,
         };
     }
 
@@ -68,7 +68,8 @@ public class FormService : IFormService
         {
             Id = form.Id,
             FormName = form.FormName,
-        }; ;
+            Status = form.Status,
+        };
     }
 
     public async Task DeleteFormByIdAsync(int formId, Guid userId)
@@ -105,6 +106,7 @@ public class FormService : IFormService
         {
             Id = form.Id,
             FormName = form.FormName,
+            Status = form.Status,
         };
     }
 }

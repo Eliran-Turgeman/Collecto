@@ -1,4 +1,5 @@
 ﻿using EmailCollector.Api.Data;
+using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -48,5 +49,21 @@ public class EmailSignupRepository : IEmailSignupRepository
     {
         _dbContext.EmailSignups.Update(entity);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(int formId, DateTime rangeStart, DateTime rangeEnd)
+    {
+        // Fetch the signups grouped by date
+        var signups = await _dbContext.EmailSignups
+            .Where(s => s.SignupFormId == formId && s.SignupDate.Date >= rangeStart.Date && s.SignupDate.Date <= rangeEnd.Date)
+            .GroupBy(s => s.SignupDate.Date)
+            .Select(g => new SignupStatsDto
+            {
+                Date = g.Key,
+                Count = g.Count()
+            })
+            .ToListAsync();
+
+        return signups;
     }
 }

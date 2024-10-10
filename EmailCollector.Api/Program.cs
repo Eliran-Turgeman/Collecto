@@ -4,15 +4,26 @@ using EmailCollector.Api.Areas.Identity.Data;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using EmailCollector.Api.Middlewares;
-using EmailCollector.Api.Interfaces;
 using EmailCollector.Api.Services;
 using EmailCollector.Domain.Interfaces.Repositories;
 using EmailCollector.Api.Repositories;
 using System.Reflection;
+using Blazorise;
+using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using EmailCollector.Api.Pages;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services
+    .AddBlazorise(options =>
+    {
+        options.Immediate = true;
+    })
+    .AddBootstrap5Providers()
+    .AddFontAwesomeIcons();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -65,10 +76,21 @@ builder.Services.AddSingleton<IDnsLookupService, DnsLookupService>();
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Identity/Account/Login";
+        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    });
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<EmailCollectorApiUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<EmailCollectorApiContext>();
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -84,9 +106,16 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.MapIdentityApi<EmailCollectorApiUser>();
-app.UseMiddleware<UserMiddleware>();
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAntiforgery();
+app.UseAuthentication();
+app.UseMiddleware<UserMiddleware>();
 app.UseAuthorization();
-
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+    endpoints.MapRazorComponents<Dashboard>();
+});
 app.MapControllers();
 app.Run();

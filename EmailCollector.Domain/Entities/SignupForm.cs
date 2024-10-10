@@ -14,4 +14,6 @@ public class SignupForm
     public required Guid CreatedBy { get; set; }
 
     public FormStatus Status { get; set; } = FormStatus.Active;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

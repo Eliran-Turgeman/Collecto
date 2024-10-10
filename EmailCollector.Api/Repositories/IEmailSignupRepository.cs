@@ -1,4 +1,5 @@
-﻿using EmailCollector.Domain.Entities;
+﻿using EmailCollector.Api.DTOs;
+using EmailCollector.Domain.Entities;
 
 namespace EmailCollector.Domain.Interfaces.Repositories;
 
@@ -8,4 +9,6 @@ namespace EmailCollector.Domain.Interfaces.Repositories;
 public interface IEmailSignupRepository : IRepository<EmailSignup>
 {
     Task<IEnumerable<EmailSignup>> GetByFormIdAsync(int formId);
+
+    Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(int formId, DateTime rangeStart, DateTime rangeEnd);
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EmailCollector.Api.DTOs;
-using EmailCollector.Api.Interfaces;
 using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;

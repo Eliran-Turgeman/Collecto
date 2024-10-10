@@ -1,6 +1,6 @@
 ﻿using EmailCollector.Api.DTOs;
 
-namespace EmailCollector.Api.Interfaces;
+namespace EmailCollector.Api.Services;
 
 /// <summary>
 /// Defines methods for handling email signups.
@@ -10,4 +10,6 @@ public interface IEmailSignupService
     Task<SignupResultDto> SubmitEmailAsync(EmailSignupDto emailSignupDto);
 
     Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId, Guid userId);
+
+    Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(int formId, DateTime? startDate, DateTime? endDate);
 }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using EmailCollector.Api.Interfaces;
 using EmailCollector.Api.DTOs;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using EmailCollector.Api.Services;
 
 namespace EmailCollector.Api.Controllers;
 
@@ -32,7 +32,7 @@ public class SignupFormsController : ControllerBase
     /// 
     /// </remarks>
     /// <response code="200">Returns all signup forms the current user has created.</response>
-    /// <response code="400">If the user is not authenticated</response>
+    /// <response code="401">If the user is not authenticated</response>
     [HttpGet]
     [Produces("application/json")]
     public async Task<ActionResult<IEnumerable<SignupForm>>> GetSignupForms()
@@ -40,7 +40,7 @@ public class SignupFormsController : ControllerBase
         _logger.LogInformation("Getting signup forms.");
         if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
         {
-            return BadRequest();
+            return Unauthorized();
         }
 
         return Ok(await _formService.GetFormsByUserAsync(userId));

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using EmailCollector.Api.Interfaces;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Enums;
+using EmailCollector.Api.Services;
 
 namespace EmailCollector.Api.Controllers;
 

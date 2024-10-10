@@ -1,0 +1,181 @@
+﻿@* @page "/"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Services
+@using EmailCollector.Api.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@using DTOs
+@using Blazorise.Charts
+@using System.Security.Claims
+
+@inject IFormService _formService
+@inject IEmailSignupService _emailSignupService
+@inject SignInManager<EmailCollectorApiUser> SignInManager
+@inject UserManager<EmailCollectorApiUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+<div>
+    <!-- Form selection -->
+    <div class="form-group">
+        <label for="formSelect">Select Form</label>
+        <select id="formSelect" @bind="SelectedFormId" class="form-control" @onchange="OnFormChange">
+            <option value="">-- Select Form --</option>
+            @foreach (var form in Forms)
+            {
+                <option value="@form.Id">@form.FormName</option>
+            }
+        </select>
+    </div>
+
+    <!-- Date Range Selection -->
+    <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" @bind="StartDate" class="form-control" />
+
+        <label for="endDate">End Date</label>
+        <input type="date" @bind="EndDate" class="form-control" />
+    </div>
+
+    <!-- Chart and Statistics Section -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Total Subscribers</div>
+                <div class="card-body">@TotalSubscribers</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Form Status</div>
+                <div class="card-body">@FormStatus</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Avg Subs Per Day</div>
+                <div class="card-body">@AvgSubsPerDay</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Daily Subscriptions</h3>
+            <LineChart @ref="dailySubsChart" TItem="double" />
+        </div>
+        <div class="col-md-12">
+            <h3>Cumulative Subscriptions</h3>
+            <LineChart @ref="cumulativeSubsChart" TItem="double" />
+        </div>
+    </div>
+</div>
+
+@code {
+    public IEnumerable<FormDto> Forms { get; set; } = new List<FormDto>();
+    public string SelectedFormId { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now.AddMonths(-1);
+    public DateTime EndDate { get; set; } = DateTime.Now;
+    public int TotalSubscribers { get; set; }
+    public string FormStatus { get; set; }
+    public double AvgSubsPerDay { get; set; }
+    public List<string> Dates { get; set; } = new List<string>();
+    public List<int> Counts { get; set; } = new List<int>();
+    public List<int> CumulativeCounts { get; set; } = new List<int>();
+    public string ErrorMessage { get; set; }
+    LineChart<double> dailySubsChart;
+    LineChart<double> cumulativeSubsChart;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ClaimsPrincipal? user = null;
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            user = authState.User;
+        } 
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+
+
+        if (user == null || !user.Identity.IsAuthenticated)
+        {
+            ErrorMessage = "Please log in to view your forms dashboard.";
+            return;
+        }
+
+        var currentUser = await UserManager.GetUserAsync(user);
+        var userId = new Guid(currentUser?.Id!);
+        Forms = await _formService.GetFormsByUserAsync(userId);
+    }
+
+    private async Task OnFormChange(ChangeEventArgs e)
+    {
+        SelectedFormId = e.Value.ToString();
+        await LoadFormData();
+    }
+
+    private async Task LoadFormData()
+    {
+        if (string.IsNullOrEmpty(SelectedFormId) || !int.TryParse(SelectedFormId, out var formId))
+        {
+            ErrorMessage = "Please select a valid form.";
+            return;
+        }
+
+        var form = await _formService.GetFormByIdAsync(formId, Guid.NewGuid());
+
+        if (form == null)
+        {
+            ErrorMessage = "Form not found.";
+            return;
+        }
+
+        var emailSignupsData = await _emailSignupService.GetSignupsPerDayAsync(formId, StartDate, EndDate);
+
+        TotalSubscribers = emailSignupsData.Sum(s => s.Count);
+        FormStatus = form.Status.ToString();
+        AvgSubsPerDay = emailSignupsData.Any() ? TotalSubscribers / emailSignupsData.Count() : 0;
+
+        Dates = emailSignupsData.Select(s => s.Date.ToString("yyyy-MM-dd")).ToList();
+        Counts = emailSignupsData.Select(s => s.Count).ToList();
+
+        // Create Cumulative Counts
+        int cumulativeSum = 0;
+        CumulativeCounts = Counts.Select(count => cumulativeSum += count).ToList();
+
+        await UpdateCharts();
+    }
+
+    private async Task UpdateCharts()
+    {
+        // Update Daily Subscriptions Chart
+        await dailySubsChart.Clear();
+        await dailySubsChart.AddLabelsDatasetsAndUpdate(Dates.ToArray(), GetLineChartDataset(Counts));
+
+        // Update Cumulative Subscriptions Chart
+        await cumulativeSubsChart.Clear();
+        await cumulativeSubsChart.AddLabelsDatasetsAndUpdate(Dates.ToArray(), GetLineChartDataset(CumulativeCounts));
+    }
+
+    private LineChartDataset<double> GetLineChartDataset(List<int> data)
+    {
+        return new LineChartDataset<double>
+            {
+                Data = data.Select(d => (double)d).ToList(),
+                Label = "Subscriptions",
+                BackgroundColor = "rgba(75, 192, 192, 0.2)",
+                BorderColor = "rgb(75, 192, 192)",
+                Fill = true
+            };
+    }
+}
+ *@

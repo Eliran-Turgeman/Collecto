@@ -1,6 +1,6 @@
 ﻿using EmailCollector.Api.DTOs;
 
-namespace EmailCollector.Api.Interfaces;
+namespace EmailCollector.Api.Services;
 
 /// <summary>
 /// Defines methods for managing signup forms.

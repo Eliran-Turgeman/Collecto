@@ -1,4 +1,6 @@
-﻿namespace EmailCollector.Api.DTOs;
+﻿using EmailCollector.Domain.Enums;
+
+namespace EmailCollector.Api.DTOs;
 
 /// <summary>
 /// DTO for displaying detailed form information.
@@ -8,5 +10,7 @@ public class FormDetailsDto
     public int Id { get; set; }
 
     public required string FormName { get; set; }
+
+    public FormStatus Status { get; set; }
 
 }

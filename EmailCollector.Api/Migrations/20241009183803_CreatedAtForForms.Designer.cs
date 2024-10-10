@@ -3,6 +3,7 @@ using System;
 using EmailCollector.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmailCollector.Api.Migrations
 {
     [DbContext(typeof(EmailCollectorApiContext))]
-    partial class EmailCollectorApiContextModelSnapshot : ModelSnapshot
+    [Migration("20241009183803_CreatedAtForForms")]
+    partial class CreatedAtForForms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
