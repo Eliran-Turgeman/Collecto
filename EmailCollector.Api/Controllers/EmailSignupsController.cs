@@ -74,10 +74,11 @@ public class EmailSignupsController : ControllerBase
     /// <response code="200">Email signup to form was successful</response>
     /// <response code="400">If the email is invalid</response>
     /// <response code="404">If the form is not found</response>
-    /// <response code="409">If the form is not active</response>
+    /// <response code="409">If the form is not active, or the email address is already signed up for this form.</response>
+    /// <response code="429">If API calls quota exceeded - 10 calls per 1min</response>
     [HttpPost]
     [Produces("application/json")]
-    public async Task<ActionResult<EmailSignup>> PostEmailSignup(EmailSignupDto emailSignup)
+    public async Task<ActionResult<EmailSignup>> PostEmailSignup([FromBody] EmailSignupDto emailSignup)
     {
         _logger.LogInformation($"Submitting email signup for form {emailSignup.FormId}.");
         var result = await _emailSignupService.SubmitEmailAsync(emailSignup);
@@ -92,12 +93,36 @@ public class EmailSignupsController : ControllerBase
                 case EmailSignupErrorCode.FormNotFound:
                     return NotFound(result.Message);
 
+                case EmailSignupErrorCode.EmailAlreadySignedUp:
+                    return Conflict(result.Message);
+
                 case EmailSignupErrorCode.FormNotActive:
                     return Conflict(result.Message);
             } 
         }
 
         _logger.LogInformation($"Email signup submitted for form {emailSignup.FormId}.");
-        return Ok(emailSignup);
+        return Ok(result.Message);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("confirmations")]
+    public async Task<IActionResult> ConfirmEmailSignup([FromQuery] string confirmationToken)
+    {
+        var confirmationResult = await _emailSignupService.ConfirmEmailSignupAsync(confirmationToken);
+
+        switch (confirmationResult.ErrorCode)
+        {
+            case EmailConfirmationErrorCode.InvalidToken:
+                return BadRequest(confirmationResult.Message);
+
+            case EmailConfirmationErrorCode.ExpiredToken:
+                return BadRequest(confirmationResult.Message);
+
+            case EmailConfirmationErrorCode.EmailAlreadyConfirmed:
+                return Conflict(confirmationResult.Message);
+        }
+
+        return Ok(confirmationResult.Message);
     }
 }

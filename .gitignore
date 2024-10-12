@@ -367,3 +367,7 @@ FodyWeavers.xsd
 data/
 
 Data/
+
+redis-data/
+
+*.env

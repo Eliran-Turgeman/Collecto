@@ -5,4 +5,5 @@ public enum EmailSignupErrorCode
     InvalidEmail,
     FormNotFound,
     FormNotActive,
+    EmailAlreadySignedUp,
 }

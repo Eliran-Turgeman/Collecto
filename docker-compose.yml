@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - email-collector-net
+
+  api:
+    build:
+      context: .
+      dockerfile: EmailCollector.Api/Dockerfile
+    container_name: email-collector-api
+    ports:
+      - "5001:8080"
+      - "5002:8081"
+    volumes:
+      - ./EmailCollector.Api/Data:/app/data
+    depends_on:
+      - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Redis__ConnectionString=redis:6379
+      - EmailConfiguration:From=${EMAIL_FROM}
+      - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER}
+      - EmailConfiguration:Username=${EMAIL_USERNAME}
+      - EmailConfiguration:Password=${EMAIL_PASSWORD}
+    networks:
+      - email-collector-net
+
+networks:
+  email-collector-net:
+    driver: bridge
+
+volumes:
+  data: 
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./data

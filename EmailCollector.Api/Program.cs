@@ -13,7 +13,11 @@ using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using EmailCollector.Api.Pages;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using AspNetCoreRateLimit;
+using EmailCollector.Api.Services.EmailSender;
+using EmailCollector.Api.Configurations;
+using Microsoft.AspNetCore.Identity.UI.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +82,11 @@ builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
 
 builder.Services.AddHttpClient();
 
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddInMemoryRateLimiting();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -90,21 +99,61 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<EmailCollectorApiUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<EmailCollectorApiContext>();
 
+
+builder.Services.Configure<FeatureToggles>(builder.Configuration.GetSection("FeatureToggles"));
+builder.Services.AddTransient<IFeatureToggles, FeatureTogglesService>();
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+builder.Services.AddTransient<IAppEmailSender>(sp =>
+{
+    // Resolve the IFeatureToggles service from the IServiceProvider
+    var featureToggles = sp.GetRequiredService<IFeatureToggles>();
+    var logger = sp.GetRequiredService<ILogger<EmailSender>>();
+    if (featureToggles.IsEmailConfirmationEnabled())
+    {
+        // Return the real EmailSender if the feature is enabled
+        var emailConfig = sp.GetService<EmailConfiguration>();
+        return new EmailSender(emailConfig!, logger);  // Assuming EmailSender depends on EmailConfiguration
+    }
+    else
+    {
+        // Return the NoOpEmailSender if the feature is disabled
+        return new NoOpAppEmailSender();
+    }
+});
+
+// Register EmailConfiguration as a singleton if needed
+var emailConfig = builder.Configuration
+    .GetSection("EmailConfiguration")
+    .Get<EmailConfiguration>();
+
+if (emailConfig != null)
+{
+    builder.Services.AddSingleton(emailConfig);
+}
+
 builder.Services.AddRazorPages();
+
+//added to use in-memory cache
+builder.Services.AddMemoryCache();
+
+//added to use Redis cache
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "redis:6379";
+});
 
 var app = builder.Build();
 
 app.UseStaticFiles();
+app.UseIpRateLimiting();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c => {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmailCollectorApi");
-        c.InjectStylesheet("/swagger-ui/darkMode.css");
-    });
-}
+app.UseSwagger();
+app.UseSwaggerUI(c => {
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmailCollectorApi");
+    c.InjectStylesheet("/swagger-ui/darkMode.css");
+});
 app.MapIdentityApi<EmailCollectorApiUser>();
 app.UseHttpsRedirection();
 app.UseRouting();
@@ -118,4 +167,5 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorComponents<Dashboard>();
 });
 app.MapControllers();
+
 app.Run();

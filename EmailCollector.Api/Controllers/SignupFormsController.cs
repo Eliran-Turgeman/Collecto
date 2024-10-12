@@ -35,7 +35,7 @@ public class SignupFormsController : ControllerBase
     /// <response code="401">If the user is not authenticated</response>
     [HttpGet]
     [Produces("application/json")]
-    public async Task<ActionResult<IEnumerable<SignupForm>>> GetSignupForms()
+    public async Task<ActionResult<IEnumerable<FormDto>>> GetSignupForms()
     {
         _logger.LogInformation("Getting signup forms.");
         if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
@@ -108,7 +108,7 @@ public class SignupFormsController : ControllerBase
     /// <response code="400">If the user is not authenticated.</response>
     [HttpPost]
     [Produces("application/json")]
-    public async Task<ActionResult<SignupForm>> PostSignupForm(CreateFormDto signupForm)
+    public async Task<ActionResult<FormDetailsDto>> PostSignupForm(CreateFormDto signupForm)
     {
         _logger.LogInformation("Creating signup form.");
         if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
@@ -118,7 +118,7 @@ public class SignupFormsController : ControllerBase
 
         var formsDetails = await _formService.CreateFormAsync(userId, signupForm);
         _logger.LogInformation($"Created signup form {formsDetails.Id}.");
-        return CreatedAtAction("GetSignupForm", new { id = formsDetails.Id }, signupForm);
+        return CreatedAtAction("GetSignupForm", new { id = formsDetails.Id }, formsDetails);
     }
 
     /// <summary>

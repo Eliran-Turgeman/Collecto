@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <style>
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+            .button:hover {
+                background-color: #45a049;
+            }
+    </style>
+</head>
+<body>
+    <h2>Email Confirmation</h2>
+    <p>Thank you for signing up! Please click the button below to confirm your email address:</p>
+
+    <a href="http://localhost:5001/api/EmailSignups/confirmations?confirmationToken={{CONFIRMATION_TOKEN}}" class="button">Confirm Email</a>
+
+    <p>If you did not sign up, you can safely ignore this email.</p>
+</body>
+</html>

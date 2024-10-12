@@ -1,9 +1,13 @@
-﻿using DnsClient;
+﻿using Blazorise;
+using EmailCollector.Api.Configurations;
 using EmailCollector.Api.DTOs;
+using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
 using EmailCollector.Domain.Interfaces.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace EmailCollector.Api.Services;
@@ -14,6 +18,9 @@ public class EmailSignupService : IEmailSignupService
     private readonly ISignupFormRepository _signupFormRepository;
     private readonly ILogger<EmailSignupService> _logger;
     private readonly IDnsLookupService _dnsLookupService;
+    private readonly IDistributedCache _signupCandidatesCache;
+    private readonly IAppEmailSender _emailSender;
+    private readonly IFeatureToggles _featureTogglesService;
 
     private static readonly Regex EmailRegex = new Regex(
         @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
@@ -22,12 +29,18 @@ public class EmailSignupService : IEmailSignupService
     public EmailSignupService(IEmailSignupRepository emailSignupRepository,
         ISignupFormRepository signupFormRepository,
         ILogger<EmailSignupService> logger,
-        IDnsLookupService dnsLookupService)
+        IDnsLookupService dnsLookupService,
+        IDistributedCache signupCandidatesCache,
+        IAppEmailSender emailSender,
+        IFeatureToggles featureTogglesService)
     {
         _emailSignupRepository = emailSignupRepository;
         _signupFormRepository = signupFormRepository;
         _logger = logger;
         _dnsLookupService = dnsLookupService;
+        _signupCandidatesCache = signupCandidatesCache;
+        _emailSender = emailSender;
+        _featureTogglesService = featureTogglesService;
     }
 
     public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId, Guid userId)
@@ -53,6 +66,8 @@ public class EmailSignupService : IEmailSignupService
 
     public async Task<SignupResultDto> SubmitEmailAsync(EmailSignupDto emailSignupDto)
     {
+        _logger.LogInformation($"Submitting email address {emailSignupDto.Email} for form {emailSignupDto.FormId}.");
+
         if (!ValidateEmail(emailSignupDto.Email))
         {
             return await Task.FromResult(new SignupResultDto
@@ -66,6 +81,7 @@ public class EmailSignupService : IEmailSignupService
         var form = await _signupFormRepository.GetByIdAsync(emailSignupDto.FormId);
         if (form == null)
         {
+            _logger.LogInformation("Form not found.");
             return await Task.FromResult(new SignupResultDto
             {
                 Success = false,
@@ -74,8 +90,21 @@ public class EmailSignupService : IEmailSignupService
             });
         }
 
+        var allExistingSignups = await _emailSignupRepository.GetByFormIdAsync(form.Id);
+        if (allExistingSignups.Any(s => s.EmailAddress == emailSignupDto.Email))
+        {
+            _logger.LogInformation("Email address already signed up.");
+            return await Task.FromResult(new SignupResultDto
+            {
+                Success = false,
+                Message = "Email address already signed up.",
+                ErrorCode = EmailSignupErrorCode.EmailAlreadySignedUp,
+            });
+        }
+
         if (form.Status != FormStatus.Active)
         {
+            _logger.LogInformation("Form is not active.");
             return await Task.FromResult(new SignupResultDto
             {
                 Success = false,
@@ -90,12 +119,100 @@ public class EmailSignupService : IEmailSignupService
             SignupFormId = emailSignupDto.FormId,
         };
 
-        await _emailSignupRepository.AddAsync(emailSignup);
+        if (!_featureTogglesService.IsEmailConfirmationEnabled())
+        {
+            _logger.LogInformation("Email confirmation is disabled, signing up email address.");
+            await _emailSignupRepository.AddAsync(emailSignup);
+            return await Task.FromResult(new SignupResultDto
+            {
+                Success = true,
+                Message = "Email address signed up successfully.",
+            });
+        }
+
+        _logger.LogInformation("Email confirmation is enabled, sending confirmation email.");
+
+        var signupCandidateValue = $"formId:{emailSignupDto.FormId}#signup:{emailSignupDto.Email}";
+        var encodedValue = Encoding.UTF8.GetBytes(signupCandidateValue);
+        var confirmationToken = Guid.NewGuid().ToString();
+
+        _logger.LogInformation($"Storing email signup candidate in cache with token {confirmationToken}.");
+
+        var options = new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1),
+        };
+        await _signupCandidatesCache.SetAsync(confirmationToken, encodedValue, options);
+
+        var message = new Message(new string[] { emailSignupDto.Email }, $"Confirm Signup to {form.FormName}", CreateHTMLContentFromTemplate(confirmationToken));
+        _emailSender.SendEmail(message);
+
+        _logger.LogInformation("Email confirmation email sent.");
 
         return await Task.FromResult(new SignupResultDto
         {
             Success = true,
-            Message = "Email address submitted successfully.",
+            Message = "Email address submitted, please confirm signup.",
+        });
+    }
+
+    public async Task<ConfirmEmailResultDto> ConfirmEmailSignupAsync(string confirmationToken)
+    {
+        var encodedSignupCandidate = await _signupCandidatesCache.GetAsync(confirmationToken);
+
+        if (encodedSignupCandidate == null)
+        {
+            return await Task.FromResult(new ConfirmEmailResultDto
+            {
+                Success = false,
+                Message = "Confirmation token expired.",
+                ErrorCode = EmailConfirmationErrorCode.ExpiredToken
+            });
+        }
+
+        var signupCandidateValue = Encoding.UTF8.GetString(encodedSignupCandidate);
+
+        var parts = signupCandidateValue.Split('#');
+        var formIdPart = parts[0].Split(':')[1];
+        var emailPart = parts[1].Split(':')[1];
+
+        _logger.LogInformation($"Confirming email address {emailPart} for form {formIdPart}.");
+
+        if (formIdPart == null || emailPart == null || !int.TryParse(formIdPart, out var formId))
+        {
+            return await Task.FromResult(new ConfirmEmailResultDto
+            {
+                Success = false,
+                Message = "Invalid confirmation token.",
+                ErrorCode = EmailConfirmationErrorCode.InvalidToken
+            });
+        }
+
+        var allExistingSignups = await _emailSignupRepository.GetByFormIdAsync(formId);
+        if (allExistingSignups.Any(s => s.EmailAddress == emailPart))
+        {
+            _logger.LogInformation("Email address already signed up.");
+            return await Task.FromResult(new ConfirmEmailResultDto
+            {
+                Success = false,
+                Message = "Email already confirmed.",
+                ErrorCode = EmailConfirmationErrorCode.EmailAlreadyConfirmed
+            });
+        }
+
+        var emailSignup = new EmailSignup
+        {
+            EmailAddress = emailPart,
+            SignupFormId = formId,
+        };
+
+        await _emailSignupRepository.AddAsync(emailSignup);
+        await _signupCandidatesCache.RemoveAsync(confirmationToken);
+
+        return await Task.FromResult(new ConfirmEmailResultDto
+        {
+            Success = true,
+            Message = "Email confirmed.",
         });
     }
 
@@ -152,5 +269,13 @@ public class EmailSignupService : IEmailSignupService
         }
 
         return filledSignups;
+    }
+
+    private string CreateHTMLContentFromTemplate(string confirmationToken)
+    {
+        var templatePath = "./Services/EmailSender/EmailTemplate.html";
+        var htmlContent = File.ReadAllText(templatePath);
+        var emailBody = htmlContent.Replace("{{CONFIRMATION_TOKEN}}", confirmationToken);
+        return emailBody;
     }
 }
