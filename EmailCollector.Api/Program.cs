@@ -133,6 +133,14 @@ if (emailConfig != null)
     builder.Services.AddSingleton(emailConfig);
 }
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("https://trycollecto.github.io")
+                              .AllowAnyMethod()
+                              .AllowAnyHeader());
+});
+
 builder.Services.AddRazorPages();
 
 //added to use in-memory cache
@@ -141,7 +149,7 @@ builder.Services.AddMemoryCache();
 //added to use Redis cache
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = "redis:6379";
+    options.Configuration = Environment.GetEnvironmentVariable("Redis__ConnectionString") ?? "redis:6379";
 });
 
 var app = builder.Build();
@@ -157,6 +165,7 @@ app.UseSwaggerUI(c => {
 app.MapIdentityApi<EmailCollectorApiUser>();
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors();
 app.UseAntiforgery();
 app.UseAuthentication();
 app.UseMiddleware<UserMiddleware>();

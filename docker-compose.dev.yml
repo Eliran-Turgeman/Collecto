@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    networks:
+      - email-collector-net
+
+  api:
+    build:
+      context: .
+      dockerfile: EmailCollector.Api/Dockerfile
+    container_name: email-collector-api
+    ports:
+      - "5001:8080"
+    volumes:
+      - ./EmailCollector.Api/Data:/app/data
+    depends_on:
+      - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Redis__ConnectionString=redis:6379
+      - EmailConfiguration:From=${EMAIL_FROM}
+      - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER}
+      - EmailConfiguration:Username=${EMAIL_USERNAME}
+      - EmailConfiguration:Password=${EMAIL_PASSWORD}
+    networks:
+      - email-collector-net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/.htpasswd:/etc/nginx/.htpasswd
+    depends_on:
+      - api
+      - grafana
+      - dbeaver
+    networks:
+      - email-collector-net
+
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  # File mount
+      - ./data/prometheus:/prometheus  # Volume for Prometheus data
+    ports:
+      - "9092:9090"  # Prometheus default port
+    networks:
+      - email-collector-net
+
+  # Grafana for visualizing Prometheus data
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Set admin password for Grafana
+    volumes:
+      - ./grafana:/var/lib/grafana  # Volume for Grafana data
+    ports:
+      - "3002:3000"  # Expose Grafana on port 3000
+    depends_on:
+      - prometheus  # Grafana depends on Prometheus
+    networks:
+      - email-collector-net
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - "8083:8978"  # Port for web access
+    environment:
+      - CB_DB_SQLITE=true  # Enable SQLite support
+    volumes:
+      - ./EmailCollector.Api/Data:/app/data
+      - ./dbeaver-data:/opt/cloudbeaver/workspace
+    networks:
+      - email-collector-net
+
+networks:
+  email-collector-net:
+    driver: bridge
+
+volumes:
+  data: 
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./data
+  grafana: 
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./grafana  # Grafana dashboards and settings will be stored here

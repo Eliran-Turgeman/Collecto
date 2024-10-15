@@ -46,7 +46,6 @@ public class EmailSender : IAppEmailSender, IEmailSender
             try
             {
                 client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
-                _logger.LogInformation($"Email creds = email:{_emailConfig.UserName}; pass:{_emailConfig.Password}");
                 client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
                 client.Send(mailMessage);
             }

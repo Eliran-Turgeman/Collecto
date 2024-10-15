@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Enums;
 using EmailCollector.Api.Services;
+using Microsoft.AspNetCore.Cors;
 
 namespace EmailCollector.Api.Controllers;
 
@@ -76,6 +77,7 @@ public class EmailSignupsController : ControllerBase
     /// <response code="404">If the form is not found</response>
     /// <response code="409">If the form is not active, or the email address is already signed up for this form.</response>
     /// <response code="429">If API calls quota exceeded - 10 calls per 1min</response>
+    [EnableCors("AllowSpecificOrigin")]
     [HttpPost]
     [Produces("application/json")]
     public async Task<ActionResult<EmailSignup>> PostEmailSignup([FromBody] EmailSignupDto emailSignup)

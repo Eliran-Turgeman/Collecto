@@ -371,3 +371,6 @@ Data/
 redis-data/
 
 *.env
+
+dbeaver-data/
+.htpasswd

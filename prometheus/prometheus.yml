@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: []
+    scheme: http
+    timeout: 10s
+    api_version: v1
+scrape_configs:
+  # Scrape Prometheus server itself
+  - job_name: prometheus
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+        - localhost:9090
+
+  # Scrape ASP.NET Core app
+  - job_name: myapp
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+        - app:8080 

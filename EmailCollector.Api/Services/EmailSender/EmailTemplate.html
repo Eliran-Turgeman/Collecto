@@ -6,27 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Confirmation</title>
     <style>
-        .button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 25px;
-            text-align: center;
-            text-decoration: none;
+        .button-24 {
+            background: #FF4742;
+            border: 1px solid #FF4742;
+            border-radius: 6px;
+            box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
             display: inline-block;
+            font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
             font-size: 16px;
-            border-radius: 5px;
+            font-weight: 800;
+            line-height: 16px;
+            min-height: 40px;
+            outline: 0;
+            padding: 12px 14px;
+            text-align: center;
+            text-rendering: geometricprecision;
+            text-transform: none;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            vertical-align: middle;
         }
 
-            .button:hover {
-                background-color: #45a049;
-            }
+        .button-24:hover,
+        .button-24:active {
+            background-color: initial;
+            background-position: 0 0;
+            color: #FF4742;
+        }
+
+        .button-24:active {
+            opacity: .5;
+        }
     </style>
 </head>
 <body>
-    <h2>Email Confirmation</h2>
     <p>Thank you for signing up! Please click the button below to confirm your email address:</p>
 
-    <a href="http://localhost:5001/api/EmailSignups/confirmations?confirmationToken={{CONFIRMATION_TOKEN}}" class="button">Confirm Email</a>
+    <a href="http://localhost:5001/api/EmailSignups/confirmations?confirmationToken={{CONFIRMATION_TOKEN}}" class="button-24">Confirm Email</a>
 
     <p>If you did not sign up, you can safely ignore this email.</p>
 </body>
