@@ -380,3 +380,5 @@ ngrok2/
 grafana/
 
 prometheus/
+/nginx/nginx.conf
+swagger.json

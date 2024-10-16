@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://your-domain.com/</loc>
+         <lastmod>2024-10-16</lastmod>
+    </url>
+    <url>
+         <loc>https://your-domain.com/api/</loc>
+         <lastmod>2024-10-16</lastmod>
+    </url>
+    <url>
+         <loc>https://your-domain.com/changelog/</loc>
+         <lastmod>2024-10-16</lastmod>
+    </url>
+    <url>
+         <loc>https://your-domain.com/usage/accept_signups/</loc>
+         <lastmod>2024-10-16</lastmod>
+    </url>
+    <url>
+         <loc>https://your-domain.com/usage/create_forms/</loc>
+         <lastmod>2024-10-16</lastmod>
+    </url>
+    <url>
+         <loc>https://your-domain.com/usage/overview/</loc>
+         <lastmod>2024-10-16</lastmod>
+    </url>
+</urlset>

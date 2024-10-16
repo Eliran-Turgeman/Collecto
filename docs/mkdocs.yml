@@ -1,0 +1,89 @@
+site_name: "Collecto"
+site_description: "Documentation for the Collecto API"
+site_author: "Eliran Turgeman"
+site_url: "https://your-domain.com"
+
+# Repository Link
+repo_name: "Collecto"
+repo_url: "https://github.com/Eliran-Turgeman/Collecto"
+edit_uri: "edit/main/docs/"  # Allows "Edit on GitHub" link in your docs
+
+# Theme
+theme:
+  name: "material"  # Using Material for MkDocs, a popular theme
+  language: "en"
+  features:
+    - navigation.tabs
+    - navigation.to
+  #favicon: "images/favicon.ico"
+  #logo: "images/logo.png"
+  palette:
+    - scheme: slate
+      primary: "black"
+      accent: "red"
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: default
+      primary: "black"
+      accent: "red"
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # - scheme: default
+    #   primary: "indigo"
+    #   accent: "cyan"
+    #   toggle:
+    #     icon: material/weather-night
+    #     name: Switch to dark mode
+
+  # Enable icons for better visuals
+  icon:
+    repo: fontawesome/brands/github  # Add GitHub icon to the top-right
+
+  # Features like "next/prev" navigation
+  features:
+    - navigation.top
+    - navigation.tabs
+    - search.highlight
+    - search.suggest
+
+# Navigation (sidebar)
+nav:
+  - Home: index.md
+  - API Reference: api.md
+  - Usage Guide:
+      - Overview: usage/overview.md
+      - Create Forms: usage/create_forms.md
+      - Accept Signups: usage/accept_signups.md
+  - Changelog: changelog.md
+
+# Markdown Extensions
+markdown_extensions:
+  - toc:  # Table of contents for long pages
+      permalink: True
+  - footnotes
+  - admonition  # Allows note and warning blocks
+  - def_list  # Definition lists support
+  - pymdownx.highlight  # Syntax highlighting for code blocks
+  - pymdownx.superfences  # Multi-line code block support
+
+# Plugins
+plugins:
+  - search  # Built-in search
+  #- mkdocs-mermaid2-plugin  # For Mermaid diagrams
+  #- mkdocs-awesome-pages-plugin  # Allows awesome_pages.yml for custom sidebar ordering
+  #- mkdocs-git-revision-date-localized-plugin  # Adds last update timestamp
+ # - mkdocs-macros-plugin  # Add macros for reusability in Markdown
+ # - mkdocs-minify-plugin  # Minifies HTML files to optimize the site
+
+# Deployment Settings (for GitHub Pages)
+#plugins:
+ # - mike  # Deploy multiple versions of docs (optional)
+
+# Versioning (useful for API docs)
+extra:
+  version:
+    current: 1.0
+    stable: 1.0
+    next: 2.0

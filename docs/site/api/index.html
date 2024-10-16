@@ -1,0 +1,3365 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Collecto API">
+      
+      
+        <meta name="author" content="Eliran Turgeman">
+      
+      
+        <link rel="canonical" href="https://your-domain.com/api/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../usage/overview/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.41">
+    
+    
+      
+        <title>API Reference - Collecto</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#collecto" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Collecto" class="md-header__button md-logo" aria-label="Collecto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Collecto
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Eliran-Turgeman/Collecto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Collecto
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../usage/overview/" class="md-tabs__link">
+          
+  
+  Usage Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../changelog/" class="md-tabs__link">
+        
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Collecto" class="md-nav__button md-logo" aria-label="Collecto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Collecto
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Eliran-Turgeman/Collecto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Collecto
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#version-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version: v1
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version: v1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#terms-of-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Terms of service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register" class="md-nav__link">
+    <span class="md-ellipsis">
+      /register
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#login" class="md-nav__link">
+    <span class="md-ellipsis">
+      /login
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/login">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      /refresh
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/refresh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmemail" class="md-nav__link">
+    <span class="md-ellipsis">
+      /confirmEmail
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/confirmEmail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resendconfirmationemail" class="md-nav__link">
+    <span class="md-ellipsis">
+      /resendConfirmationEmail
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/resendConfirmationEmail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forgotpassword" class="md-nav__link">
+    <span class="md-ellipsis">
+      /forgotPassword
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/forgotPassword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resetpassword" class="md-nav__link">
+    <span class="md-ellipsis">
+      /resetPassword
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/resetPassword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manage2fa" class="md-nav__link">
+    <span class="md-ellipsis">
+      /manage/2fa
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/manage/2fa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manageinfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      /manage/info
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/manage/info">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apiemailsignupsformformid" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/EmailSignups/form/{formId}
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/EmailSignups/form/{formId}">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apiemailsignups" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/EmailSignups
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/EmailSignups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apiemailsignupsconfirmations" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/EmailSignups/confirmations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/EmailSignups/confirmations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apisignupforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/SignupForms
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/SignupForms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apisignupformsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/SignupForms/{id}
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/SignupForms/{id}">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      DELETE
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DELETE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#put" class="md-nav__link">
+    <span class="md-ellipsis">
+      PUT
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PUT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Usage Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Usage Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/create_forms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create Forms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/accept_signups/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Accept Signups
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#version-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version: v1
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version: v1">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#terms-of-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Terms of service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register" class="md-nav__link">
+    <span class="md-ellipsis">
+      /register
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/register">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#login" class="md-nav__link">
+    <span class="md-ellipsis">
+      /login
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/login">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      /refresh
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/refresh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confirmemail" class="md-nav__link">
+    <span class="md-ellipsis">
+      /confirmEmail
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/confirmEmail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resendconfirmationemail" class="md-nav__link">
+    <span class="md-ellipsis">
+      /resendConfirmationEmail
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/resendConfirmationEmail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forgotpassword" class="md-nav__link">
+    <span class="md-ellipsis">
+      /forgotPassword
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/forgotPassword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resetpassword" class="md-nav__link">
+    <span class="md-ellipsis">
+      /resetPassword
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/resetPassword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manage2fa" class="md-nav__link">
+    <span class="md-ellipsis">
+      /manage/2fa
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/manage/2fa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manageinfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      /manage/info
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/manage/info">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#responses_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apiemailsignupsformformid" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/EmailSignups/form/{formId}
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/EmailSignups/form/{formId}">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apiemailsignups" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/EmailSignups
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/EmailSignups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apiemailsignupsconfirmations" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/EmailSignups/confirmations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/EmailSignups/confirmations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apisignupforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/SignupForms
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/SignupForms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      POST
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apisignupformsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      /api/SignupForms/{id}
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/SignupForms/{id}">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      GET
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GET">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      DELETE
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DELETE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#put" class="md-nav__link">
+    <span class="md-ellipsis">
+      PUT
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PUT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description:
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#responses_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      Responses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="collecto">Collecto<a class="headerlink" href="#collecto" title="Permanent link">&para;</a></h1>
+<p>API for managing email collection forms.</p>
+<p><strong>NOTE</strong>: You can also view the same contents within the app using swagger. <a href="http://127.0.0.1:8000/usage/overview/#setup-running-the-application">Start</a> the application and go <a href="localhost:5001//swagger/index.html">here</a></p>
+<h2 id="version-v1">Version: v1<a class="headerlink" href="#version-v1" title="Permanent link">&para;</a></h2>
+<h3 id="terms-of-service">Terms of service<a class="headerlink" href="#terms-of-service" title="Permanent link">&para;</a></h3>
+<p>https://example.com/terms</p>
+<p><strong>Contact information:</strong><br />
+Example Contact<br />
+https://example.com/contact  </p>
+<p><strong>License:</strong> <a href="https://example.com/license">Example License</a></p>
+<h3 id="register">/register<a class="headerlink" href="#register" title="Permanent link">&para;</a></h3>
+<h4 id="post">POST<a class="headerlink" href="#post" title="Permanent link">&para;</a></h4>
+<h5 id="responses">Responses<a class="headerlink" href="#responses" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+</tbody>
+</table>
+<h3 id="login">/login<a class="headerlink" href="#login" title="Permanent link">&para;</a></h3>
+<h4 id="post_1">POST<a class="headerlink" href="#post_1" title="Permanent link">&para;</a></h4>
+<h5 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>useCookies</td>
+<td>query</td>
+<td></td>
+<td>No</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>useSessionCookies</td>
+<td>query</td>
+<td></td>
+<td>No</td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_1">Responses<a class="headerlink" href="#responses_1" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="refresh">/refresh<a class="headerlink" href="#refresh" title="Permanent link">&para;</a></h3>
+<h4 id="post_2">POST<a class="headerlink" href="#post_2" title="Permanent link">&para;</a></h4>
+<h5 id="responses_2">Responses<a class="headerlink" href="#responses_2" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="confirmemail">/confirmEmail<a class="headerlink" href="#confirmemail" title="Permanent link">&para;</a></h3>
+<h4 id="get">GET<a class="headerlink" href="#get" title="Permanent link">&para;</a></h4>
+<h5 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>userId</td>
+<td>query</td>
+<td></td>
+<td>No</td>
+<td>string</td>
+</tr>
+<tr>
+<td>code</td>
+<td>query</td>
+<td></td>
+<td>No</td>
+<td>string</td>
+</tr>
+<tr>
+<td>changedEmail</td>
+<td>query</td>
+<td></td>
+<td>No</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_3">Responses<a class="headerlink" href="#responses_3" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="resendconfirmationemail">/resendConfirmationEmail<a class="headerlink" href="#resendconfirmationemail" title="Permanent link">&para;</a></h3>
+<h4 id="post_3">POST<a class="headerlink" href="#post_3" title="Permanent link">&para;</a></h4>
+<h5 id="responses_4">Responses<a class="headerlink" href="#responses_4" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="forgotpassword">/forgotPassword<a class="headerlink" href="#forgotpassword" title="Permanent link">&para;</a></h3>
+<h4 id="post_4">POST<a class="headerlink" href="#post_4" title="Permanent link">&para;</a></h4>
+<h5 id="responses_5">Responses<a class="headerlink" href="#responses_5" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+</tbody>
+</table>
+<h3 id="resetpassword">/resetPassword<a class="headerlink" href="#resetpassword" title="Permanent link">&para;</a></h3>
+<h4 id="post_5">POST<a class="headerlink" href="#post_5" title="Permanent link">&para;</a></h4>
+<h5 id="responses_6">Responses<a class="headerlink" href="#responses_6" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+</tbody>
+</table>
+<h3 id="manage2fa">/manage/2fa<a class="headerlink" href="#manage2fa" title="Permanent link">&para;</a></h3>
+<h4 id="post_6">POST<a class="headerlink" href="#post_6" title="Permanent link">&para;</a></h4>
+<h5 id="responses_7">Responses<a class="headerlink" href="#responses_7" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="manageinfo">/manage/info<a class="headerlink" href="#manageinfo" title="Permanent link">&para;</a></h3>
+<h4 id="get_1">GET<a class="headerlink" href="#get_1" title="Permanent link">&para;</a></h4>
+<h5 id="responses_8">Responses<a class="headerlink" href="#responses_8" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_1">Security<a class="headerlink" href="#security_1" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="post_7">POST<a class="headerlink" href="#post_7" title="Permanent link">&para;</a></h4>
+<h5 id="responses_9">Responses<a class="headerlink" href="#responses_9" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_2">Security<a class="headerlink" href="#security_2" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="apiemailsignupsformformid">/api/EmailSignups/form/{formId}<a class="headerlink" href="#apiemailsignupsformformid" title="Permanent link">&para;</a></h3>
+<h4 id="get_2">GET<a class="headerlink" href="#get_2" title="Permanent link">&para;</a></h4>
+<h5 id="summary">Summary:<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h5>
+<p>Get email signups for a specific form.</p>
+<h5 id="description">Description:<a class="headerlink" href="#description" title="Permanent link">&para;</a></h5>
+<p>Sample request:</p>
+<div class="highlight"><pre><span></span><code>GET /api/EmailSignups/form/5
+</code></pre></div>
+<h5 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>formId</td>
+<td>path</td>
+<td>Form id to get email signups for.</td>
+<td>Yes</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_10">Responses<a class="headerlink" href="#responses_10" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Returns all email signups for the form.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>If the user is not authenticated.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>If the form is not found.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_3">Security<a class="headerlink" href="#security_3" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="apiemailsignups">/api/EmailSignups<a class="headerlink" href="#apiemailsignups" title="Permanent link">&para;</a></h3>
+<h4 id="post_8">POST<a class="headerlink" href="#post_8" title="Permanent link">&para;</a></h4>
+<h5 id="summary_1">Summary:<a class="headerlink" href="#summary_1" title="Permanent link">&para;</a></h5>
+<p>Signup for an email form.</p>
+<h5 id="description_1">Description:<a class="headerlink" href="#description_1" title="Permanent link">&para;</a></h5>
+<p>Sample request:</p>
+<div class="highlight"><pre><span></span><code>POST /api/EmailSignups
+{
+    &quot;FormId&quot;: &quot;5&quot;,
+    &quot;Email&quot;: &quot;example@email.com&quot;
+}
+</code></pre></div>
+<h5 id="responses_11">Responses<a class="headerlink" href="#responses_11" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Email signup to form was successful</td>
+</tr>
+<tr>
+<td>400</td>
+<td>If the email is invalid</td>
+</tr>
+<tr>
+<td>404</td>
+<td>If the form is not found</td>
+</tr>
+<tr>
+<td>409</td>
+<td>If the form is not active, or the email address is already signed up for this form.</td>
+</tr>
+<tr>
+<td>429</td>
+<td>If API calls quota exceeded - 10 calls per 1min</td>
+</tr>
+</tbody>
+</table>
+<h3 id="apiemailsignupsconfirmations">/api/EmailSignups/confirmations<a class="headerlink" href="#apiemailsignupsconfirmations" title="Permanent link">&para;</a></h3>
+<h4 id="get_3">GET<a class="headerlink" href="#get_3" title="Permanent link">&para;</a></h4>
+<h5 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>confirmationToken</td>
+<td>query</td>
+<td></td>
+<td>No</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_12">Responses<a class="headerlink" href="#responses_12" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="apisignupforms">/api/SignupForms<a class="headerlink" href="#apisignupforms" title="Permanent link">&para;</a></h3>
+<h4 id="get_4">GET<a class="headerlink" href="#get_4" title="Permanent link">&para;</a></h4>
+<h5 id="summary_2">Summary:<a class="headerlink" href="#summary_2" title="Permanent link">&para;</a></h5>
+<p>Get all signup forms for the current user.</p>
+<h5 id="description_2">Description:<a class="headerlink" href="#description_2" title="Permanent link">&para;</a></h5>
+<p>Sample request:</p>
+<div class="highlight"><pre><span></span><code>Get /api/SignupForms
+</code></pre></div>
+<h5 id="responses_13">Responses<a class="headerlink" href="#responses_13" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Returns all signup forms the current user has created.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>If the user is not authenticated</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_4">Security<a class="headerlink" href="#security_4" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="post_9">POST<a class="headerlink" href="#post_9" title="Permanent link">&para;</a></h4>
+<h5 id="summary_3">Summary:<a class="headerlink" href="#summary_3" title="Permanent link">&para;</a></h5>
+<p>Creates a new signup form.</p>
+<h5 id="description_3">Description:<a class="headerlink" href="#description_3" title="Permanent link">&para;</a></h5>
+<p>Sample Requests:</p>
+<p>Create a new form:</p>
+<div class="highlight"><pre><span></span><code>POST /api/SignupForms
+{
+    &quot;FormName&quot;: &quot;My Form&quot;
+}
+</code></pre></div>
+<p>Create a new inactive form:</p>
+<div class="highlight"><pre><span></span><code>POST /api/SignupForms
+{
+    &quot;FormName&quot;: &quot;My Form&quot;,
+    &quot;Status&quot;: &quot;Inactive&quot;
+}
+</code></pre></div>
+<h5 id="responses_14">Responses<a class="headerlink" href="#responses_14" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Returns the newly created form.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>If the user is not authenticated.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_5">Security<a class="headerlink" href="#security_5" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="apisignupformsid">/api/SignupForms/{id}<a class="headerlink" href="#apisignupformsid" title="Permanent link">&para;</a></h3>
+<h4 id="get_5">GET<a class="headerlink" href="#get_5" title="Permanent link">&para;</a></h4>
+<h5 id="summary_4">Summary:<a class="headerlink" href="#summary_4" title="Permanent link">&para;</a></h5>
+<p>Get a specific signup form.</p>
+<h5 id="description_4">Description:<a class="headerlink" href="#description_4" title="Permanent link">&para;</a></h5>
+<p>Sample request:</p>
+<div class="highlight"><pre><span></span><code>Get /api/SignupForms/5
+</code></pre></div>
+<h5 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>path</td>
+<td>Signup form id</td>
+<td>Yes</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_15">Responses<a class="headerlink" href="#responses_15" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Returns the signup form matching the id.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>If the user is not authenticated.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>If the signup form is not found.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_6">Security<a class="headerlink" href="#security_6" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="delete">DELETE<a class="headerlink" href="#delete" title="Permanent link">&para;</a></h4>
+<h5 id="summary_5">Summary:<a class="headerlink" href="#summary_5" title="Permanent link">&para;</a></h5>
+<p>Deletes a signup form.</p>
+<h5 id="description_5">Description:<a class="headerlink" href="#description_5" title="Permanent link">&para;</a></h5>
+<p>Sample request:</p>
+<div class="highlight"><pre><span></span><code>DELETE /api/SignupForms/5
+</code></pre></div>
+<h5 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>path</td>
+<td>Id of form to delete.</td>
+<td>Yes</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_16">Responses<a class="headerlink" href="#responses_16" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>204</td>
+<td>If the form is deleted successfully.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>If the user is not authenticated.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>If the form is not found.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_7">Security<a class="headerlink" href="#security_7" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="put">PUT<a class="headerlink" href="#put" title="Permanent link">&para;</a></h4>
+<h5 id="summary_6">Summary:<a class="headerlink" href="#summary_6" title="Permanent link">&para;</a></h5>
+<p>Updates a signup form.</p>
+<h5 id="description_6">Description:<a class="headerlink" href="#description_6" title="Permanent link">&para;</a></h5>
+<p>Sample requests:</p>
+<p>Updating all info:</p>
+<div class="highlight"><pre><span></span><code>PUT /api/SignupForms/5
+{
+    &quot;FormName&quot;: &quot;Updated Form Name&quot;,
+    &quot;Status&quot;: &quot;Inactive&quot;
+}
+</code></pre></div>
+<p>Updating only status:</p>
+<div class="highlight"><pre><span></span><code>PUT /api/SignupForms/5
+{
+    &quot;Status&quot;: &quot;Active&quot;
+}
+</code></pre></div>
+<h5 id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Located in</th>
+<th>Description</th>
+<th>Required</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>path</td>
+<td>Id of a form to update</td>
+<td>Yes</td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+<h5 id="responses_17">Responses<a class="headerlink" href="#responses_17" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Success</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+</tbody>
+</table>
+<h5 id="security_8">Security<a class="headerlink" href="#security_8" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Security Schema</th>
+<th>Scopes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oauth2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "navigation.tabs", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"current": 1.0, "next": 2.0, "stable": 1.0}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>

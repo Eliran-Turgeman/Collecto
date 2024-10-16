@@ -17,6 +17,7 @@ using AspNetCoreRateLimit;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Builder;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +51,7 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Email Collection API",
+        Title = "Collecto",
         Description = "API for managing email collection forms.",
         TermsOfService = new Uri("https://example.com/terms"),
         Contact = new OpenApiContact
@@ -164,7 +165,7 @@ app.UseSwaggerUI(c => {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmailCollectorApi");
     c.InjectStylesheet("/swagger-ui/darkMode.css");
 });
-//app.MapIdentityApi<EmailCollectorApiUser>();
+app.MapIdentityApi<EmailCollectorApiUser>();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();

@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: EmailCollector.Api/Dockerfile
-    container_name: email-collector-api
+    container_name: collecto
     ports:
       - "5001:8080"
     volumes:
@@ -23,7 +23,7 @@ services:
     depends_on:
       - redis
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - Redis__ConnectionString=redis:6379
       - EmailConfiguration:From=${EMAIL_FROM}
       - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER}
