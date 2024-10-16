@@ -374,3 +374,9 @@ redis-data/
 
 dbeaver-data/
 .htpasswd
+
+ngrok2/
+
+grafana/
+
+prometheus/

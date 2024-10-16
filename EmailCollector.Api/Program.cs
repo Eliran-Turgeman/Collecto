@@ -135,8 +135,10 @@ if (emailConfig != null)
 
 builder.Services.AddCors(options =>
 {
+    var validDomains = builder.Configuration.GetSection("ValidCorsOrigins").Get<string>()?.Split(",") ?? [];
+    Console.WriteLine($"ValidCorsOrigins: {string.Join(", ", validDomains)}");
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://trycollecto.github.io")
+        builder => builder.WithOrigins(validDomains)
                               .AllowAnyMethod()
                               .AllowAnyHeader());
 });
@@ -162,7 +164,7 @@ app.UseSwaggerUI(c => {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmailCollectorApi");
     c.InjectStylesheet("/swagger-ui/darkMode.css");
 });
-app.MapIdentityApi<EmailCollectorApiUser>();
+//app.MapIdentityApi<EmailCollectorApiUser>();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();

@@ -275,7 +275,8 @@ public class EmailSignupService : IEmailSignupService
     {
         var templatePath = "./Services/EmailSender/EmailTemplate.html";
         var htmlContent = File.ReadAllText(templatePath);
-        var emailBody = htmlContent.Replace("{{CONFIRMATION_TOKEN}}", confirmationToken);
+        var emailBody = htmlContent.Replace("{{CONFIRMATION_TOKEN}}", confirmationToken)
+            .Replace("{{COLLECTO_DOMAIN}}", Environment.GetEnvironmentVariable("COLLECTO_DOMAIN"));
         return emailBody;
     }
 }

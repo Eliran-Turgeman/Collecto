@@ -29,6 +29,8 @@ services:
       - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER}
       - EmailConfiguration:Username=${EMAIL_USERNAME}
       - EmailConfiguration:Password=${EMAIL_PASSWORD}
+      - ValidCorsOrigins=${VALID_CORS_ORIGINS}
+      - COLLECTO_DOMAIN=${COLLECTO_DOMAIN}
     networks:
       - email-collector-net
 
