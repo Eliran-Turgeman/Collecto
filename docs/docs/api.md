@@ -1,7 +1,7 @@
 # Collecto
 API for managing email collection forms.
 
-**NOTE**: You can also view the same contents within the app using swagger. [Start](http://127.0.0.1:8000/usage/overview/#setup-running-the-application) the application and go [here](localhost:5001//swagger/index.html)
+**NOTE**: You can also view the same contents within the app using swagger. [Start](https://www.16elt.com/Collecto/usage/overview/#setup-running-the-application) the application and go [here](localhost:5001/swagger/index.html)
 
 ## Version: v1
 

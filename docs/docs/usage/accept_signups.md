@@ -2,7 +2,7 @@
 
 Once you've created a form in Collecto, you'll receive a unique FormId in the response. This FormId is essential for accepting signups for that specific form. Here's how you can collect signups using the API.
 
-In case you need a reminder on how to create a form go [here](http://127.0.0.1:8000/usage/create_forms/).
+In case you need a reminder on how to create a form go [here](https://www.16elt.com/Collecto/usage/create_forms/).
 
 Now that you have the FormId, you can use it to accept signups by making a POST request to the following endpoint:
 

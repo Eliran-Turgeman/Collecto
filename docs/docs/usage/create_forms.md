@@ -7,11 +7,11 @@ This guide will walk you through the steps to create a new signup form using Col
 
 ## Register
 
-To register, first start the application - refer to [here](http://127.0.0.1:8000/usage/overview/#setup-running-the-application) for guidance.
+To register, first start the application - refer to [here](https://www.16elt.com/Collecto/usage/overview/#setup-running-the-application) for guidance.
 
 After the application is live, you can access the following url To register : [localhost:5001/Identity/Account/Register](localhost:5001/Identity/Account/Register)
 
-Note that if you just registered, you might need to confirm your registration based on the configuration of environment variables. Learn more [here](localhost:5001/Identity/Account/Login).
+Note that if you just registered, you might need to confirm your registration based on the configuration of environment variables. Learn more [here](https://www.16elt.com/Collecto/usage/overview/#environment-variables).
 
 ## Creating a form
 
