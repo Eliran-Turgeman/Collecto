@@ -1,4 +1,8 @@
-# Collecto
+<h1>
+  <img src="https://github.com/user-attachments/assets/013fbaa7-02c0-4373-b8ba-d217f556da13" alt="Collecto Logo" width="30" style="vertical-align: middle;"/>
+  Collecto
+</h1>
+
 
 Collecto is an open-source, self-hosted, lightweight, email collection service.  
 Docs available at [https://www.16elt.com/Collecto/](https://www.16elt.com/Collecto/)
