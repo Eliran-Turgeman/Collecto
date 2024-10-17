@@ -1,9 +1,9 @@
 # Collecto
 
-Collecto is a open-source, self-hosted, lightweight, email collection service.  
+Collecto is an open-source, self-hosted, lightweight, email collection service.  
 Docs available at [https://www.16elt.com/Collecto/](https://www.16elt.com/Collecto/)
 
-## Instalation
+## Installation
 
 ### Clone the Repository
 
@@ -19,12 +19,12 @@ Collecto uses Docker Compose to run its services, including the email collection
 1. Make sure you are in the project directory where the docker-compose.yml file is located.
 2. Run the following command to build and start the services:
 
-Prod (using latest image from dockerhub:
+Prod (using the latest image from DockerHub):
 ```bash
 docker-compose up --build
 ```
 
-Local/Dev (building dockerfile):
+Local/Dev (building Dockerfile):
 ```bash
 docker-compose --file .\docker-compose.dev.yml up --build
 ```
@@ -32,8 +32,8 @@ docker-compose --file .\docker-compose.dev.yml up --build
 
 Once the services are up and running:
 
-* The Collecto API will be available at: http://localhost:5001
-* You can access the Swagger UI (for API testing and exploration) at: http://localhost:5001/swagger/index.html
+* The Collecto API will be available at [http://localhost:5001](http://localhost:5001)
+* You can access the Swagger UI (for API testing and exploration) at: [http://localhost:5001/swagger/index.html](http://localhost:5001/swagger/index.html)
 
 To stop the running containers, use one of the following commands, based on how you started the application:
 
