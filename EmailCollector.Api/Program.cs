@@ -176,7 +176,6 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapRazorPages();
-    endpoints.MapRazorComponents<Dashboard>();
 });
 app.MapControllers();
 

@@ -1,21 +1,21 @@
-﻿ @page "/"
- @model EmailCollector.Api.Pages.DashboardModel
- @{
-     ViewData["Title"] = "Dashboard";
- }
+﻿@page "/"
+@model EmailCollector.Api.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
 
- @if (!string.IsNullOrEmpty(Model.ErrorMessage))
- {
-     <div class="alert alert-danger">
-         @Model.ErrorMessage
-     </div>
- }
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Model.ErrorMessage
+    </div>
+}
 
- <!-- Form selection -->
-<form method="post">
-    <div class="form-group">
-        <label for="formSelect">Select Form</label>
-        <select id="formSelect" name="SelectedFormId" class="form-control">
+<!-- Form selection -->
+<form method="post" class="mb-4 p-4 shadow-sm bg-white rounded">
+    <div class="form-group mb-3">
+        <label for="formSelect" class="form-label fw-bold">Select Form</label>
+        <select id="formSelect" name="SelectedFormId" class="form-select form-control-lg">
             <option value="">-- Select Form --</option>
             @foreach (var form in Model.Forms)
             {
@@ -26,101 +26,110 @@
         </select>
     </div>
 
-    <div class="form-group">
-        <label for="startDate">Start Date</label>
-        <input type="date" id="startDate" name="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
-
-        <label for="endDate">End Date</label>
-        <input type="date" id="endDate" name="EndDate" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="startDate" class="form-label fw-bold">Start Date</label>
+            <input type="date" id="startDate" name="StartDate" class="form-control form-control-lg" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-6">
+            <label for="endDate" class="form-label fw-bold">End Date</label>
+            <input type="date" id="endDate" name="EndDate" class="form-control form-control-lg" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary btn-lg mt-3 w-100">Update</button>
 </form>
 
+<!-- Statistics Section -->
+<h3 class="fw-bold">Form Statistics</h3>
+<div class="row g-3 mb-5">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold text-center">Total Subscribers</div>
+            <div class="card-body text-center">
+                <h5 class="display-6">@Model.TotalSubscribers</h5>
+            </div>
+        </div>
+    </div>
 
- <!-- Statistics Section -->
- <h3>Form Statistics</h3>
- <div class="row">
-     <div class="col-md-4">
-         <div class="card">
-             <div class="card-header"> Total Subscribers </div>
-             <div class="card-body">
-                 <h5>@Model.TotalSubscribers</h5>
-             </div>
-         </div>
-     </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold text-center">Form Status</div>
+            <div class="card-body text-center">
+                <h5 class="display-6">@Model.FormStatus</h5>
+            </div>
+        </div>
+    </div>
 
-     <div class="col-md-4">
-         <div class="card">
-             <div class="card-header"> Form Status </div>
-             <div class="card-body">
-                 <h5>@Model.FormStatus</h5>
-             </div>
-         </div>
-     </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold text-center">Average Subs Per Day</div>
+            <div class="card-body text-center">
+                <h5 class="display-6">@Model.AvgSubsPerDay</h5>
+            </div>
+        </div>
+    </div>
+</div>
 
-     <div class="col-md-4">
-         <div class="card">
-             <div class="card-header"> Average Subs Per Day </div>
-             <div class="card-body">
-                 <h5>@Model.AvgSubsPerDay</h5>
-             </div>
-         </div>
-     </div>
- </div>
+<!-- Spacing Between Statistics and Graphs -->
+<hr class="my-5" />
 
- <!-- Chart Container -->
- <h3>Daily Subscriptions</h3>
- <canvas id="subsChart" width="400" height="200"></canvas>
+<!-- Chart Container -->
+<h3 class="fw-bold mb-3">Daily Subscriptions</h3>
+<div class="p-4 shadow-sm bg-white rounded mb-5">
+    <canvas id="subsChart" width="400" height="200"></canvas>
+</div>
 
- <h3>Cumulative Subscriptions</h3>
- <canvas id="cumulativeSubsChart" width="400" height="200"></canvas>
+<h3 class="fw-bold mb-3">Cumulative Subscriptions</h3>
+<div class="p-4 shadow-sm bg-white rounded mb-5">
+    <canvas id="cumulativeSubsChart" width="400" height="200"></canvas>
+</div>
 
- @section Scripts {
-     <script>
-         document.addEventListener("DOMContentLoaded", function () {
-             renderCharts();
-         });
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            renderCharts();
+        });
 
-         function renderCharts() {
-             const dates = @Json.Serialize(Model.Dates);
-             const counts = @Json.Serialize(Model.Counts);
-             const cumulativeCounts = @Json.Serialize(Model.CumulativeCounts);
+        function renderCharts() {
+            const dates = @Json.Serialize(Model.Dates);
+            const counts = @Json.Serialize(Model.Counts);
+            const cumulativeCounts = @Json.Serialize(Model.CumulativeCounts);
 
-             // Daily Subscriptions Chart
-             const subsCtx = document.getElementById('subsChart').getContext('2d');
-             new Chart(subsCtx, {
-                 type: 'line',
-                 data: {
-                     labels: dates,
-                     datasets: [{
-                         label: 'Daily Subscriptions',
-                         data: counts,
-                         borderColor: 'rgb(75, 192, 192)',
-                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                         fill: true,
-                     }]
-                 }
-             });
+            // Daily Subscriptions Chart
+            const subsCtx = document.getElementById('subsChart').getContext('2d');
+            new Chart(subsCtx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Daily Subscriptions',
+                        data: counts,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                    }]
+                }
+            });
 
-             // Cumulative Subscriptions Chart
-             const cumulativeCtx = document.getElementById('cumulativeSubsChart').getContext('2d');
-             new Chart(cumulativeCtx, {
-                 type: 'line',
-                 data: {
-                     labels: dates,
-                     datasets: [{
-                         label: 'Cumulative Subscriptions',
-                         data: cumulativeCounts,
-                         borderColor: 'rgb(255, 99, 132)',
-                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                         fill: true,
-                     }]
-                 }
-             });
-         }
-     </script>
+            // Cumulative Subscriptions Chart
+            const cumulativeCtx = document.getElementById('cumulativeSubsChart').getContext('2d');
+            new Chart(cumulativeCtx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Cumulative Subscriptions',
+                        data: cumulativeCounts,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true,
+                    }]
+                }
+            });
+        }
+    </script>
 
-     <!-- Add Chart.js for charting -->
-     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- }
+    <!-- Add Chart.js for charting -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+}

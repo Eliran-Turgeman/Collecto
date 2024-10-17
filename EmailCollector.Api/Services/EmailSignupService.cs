@@ -178,7 +178,7 @@ public class EmailSignupService : IEmailSignupService
 
         _logger.LogInformation($"Confirming email address {emailPart} for form {formIdPart}.");
 
-        if (formIdPart == null || emailPart == null || !int.TryParse(formIdPart, out var formId))
+        if (formIdPart == string.Empty || emailPart == string.Empty || !int.TryParse(formIdPart, out var formId))
         {
             return await Task.FromResult(new ConfirmEmailResultDto
             {
@@ -276,7 +276,7 @@ public class EmailSignupService : IEmailSignupService
         var templatePath = "./Services/EmailSender/EmailTemplate.html";
         var htmlContent = File.ReadAllText(templatePath);
         var emailBody = htmlContent.Replace("{{CONFIRMATION_TOKEN}}", confirmationToken)
-            .Replace("{{COLLECTO_DOMAIN}}", Environment.GetEnvironmentVariable("COLLECTO_DOMAIN") ?? "localhost:5001");
+            .Replace("{{COLLECTO_DOMAIN}}", Environment.GetEnvironmentVariable("COLLECTO_DOMAIN"));
         return emailBody;
     }
 }

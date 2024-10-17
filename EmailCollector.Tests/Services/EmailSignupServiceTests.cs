@@ -1,13 +1,16 @@
+using EmailCollector.Api.Configurations;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Services;
+using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
 using EmailCollector.Domain.Interfaces.Repositories;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework;
+using System.Text;
 
-namespace EmailCollector.Tests.Services
+namespace EmailCollector.Api.Tests.Services
 {
     [TestFixture]
     public class EmailSignupServiceTests
@@ -17,6 +20,9 @@ namespace EmailCollector.Tests.Services
         private Mock<ILogger<EmailSignupService>> _loggerMock;
         private Mock<IDnsLookupService> _dnsLookupServiceMock;
         private IEmailSignupService _emailSignupService;
+        private Mock<IDistributedCache> _signupCandidatesCacheMock;
+        private Mock<IAppEmailSender> _emailSenderMock;
+        private Mock<IFeatureToggles> _featureTogglesServiceMock;
 
         [SetUp]
         public void Setup()
@@ -25,6 +31,9 @@ namespace EmailCollector.Tests.Services
             _signupFormRepositoryMock = new Mock<ISignupFormRepository>();
             _loggerMock = new Mock<ILogger<EmailSignupService>>();
             _dnsLookupServiceMock = new Mock<IDnsLookupService>();
+            _signupCandidatesCacheMock = new Mock<IDistributedCache>();
+            _emailSenderMock = new Mock<IAppEmailSender>();
+            _featureTogglesServiceMock = new Mock<IFeatureToggles>();
 
             // Always return true for DNS lookup
             _dnsLookupServiceMock.Setup(service => service.HasMxRecords(It.IsAny<string>())).Returns(true);
@@ -33,7 +42,10 @@ namespace EmailCollector.Tests.Services
                 _emailSignupRepositoryMock.Object,
                 _signupFormRepositoryMock.Object,
                 _loggerMock.Object,
-                _dnsLookupServiceMock.Object);
+                _dnsLookupServiceMock.Object,
+                _signupCandidatesCacheMock.Object,
+                _emailSenderMock.Object,
+                _featureTogglesServiceMock.Object);
         }
 
         [Test]
@@ -116,12 +128,9 @@ namespace EmailCollector.Tests.Services
             // Act
             var result = await _emailSignupService.SubmitEmailAsync(emailSignupDto);
 
-            Assert.Multiple(() =>
-            {
-                // Assert
-                Assert.That(result.Success, Is.False);
-                Assert.That(result.ErrorCode, Is.EqualTo(expectedResponse.ErrorCode));
-            });
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.ErrorCode, Is.EqualTo(expectedResponse.ErrorCode));
         }
 
         [Test]
@@ -141,12 +150,9 @@ namespace EmailCollector.Tests.Services
             // Act
             var result = await _emailSignupService.SubmitEmailAsync(emailSignupDto);
 
-            Assert.Multiple(() =>
-            {
-                // Assert
-                Assert.That(result.Success, Is.False);
-                Assert.That(result.ErrorCode, Is.EqualTo(expectedResponse.ErrorCode));
-            });
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.ErrorCode, Is.EqualTo(expectedResponse.ErrorCode));
         }
 
         [Test]
@@ -167,22 +173,21 @@ namespace EmailCollector.Tests.Services
             // Act
             var result = await _emailSignupService.SubmitEmailAsync(emailSignupDto);
 
-            Assert.Multiple(() =>
-            {
-                // Assert
-                Assert.That(result.Success, Is.False);
-                Assert.That(result.ErrorCode, Is.EqualTo(expectedResponse.ErrorCode));
-            });
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.ErrorCode, Is.EqualTo(expectedResponse.ErrorCode));
         }
 
         [Test]
-        public async Task SubmitEmailAsync_ValidEmailAndForm_ReturnsSuccessResult()
+        public async Task SubmitEmailAsync_ValidEmailAndForm_EmailConfirmation_Disabled_ReturnsSuccessResult()
         {
             // Arrange
             var emailSignupDto = new EmailSignupDto { Email = "test@example.com", FormId = 1 };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Active, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
+            _featureTogglesServiceMock.Setup(service => service.IsEmailConfirmationEnabled()).Returns(false);
+
             var expectedResponse = new SignupResultDto
             {
                 Success = true,
@@ -192,11 +197,137 @@ namespace EmailCollector.Tests.Services
             // Act
             var result = await _emailSignupService.SubmitEmailAsync(emailSignupDto);
 
-            Assert.Multiple(() =>
+            // Assert
+            Assert.That(result.Success, Is.True);
+
+            // assert distributed cache was not called
+            _signupCandidatesCacheMock.Verify(cache => cache.SetAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), default), Times.Never);
+
+            // assert email sender was not called
+            _emailSenderMock.Verify(sender => sender.SendEmail(It.IsAny<Message>()), Times.Never);
+        }
+
+        [Test]
+        public async Task SubmitEmailAsync_ValidEmailAndForm_EmailConfirmation_Enabled_ReturnsSuccessResult()
+        {
+            // Arrange
+            var emailSignupDto = new EmailSignupDto { Email = "test@example.com", FormId = 1 };
+            var form = new SignupForm { FormName = "test", Status = FormStatus.Active, CreatedBy = Guid.NewGuid() };
+            _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
+                .ReturnsAsync(form);
+            _featureTogglesServiceMock.Setup(service => service.IsEmailConfirmationEnabled()).Returns(true);
+
+            var expectedResponse = new SignupResultDto
             {
-                // Assert
-                Assert.That(result.Success, Is.True);
-            });
+                Success = true,
+                Message = "Email address submitted successfully.",
+            };
+
+            // Act
+            var result = await _emailSignupService.SubmitEmailAsync(emailSignupDto);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+
+            // assert distributed cache was not called
+            _signupCandidatesCacheMock.Verify(cache => cache.SetAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), CancellationToken.None), Times.Once);
+
+            // assert email sender was not called
+            _emailSenderMock.Verify(sender => sender.SendEmail(It.IsAny<Message>()), Times.Once);
+        }
+
+        [Test]
+        public async Task ConfirmEmailSignupAsync_ExpiredToken_ReturnsExpiredTokenResult()
+        {
+            // Arrange
+            var confirmationToken = "expiredToken";
+            _signupCandidatesCacheMock.Setup(cache => cache.GetAsync(confirmationToken, CancellationToken.None)).ReturnsAsync((byte[])null);
+
+            // Act
+            var result = await _emailSignupService.ConfirmEmailSignupAsync(confirmationToken);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Message, Is.EqualTo("Confirmation token expired."));
+            Assert.That(result.ErrorCode, Is.EqualTo(EmailConfirmationErrorCode.ExpiredToken));
+        }
+
+        [Test]
+        public async Task ConfirmEmailSignupAsync_InvalidToken_ReturnsInvalidTokenResult()
+        {
+            // Arrange
+            var confirmationToken = "invalidToken";
+            var encodedSignupCandidate = Encoding.UTF8.GetBytes("formId:1#signup:"); // signup candidate without email
+            _signupCandidatesCacheMock.Setup(cache => cache.GetAsync(confirmationToken, CancellationToken.None)).ReturnsAsync(encodedSignupCandidate);
+
+            // Act
+            var result = await _emailSignupService.ConfirmEmailSignupAsync(confirmationToken);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Message, Is.EqualTo("Invalid confirmation token."));
+            Assert.That(result.ErrorCode, Is.EqualTo(EmailConfirmationErrorCode.InvalidToken));
+        }
+
+        [Test]
+        public async Task ConfirmEmailSignupAsync_EmailAlreadyConfirmed_ReturnsEmailAlreadyConfirmedResult()
+        {
+            // Arrange
+            var confirmationToken = "validToken";
+            var encodedSignupCandidate = Encoding.UTF8.GetBytes("formId:1#signup:test@example.com");
+            var formId = 1;
+            var email = "test@example.com";
+            var existingSignups = new List<EmailSignup>
+            {
+                new EmailSignup { EmailAddress = email }
+            };
+            _signupCandidatesCacheMock.Setup(cache => cache.GetAsync(confirmationToken, CancellationToken.None)).ReturnsAsync(encodedSignupCandidate);
+            _emailSignupRepositoryMock.Setup(repo => repo.GetByFormIdAsync(formId)).ReturnsAsync(existingSignups);
+
+            // Act
+            var result = await _emailSignupService.ConfirmEmailSignupAsync(confirmationToken);
+
+            // Assert
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Message, Is.EqualTo("Email already confirmed."));
+            Assert.That(result.ErrorCode, Is.EqualTo(EmailConfirmationErrorCode.EmailAlreadyConfirmed));
+        }
+
+        [Test]
+        public async Task ConfirmEmailSignupAsync_ValidToken_AddsEmailSignupAndRemovesTokenAndReturnsSuccessResult()
+        {
+            // Arrange
+            var confirmationToken = "validToken";
+            var encodedSignupCandidate = Encoding.UTF8.GetBytes("formId:1#signup:test@example.com");
+            var formId = 1;
+            var email = "test@example.com";
+            var form = new SignupForm { Id = formId, FormName = "test", CreatedBy = Guid.NewGuid() };
+            _signupCandidatesCacheMock.Setup(cache => cache.GetAsync(confirmationToken, CancellationToken.None)).ReturnsAsync(encodedSignupCandidate);
+            _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId)).ReturnsAsync(form);
+            //_emailSignupRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<EmailSignup>())).Returns(Task.CompletedTask);
+            //_signupCandidatesCacheMock.Setup(cache => cache.RemoveAsync(confirmationToken, CancellationToken.None)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _emailSignupService.ConfirmEmailSignupAsync(confirmationToken);
+
+            // Assert
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Message, Is.EqualTo("Email confirmed."));
+            _emailSignupRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<EmailSignup>()), Times.Once);
+            _signupCandidatesCacheMock.Verify(cache => cache.RemoveAsync(confirmationToken, CancellationToken.None), Times.Once);
+        }
+
+        [Test]
+        public async Task GetSignupsPerDayAsync_FormNotFound_ThrowsArgumentException()
+        {
+            // Arrange
+            var formId = 1;
+            var startDate = DateTime.Now.Date;
+            var endDate = DateTime.Now.Date;
+            _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId)).ReturnsAsync((SignupForm)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(() => _emailSignupService.GetSignupsPerDayAsync(formId, startDate, endDate));
         }
     }
 }
