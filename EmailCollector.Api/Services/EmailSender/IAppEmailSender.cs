@@ -1,6 +1,8 @@
-﻿namespace EmailCollector.Api.Services.EmailSender;
+﻿using EmailCollector.Domain.Entities;
+
+namespace EmailCollector.Api.Services.EmailSender;
 
 public interface IAppEmailSender
 {
-    void SendEmail(Message message);
+    void SendEmail(Message message, SmtpEmailSettings? formEmailSettings);
 }

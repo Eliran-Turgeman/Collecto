@@ -1,6 +1,7 @@
 ﻿using Blazorise;
 using EmailCollector.Api.Configurations;
 using EmailCollector.Api.DTOs;
+using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
@@ -21,6 +22,7 @@ public class EmailSignupService : IEmailSignupService
     private readonly IDistributedCache _signupCandidatesCache;
     private readonly IAppEmailSender _emailSender;
     private readonly IFeatureToggles _featureTogglesService;
+    private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
 
     private static readonly Regex EmailRegex = new Regex(
         @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
@@ -32,7 +34,8 @@ public class EmailSignupService : IEmailSignupService
         IDnsLookupService dnsLookupService,
         IDistributedCache signupCandidatesCache,
         IAppEmailSender emailSender,
-        IFeatureToggles featureTogglesService)
+        IFeatureToggles featureTogglesService,
+        ISmtpEmailSettingsRepository smtpEmailSettingsRepository)
     {
         _emailSignupRepository = emailSignupRepository;
         _signupFormRepository = signupFormRepository;
@@ -41,6 +44,7 @@ public class EmailSignupService : IEmailSignupService
         _signupCandidatesCache = signupCandidatesCache;
         _emailSender = emailSender;
         _featureTogglesService = featureTogglesService;
+        _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
     }
 
     public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId, Guid userId)
@@ -145,7 +149,8 @@ public class EmailSignupService : IEmailSignupService
         await _signupCandidatesCache.SetAsync(confirmationToken, encodedValue, options);
 
         var message = new Message(new string[] { emailSignupDto.Email }, $"Confirm Signup to {form.FormName}", CreateHTMLContentFromTemplate(confirmationToken));
-        _emailSender.SendEmail(message);
+        var smtpConfiguration = await _smtpEmailSettingsRepository.GetByIdAsync(form.Id);
+        _emailSender.SendEmail(message, smtpConfiguration);
 
         _logger.LogInformation("Email confirmation email sent.");
 

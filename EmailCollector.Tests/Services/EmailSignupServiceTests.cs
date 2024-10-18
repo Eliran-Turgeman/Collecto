@@ -1,5 +1,6 @@
 using EmailCollector.Api.Configurations;
 using EmailCollector.Api.DTOs;
+using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Domain.Entities;
@@ -23,6 +24,7 @@ namespace EmailCollector.Api.Tests.Services
         private Mock<IDistributedCache> _signupCandidatesCacheMock;
         private Mock<IAppEmailSender> _emailSenderMock;
         private Mock<IFeatureToggles> _featureTogglesServiceMock;
+        private Mock<ISmtpEmailSettingsRepository> _smtpEmailSettingsRepositoryMock;
 
         [SetUp]
         public void Setup()
@@ -34,6 +36,7 @@ namespace EmailCollector.Api.Tests.Services
             _signupCandidatesCacheMock = new Mock<IDistributedCache>();
             _emailSenderMock = new Mock<IAppEmailSender>();
             _featureTogglesServiceMock = new Mock<IFeatureToggles>();
+            _smtpEmailSettingsRepositoryMock = new Mock<ISmtpEmailSettingsRepository>();
 
             // Always return true for DNS lookup
             _dnsLookupServiceMock.Setup(service => service.HasMxRecords(It.IsAny<string>())).Returns(true);
@@ -45,7 +48,8 @@ namespace EmailCollector.Api.Tests.Services
                 _dnsLookupServiceMock.Object,
                 _signupCandidatesCacheMock.Object,
                 _emailSenderMock.Object,
-                _featureTogglesServiceMock.Object);
+                _featureTogglesServiceMock.Object,
+                _smtpEmailSettingsRepositoryMock.Object);
         }
 
         [Test]
@@ -204,7 +208,7 @@ namespace EmailCollector.Api.Tests.Services
             _signupCandidatesCacheMock.Verify(cache => cache.SetAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), default), Times.Never);
 
             // assert email sender was not called
-            _emailSenderMock.Verify(sender => sender.SendEmail(It.IsAny<Message>()), Times.Never);
+            _emailSenderMock.Verify(sender => sender.SendEmail(It.IsAny<Message>(), It.IsAny<SmtpEmailSettings?>()), Times.Never);
         }
 
         [Test]
@@ -233,7 +237,7 @@ namespace EmailCollector.Api.Tests.Services
             _signupCandidatesCacheMock.Verify(cache => cache.SetAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), CancellationToken.None), Times.Once);
 
             // assert email sender was not called
-            _emailSenderMock.Verify(sender => sender.SendEmail(It.IsAny<Message>()), Times.Once);
+            _emailSenderMock.Verify(sender => sender.SendEmail(It.IsAny<Message>(), It.IsAny<SmtpEmailSettings?>()), Times.Once);
         }
 
         [Test]

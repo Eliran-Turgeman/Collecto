@@ -1,8 +1,10 @@
-﻿namespace EmailCollector.Api.Services.EmailSender;
+﻿using EmailCollector.Domain.Entities;
+
+namespace EmailCollector.Api.Services.EmailSender;
 
 public class NoOpAppEmailSender : IAppEmailSender
 {
-    public void SendEmail(Message message)
+    public void SendEmail(Message message, SmtpEmailSettings? smtpEmailSettings)
     {
         return;
     }

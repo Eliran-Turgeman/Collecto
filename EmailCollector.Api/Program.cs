@@ -140,7 +140,6 @@ if (emailConfig != null)
 builder.Services.AddCors(options =>
 {
     var validDomains = builder.Configuration.GetSection("ValidCorsOrigins").Get<string>()?.Split(",") ?? [];
-    Console.WriteLine($"ValidCorsOrigins: {string.Join(", ", validDomains)}");
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder.WithOrigins(validDomains)
                               .AllowAnyMethod()
