@@ -1,0 +1,146 @@
+﻿@page "/configurations"
+@using EmailCollector.Api.Services
+@inject IFormService FormService
+@model EmailCollector.Api.Pages.ConfigurationsPageModel
+
+@{
+    ViewData["Title"] = "Form Configurations";
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Model.ErrorMessage
+    </div>
+}
+
+<h1>Form Configurations</h1>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    h1, h2 {
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+    }
+
+    .section {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+        border: none;
+    }
+
+    hr {
+        margin: 30px 0;
+        border: 0;
+        border-top: 1px solid #ddd;
+    }
+</style>
+
+<!-- Form selection -->
+<form method="post">
+    <div class="form-group">
+        <label for="formSelect">Select Form:</label>
+        <select id="formSelect" name="SelectedFormId" class="form-control" asp-for="SelectedFormId">
+            <option value="">-- Select Form --</option>
+            @foreach (var form in Model.Forms)
+            {
+                <option value="@form.Id" selected="@(Model.SelectedFormId == form.Id ? "selected" : null)">
+                    @form.FormName
+                </option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary" name="action" value="load">Load Configuration</button>
+</form>
+
+<hr />
+
+@if (Model.SelectedFormId != null)
+{
+    <!-- Second form: View/Edit/Save form settings -->
+    <form method="post">
+        <input type="hidden" name="SelectedFormId" value="@Model.SelectedFormId" />
+        <!-- Email Settings Section -->
+        <div class="section">
+            <h2>Email Settings</h2>
+            <div class="form-group">
+                <label for="emailFrom">Email From:</label>
+                <input type="email" id="emailFrom" name="EmailFrom" class="form-control" asp-for="SmtpEmailSettings.EmailFrom" />
+            </div>
+
+            <div class="form-group">
+                <label for="smtpServer">SMTP Server:</label>
+                <input type="text" id="smtpServer" name="SmtpServer" class="form-control" asp-for="SmtpEmailSettings.SmtpServer" />
+            </div>
+
+            <div class="form-group">
+                <label for="smtpPort">SMTP Port:</label>
+                <input type="text" id="smtpPort" name="SmtpPort" class="form-control" asp-for="SmtpEmailSettings.SmtpPort" />
+            </div>
+
+            <div class="form-group">
+                <label for="smtpUsername">SMTP Username:</label>
+                <input type="text" id="smtpUsername" name="SmtpUsername" class="form-control" asp-for="SmtpEmailSettings.SmtpUsername" />
+            </div>
+
+            <div class="form-group">
+                <label for="smtpPassword">SMTP Password:</label>
+                <input type="password" id="smtpPassword" name="SmtpPassword" class="form-control" asp-for="SmtpEmailSettings.SmtpPassword" placeholder="••••••••" />
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- CORS Settings Section -->
+        <div class="section">
+            <h2>CORS Settings</h2>
+            <div class="form-group">
+                <label for="allowedOrigins">Allowed CORS Origins:</label>
+                <input type="text" id="allowedOrigins" name="AllowedOrigins" class="form-control" asp-for="CorsSettings.AllowedOrigins" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success" name="action" value="save">Save Configuration</button>
+    </form>
+}
+
+

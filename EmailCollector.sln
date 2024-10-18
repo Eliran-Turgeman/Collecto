@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Api", "Email
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Domain", "EmailCollector.Domain\EmailCollector.Domain.csproj", "{A9040496-E40D-4B82-B2D8-09E3CD30BEDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailCollector.Tests", "EmailCollector.Tests\EmailCollector.Tests.csproj", "{ED099161-7E0E-4A4A-92FC-527CFADB4A50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Tests", "EmailCollector.Tests\EmailCollector.Tests.csproj", "{ED099161-7E0E-4A4A-92FC-527CFADB4A50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

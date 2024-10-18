@@ -78,6 +78,9 @@ builder.Services.AddScoped<IEmailSignupService, EmailSignupService>();
 
 builder.Services.AddSingleton<IDnsLookupService, DnsLookupService>();
 
+builder.Services.AddScoped<ISmtpEmailSettingsRepository, SmtpEmailSettingsRepository>();
+builder.Services.AddScoped<IFormCorsSettingsRepository, FormCorsSettingsRepository>();
+
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));
 

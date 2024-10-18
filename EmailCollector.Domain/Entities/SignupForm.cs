@@ -16,4 +16,8 @@ public class SignupForm
     public FormStatus Status { get; set; } = FormStatus.Active;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public FormCorsSettings FormCorsSettings { get; set; }
+
+    public FormEmailSettings FormEmailSettings { get; set; }
 }
