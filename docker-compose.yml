@@ -24,10 +24,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:80
       - Redis__ConnectionString=redis:6379
-      - EmailConfiguration:From=${EMAIL_FROM}
-      - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER}
-      - EmailConfiguration:Username=${EMAIL_USERNAME}
-      - EmailConfiguration:Password=${EMAIL_PASSWORD}
+      - EmailConfiguration:From=${EMAIL_FROM?Mandatory environment variable, check your .env file}
+      - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER?Mandatory environment variable, check your .env file}
+      - EmailConfiguration:Username=${EMAIL_USERNAME?Mandatory environment variable, check your .env file}
+      - EmailConfiguration:Password=${EMAIL_PASSWORD?Mandatory environment variable, check your .env file}
       - ValidCorsOrigins=${VALID_CORS_ORIGINS}
       - COLLECTO_DOMAIN=${COLLECTO_DOMAIN}
     networks:
