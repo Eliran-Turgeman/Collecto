@@ -1,7 +1,7 @@
 ﻿using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
 
-namespace EmailCollector.Domain.Interfaces.Repositories;
+namespace EmailCollector.Api.Repositories;
 
 /// <summary>
 /// Repository interface for EmailSignup entity.

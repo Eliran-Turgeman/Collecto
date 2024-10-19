@@ -382,3 +382,5 @@ grafana/
 prometheus/
 /nginx/nginx.conf
 swagger.json
+
+.idea/

@@ -5,19 +5,16 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using EmailCollector.Api.Middlewares;
 using EmailCollector.Api.Services;
-using EmailCollector.Domain.Interfaces.Repositories;
 using EmailCollector.Api.Repositories;
 using System.Reflection;
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using EmailCollector.Api.Pages;
 using AspNetCoreRateLimit;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Builder;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -141,7 +138,7 @@ builder.Services.AddCors(options =>
 {
     var validDomains = builder.Configuration.GetSection("ValidCorsOrigins").Get<string>()?.Split(",") ?? [];
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins(validDomains)
+        b => b.WithOrigins(validDomains)
                               .AllowAnyMethod()
                               .AllowAnyHeader());
 });
@@ -158,6 +155,12 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<EmailCollectorApiContext>();
+    dbContext.Database.Migrate();
+}
 
 app.UseStaticFiles();
 app.UseIpRateLimiting();

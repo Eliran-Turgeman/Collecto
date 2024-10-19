@@ -1,7 +1,6 @@
 ﻿using EmailCollector.Api.Data;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
-using EmailCollector.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Api.Repositories;

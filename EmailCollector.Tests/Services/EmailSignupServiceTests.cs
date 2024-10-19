@@ -5,7 +5,6 @@ using EmailCollector.Api.Services;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
-using EmailCollector.Domain.Interfaces.Repositories;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -191,12 +190,6 @@ namespace EmailCollector.Api.Tests.Services
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
             _featureTogglesServiceMock.Setup(service => service.IsEmailConfirmationEnabled()).Returns(false);
-
-            var expectedResponse = new SignupResultDto
-            {
-                Success = true,
-                Message = "Email address submitted successfully.",
-            };
 
             // Act
             var result = await _emailSignupService.SubmitEmailAsync(emailSignupDto);

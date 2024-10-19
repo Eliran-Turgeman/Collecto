@@ -1,5 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using MimeKit;
+﻿using MimeKit;
 namespace EmailCollector.Api.Services.EmailSender;
 
 public class Message

@@ -34,21 +34,6 @@ services:
     networks:
       - email-collector-net
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/.htpasswd:/etc/nginx/.htpasswd
-    depends_on:
-      - api
-      - grafana
-      - dbeaver
-    networks:
-      - email-collector-net
-
   # Prometheus for monitoring
   prometheus:
     image: prom/prometheus:latest

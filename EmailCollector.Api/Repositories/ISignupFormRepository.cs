@@ -1,6 +1,6 @@
 ﻿using EmailCollector.Domain.Entities;
 
-namespace EmailCollector.Domain.Interfaces.Repositories;
+namespace EmailCollector.Api.Repositories;
 
 /// <summary>
 /// Repository interface for SignupForm entity.

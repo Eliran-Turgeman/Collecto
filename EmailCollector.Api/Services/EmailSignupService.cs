@@ -1,13 +1,10 @@
-﻿using Blazorise;
-using EmailCollector.Api.Configurations;
+﻿using EmailCollector.Api.Configurations;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
-using EmailCollector.Domain.Interfaces.Repositories;
 using Microsoft.Extensions.Caching.Distributed;
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -148,7 +145,7 @@ public class EmailSignupService : IEmailSignupService
         };
         await _signupCandidatesCache.SetAsync(confirmationToken, encodedValue, options);
 
-        var message = new Message(new string[] { emailSignupDto.Email }, $"Confirm Signup to {form.FormName}", CreateHTMLContentFromTemplate(confirmationToken));
+        var message = new Message(new string[] { emailSignupDto.Email }, $"Confirm Signup to {form.FormName}", CreateHtmlContentFromTemplate(confirmationToken));
         var smtpConfiguration = await _smtpEmailSettingsRepository.GetByIdAsync(form.Id);
         _emailSender.SendEmail(message, smtpConfiguration);
 
@@ -247,7 +244,7 @@ public class EmailSignupService : IEmailSignupService
 
         var rangeEnd = endDate ?? DateTime.Now.Date;
 
-        _logger.LogInformation($"Gettings singups for form {form.Id} in range {rangeStart} - {rangeEnd}");
+        _logger.LogInformation($"Getting signups for form {form.Id} in range {rangeStart} - {rangeEnd}");
         var signups = await _emailSignupRepository.GetSignupsByFormIdAndDateRangeAsync(formId, rangeStart, rangeEnd);
         _logger.LogInformation($"Found {signups.Count()} signups for form {form.Id} in range {rangeStart} - {rangeEnd}");
 
@@ -263,20 +260,13 @@ public class EmailSignupService : IEmailSignupService
         for (var date = startDate.Date; date <= endDate; date = date.AddDays(1))
         {
             var existingSignup = signups.FirstOrDefault(s => s.Date == date);
-            if (existingSignup != null)
-            {
-                filledSignups.Add(existingSignup);
-            }
-            else
-            {
-                filledSignups.Add(new SignupStatsDto { Date = date, Count = 0 });
-            }
+            filledSignups.Add(existingSignup ?? new SignupStatsDto { Date = date, Count = 0 });
         }
 
         return filledSignups;
     }
 
-    private string CreateHTMLContentFromTemplate(string confirmationToken)
+    private string CreateHtmlContentFromTemplate(string confirmationToken)
     {
         var templatePath = "./Services/EmailSender/EmailTemplate.html";
         var htmlContent = File.ReadAllText(templatePath);

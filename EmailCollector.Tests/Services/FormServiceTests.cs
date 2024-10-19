@@ -2,7 +2,7 @@ using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
-using EmailCollector.Domain.Interfaces.Repositories;
+using EmailCollector.Api.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
 

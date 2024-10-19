@@ -1,5 +1,3 @@
-using Blazorise;
-using Duende.IdentityServer.Models;
 using EmailCollector.Api.Areas.Identity.Data;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Repositories;
@@ -9,7 +7,6 @@ using EmailCollector.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
 
 namespace EmailCollector.Api.Pages;
 

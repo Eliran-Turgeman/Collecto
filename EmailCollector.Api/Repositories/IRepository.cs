@@ -1,4 +1,4 @@
-﻿namespace EmailCollector.Domain.Interfaces.Repositories;
+﻿namespace EmailCollector.Api.Repositories;
 
 /// <summary>
 /// Generic repository interface for CRUD operations.

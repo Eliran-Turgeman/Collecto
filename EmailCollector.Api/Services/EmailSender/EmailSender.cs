@@ -68,13 +68,11 @@ public class EmailSender : IAppEmailSender, IEmailSender
             }
             catch
             {
-                //log an error message or throw an exception or both.
-                throw;
+                _logger.LogError("Failed to send email.");
             }
             finally
             {
                 client.Disconnect(true);
-                client.Dispose();
             }
         }
     }

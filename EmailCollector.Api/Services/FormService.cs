@@ -1,6 +1,6 @@
 ﻿using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
-using EmailCollector.Domain.Interfaces.Repositories;
+using EmailCollector.Api.Repositories;
 
 namespace EmailCollector.Api.Services;
 
