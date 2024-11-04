@@ -22,6 +22,7 @@ public class HomeModel : PageModel
         _formService = formService;
     }
 
+    public Guid UserId { get; set; }
     public string ErrorMessage { get; set; } = string.Empty;
     public IEnumerable<FormDto> Forms { get; set; } = new List<FormDto>();
 
@@ -34,9 +35,9 @@ public class HomeModel : PageModel
         }
 
         var currentUser = await _userManager.GetUserAsync(User);
-        var userId = new Guid(currentUser?.Id!);
+        UserId = new Guid(currentUser?.Id!);
 
-        Forms = await _formService.GetFormsByUserAsync(userId);
+        Forms = await _formService.GetFormsByUserAsync(UserId);
 
         return Page();
     }
@@ -49,10 +50,22 @@ public class HomeModel : PageModel
         }
 
         var currentUser = await _userManager.GetUserAsync(User);
-        var userId = new Guid(currentUser?.Id!);
+        UserId = new Guid(currentUser?.Id!);
 
-        Forms = await _formService.GetFormsByUserAsync(userId);
+        Forms = await _formService.GetFormsByUserAsync(UserId);
 
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostDeleteFormAsync(string formId)
+    {
+        var currentUser = await _userManager.GetUserAsync(User);
+        UserId = new Guid(currentUser?.Id!);
+
+        if (!string.IsNullOrEmpty(formId) && int.TryParse(formId, out var intFormId))
+        {
+            await _formService.DeleteFormByIdAsync(intFormId, UserId);
+        }
+        return RedirectToPage();
     }
 }
