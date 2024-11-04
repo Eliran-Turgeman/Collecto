@@ -12,5 +12,4 @@ public class FormDetailsDto
     public required string FormName { get; set; }
 
     public FormStatus Status { get; set; }
-
 }

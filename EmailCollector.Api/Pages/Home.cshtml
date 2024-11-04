@@ -1,0 +1,51 @@
+﻿@page "/"
+@model EmailCollector.Api.Pages.HomeModel
+@{
+    ViewData["Title"] = "Collecto";
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Model.ErrorMessage
+    </div>
+}
+
+<h1>Your Forms</h1>
+    
+@if (Model.Forms != null && Model.Forms.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Form Name</th>
+                <th>Date Created</th>
+                <th>Subscribers</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var form in Model.Forms)
+            {
+                <tr>
+                    <td>@form.FormName</td>
+                    <td>"1996-02-09"</td>
+                    <td>"12"</td>
+                    <td>
+                        <a asp-page="/Configurations" asp-route-formId="@form.Id" class="btn btn-primary">Configure</a>
+                        <a asp-page="/Dashboard" asp-route-formId="@form.Id" class="btn btn-secondary">Dashboard</a>
+                        <div class="dropdown d-inline">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                &#x22ee;
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" asp-page="/EditForm" asp-route-formId="@form.Id">Edit</a></li>
+                                <li><button class="dropdown-item text-danger" onclick="deleteForm('@form.Id')">Delete</button></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
