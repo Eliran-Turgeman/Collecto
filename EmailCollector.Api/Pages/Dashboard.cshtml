@@ -1,4 +1,4 @@
-﻿@page "/dashboard"
+﻿@page "/dashboard/{formId:int?}"
 @model EmailCollector.Api.Pages.DashboardModel
 @{
     ViewData["Title"] = "Dashboard";
@@ -15,11 +15,11 @@
 <form method="post" class="mb-4 p-4 shadow-sm bg-white rounded">
     <div class="form-group mb-3">
         <label for="formSelect" class="form-label fw-bold">Select Form</label>
-        <select id="formSelect" name="SelectedFormId" class="form-select form-control-lg">
+        <select id="formSelect" name="FormId" class="form-select form-control-lg">
             <option value="">-- Select Form --</option>
             @foreach (var form in Model.Forms)
             {
-                <option value="@form.Id" selected="@(Model.SelectedFormId == form.Id.ToString() ? "selected" : null)">
+                <option value="@form.Id" selected="@(Model.FormId == form.Id.ToString() ? "selected" : null)">
                     @form.FormName
                 </option>
             }

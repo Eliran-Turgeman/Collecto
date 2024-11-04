@@ -1,4 +1,4 @@
-﻿@page "/configurations"
+﻿@page "/configurations/{formId:int?}"
 @model EmailCollector.Api.Pages.ConfigurationsPageModel
 
 @{
@@ -77,11 +77,11 @@
 <form method="post">
     <div class="form-group">
         <label for="formSelect">Select Form:</label>
-        <select id="formSelect" name="SelectedFormId" class="form-control" asp-for="SelectedFormId">
+        <select id="formSelect" name="FormId" class="form-control" asp-for="FormId">
             <option value="">-- Select Form --</option>
             @foreach (var form in Model.Forms)
             {
-                <option value="@form.Id" selected="@(Model.SelectedFormId == form.Id ? "selected" : null)">
+                <option value="@form.Id" selected="@(Model.FormId == form.Id ? "selected" : null)">
                     @form.FormName
                 </option>
             }
@@ -92,11 +92,11 @@
 
 <hr />
 
-@if (Model.SelectedFormId != null)
+@if (Model.FormId != null)
 {
     <!-- Second form: View/Edit/Save form settings -->
     <form method="post">
-        <input type="hidden" name="SelectedFormId" value="@Model.SelectedFormId" />
+        <input type="hidden" name="FormId" value="@Model.FormId" />
         <!-- Email Settings Section -->
         <div class="section">
             <h2>Email Settings</h2>

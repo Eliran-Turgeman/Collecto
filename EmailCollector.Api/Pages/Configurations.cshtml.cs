@@ -31,8 +31,8 @@ public class ConfigurationsPageModel : PageModel
         _userManager = userManager;
     }
 
-    [BindProperty]
-    public int? SelectedFormId { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public int? FormId { get; set; }
 
     public IEnumerable<FormDto> Forms { get; set; } = new List<FormDto>();
     
@@ -57,6 +57,8 @@ public class ConfigurationsPageModel : PageModel
 
         Forms = await _formService.GetFormsByUserAsync(userId);
 
+        await LoadSettingsAsync();
+
         return Page();
     }
 
@@ -73,23 +75,21 @@ public class ConfigurationsPageModel : PageModel
 
         Forms = await _formService.GetFormsByUserAsync(userId);
 
-        if (action == "load" && SelectedFormId.HasValue)
+        if (action == "load" && FormId.HasValue)
         {
-            // Load the configurations for the selected form
-            SmtpEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(SelectedFormId) ?? new SmtpEmailSettings();
-            CorsSettings = await _formCorsSettingsRepository.GetByIdAsync(SelectedFormId) ?? new FormCorsSettings();
+            return RedirectToPage(new { formId = FormId });
         }
 
-        else if (action == "save" && SelectedFormId.HasValue)
+        else if (action == "save" && FormId.HasValue)
         {
             // Save the email settings
-            var existingEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(SelectedFormId.Value);
+            var existingEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(FormId.Value);
             if (existingEmailSettings == null)
             {
                 // Create new settings
                 await _smtpEmailSettingsRepository.AddAsync(new SmtpEmailSettings
                 {
-                    FormId = SelectedFormId.Value,
+                    FormId = FormId.Value,
                     EmailMethod = EmailMethod.Smtp,
                     EmailFrom = SmtpEmailSettings.EmailFrom,
                     SmtpServer = SmtpEmailSettings.SmtpServer,
@@ -111,13 +111,13 @@ public class ConfigurationsPageModel : PageModel
             }
 
             // Save the CORS settings
-            var existingCorsSettings = await _formCorsSettingsRepository.GetByIdAsync(SelectedFormId.Value);
+            var existingCorsSettings = await _formCorsSettingsRepository.GetByIdAsync(FormId.Value);
             if (existingCorsSettings == null)
             {
                 // Create new settings
                 await _formCorsSettingsRepository.AddAsync(new FormCorsSettings
                 {
-                    FormId = SelectedFormId.Value,
+                    FormId = FormId.Value,
                     AllowedOrigins = CorsSettings.AllowedOrigins,
                 });
             }
@@ -131,6 +131,15 @@ public class ConfigurationsPageModel : PageModel
         }
 
         return Page();
+    }
+
+    private async Task LoadSettingsAsync()
+    {
+        if (FormId.HasValue)
+        {
+            SmtpEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(FormId) ?? new SmtpEmailSettings();
+            CorsSettings = await _formCorsSettingsRepository.GetByIdAsync(FormId) ?? new FormCorsSettings();
+        }
     }
 }
 

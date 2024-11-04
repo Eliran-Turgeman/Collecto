@@ -1,3 +1,4 @@
+using Blazorise;
 using EmailCollector.Api.Areas.Identity.Data;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Services;
@@ -16,8 +17,8 @@ public class DashboardModel : PageModel
 
     public IEnumerable<FormDto> Forms { get; set; } = new List<FormDto>();
 
-    [BindProperty]
-    public string SelectedFormId { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public string FormId { get; set; }
 
     [BindProperty]
     public DateTime StartDate { get; set; } = DateTime.Now.AddMonths(-1);
@@ -60,38 +61,27 @@ public class DashboardModel : PageModel
 
         Forms = await _formService.GetFormsByUserAsync(userId);
 
-        return Page();
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!_signInManager.IsSignedIn(User))
-        {
-            ErrorMessage = "Please log in to view your forms dashboard.";
-            return Page();
-        }
-
-        var currentUser = await _userManager.GetUserAsync(User);
-        var userId = new Guid(currentUser?.Id!);
-
-        // Load the forms again in case it's needed for redisplay.
-        Forms = await _formService.GetFormsByUserAsync(userId);
-
         // Ensure SelectedFormId is valid
-        if (string.IsNullOrEmpty(SelectedFormId) || !int.TryParse(SelectedFormId, out var intSelectedFormId))
+        if (string.IsNullOrEmpty(FormId) || !int.TryParse(FormId, out var intSelectedFormId))
         {
             ErrorMessage = "Please select a form.";
             return Page();
         }
 
-        var form = await _formService.GetFormByIdAsync(intSelectedFormId, userId);
-        if (form == null)
-        {
-            ErrorMessage = "Form not found.";
-            return Page();
-        }
+        await LoadFormData(intSelectedFormId, userId);
 
-        var emailSignupsData = await _emailSignupService.GetSignupsPerDayAsync(intSelectedFormId, StartDate, EndDate);
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        return RedirectToPage(new { formId = FormId });
+    }
+
+    private async Task LoadFormData(int formId, Guid userId)
+    {
+        var form = await _formService.GetFormByIdAsync(formId, userId);
+        var emailSignupsData = await _emailSignupService.GetSignupsPerDayAsync(formId, StartDate, EndDate);
 
         TotalSubscribers = emailSignupsData.Sum(s => s.Count);
         FormStatus = form.Status.ToString();
@@ -102,8 +92,5 @@ public class DashboardModel : PageModel
 
         int cumulativeSum = 0;
         CumulativeCounts = Counts.Select(count => cumulativeSum += count).ToList();
-
-        return Page();
     }
-
 }
