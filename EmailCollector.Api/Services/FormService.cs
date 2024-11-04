@@ -75,9 +75,7 @@ public class FormService : IFormService
     public async Task DeleteFormByIdAsync(int formId, Guid userId)
     {
         var form = await _signupFormRepository.GetByIdAsync(formId);
-        _logger.LogInformation($"Deleting form {formId}.");
-        _logger.LogInformation($"Form created by {form.CreatedBy}");
-        _logger.LogInformation($"User id {userId}");
+
         if (form == null || form.CreatedBy != userId)
         {
             _logger.LogInformation($"Form {formId} not found or user is not the creator.");
