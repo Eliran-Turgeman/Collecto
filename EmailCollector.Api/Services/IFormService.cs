@@ -16,4 +16,6 @@ public interface IFormService
     Task DeleteFormByIdAsync(int formId, Guid userId);
 
     Task<FormDetailsDto?> UpdateFormAsync(int formId, Guid userId, CreateFormDto createFormDto);
+
+    Task<IEnumerable<FormSummaryDetailsDto?>> GetFormsSummaryDetailsAsync(Guid userId);
 }

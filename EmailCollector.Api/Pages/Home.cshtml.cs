@@ -24,7 +24,7 @@ public class HomeModel : PageModel
 
     public Guid UserId { get; set; }
     public string ErrorMessage { get; set; } = string.Empty;
-    public IEnumerable<FormDto> Forms { get; set; } = new List<FormDto>();
+    public IEnumerable<FormSummaryDetailsDto?> Forms { get; set; } = new List<FormSummaryDetailsDto>();
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -37,7 +37,7 @@ public class HomeModel : PageModel
         var currentUser = await _userManager.GetUserAsync(User);
         UserId = new Guid(currentUser?.Id!);
 
-        Forms = await _formService.GetFormsByUserAsync(UserId);
+        Forms = await _formService.GetFormsSummaryDetailsAsync(UserId);
 
         return Page();
     }
@@ -52,7 +52,7 @@ public class HomeModel : PageModel
         var currentUser = await _userManager.GetUserAsync(User);
         UserId = new Guid(currentUser?.Id!);
 
-        Forms = await _formService.GetFormsByUserAsync(UserId);
+        Forms = await _formService.GetFormsSummaryDetailsAsync(UserId);
 
         return Page();
     }

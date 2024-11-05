@@ -49,17 +49,17 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "Collecto",
-        Description = "API for managing email collection forms.",
+        Description = "Email collection service",
         TermsOfService = new Uri("https://example.com/terms"),
         Contact = new OpenApiContact
         {
-            Name = "Example Contact",
-            Url = new Uri("https://example.com/contact")
+            Name = "Contact",
+            Url = new Uri("https://github.com/Eliran-Turgeman/Collecto")
         },
         License = new OpenApiLicense
         {
-            Name = "Example License",
-            Url = new Uri("https://example.com/license")
+            Name = "AGPL-3.0 License",
+            Url = new Uri("https://github.com/Eliran-Turgeman/Collecto/blob/master/LICENSE")
         }
     });
 

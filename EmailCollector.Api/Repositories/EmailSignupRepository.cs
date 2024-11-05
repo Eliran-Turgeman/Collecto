@@ -65,4 +65,16 @@ public class EmailSignupRepository : IEmailSignupRepository
 
         return signups;
     }
+
+    /// <summary>
+    /// Retrieves the number of signups for a form.
+    /// </summary>
+    /// <param name="formId">The form identifer</param>
+    /// <returns>Count of all-time signups for form id specified</returns>
+    public async Task<int> GetSignupCountByFormId(int formId)
+    {
+        return await _dbContext.EmailSignups
+            .Where(signup => signup.SignupFormId == formId)
+            .CountAsync();
+    }
 }

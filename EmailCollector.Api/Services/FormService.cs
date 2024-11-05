@@ -10,12 +10,15 @@ namespace EmailCollector.Api.Services;
 public class FormService : IFormService
 {
     private readonly ISignupFormRepository _signupFormRepository;
+    private readonly IEmailSignupRepository _emailSignupRepository;
     private readonly ILogger<FormService> _logger;
 
     public FormService(ISignupFormRepository signupFormRepository,
+        IEmailSignupRepository emailSignupRepository,
         ILogger<FormService> logger)
     {
         _signupFormRepository = signupFormRepository;
+        _emailSignupRepository = emailSignupRepository;
         _logger = logger;
     }
 
@@ -108,5 +111,35 @@ public class FormService : IFormService
             FormName = form.FormName,
             Status = form.Status,
         };
+    }
+
+    /// <summary>
+    /// Gets the details of all forms by userId including the number of signups.
+    /// Mainly used for the form summary page.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable<FormSummaryDetailsDto?>> GetFormsSummaryDetailsAsync(Guid userId)
+    {
+        var forms = await _signupFormRepository.GetByUserIdAsync(userId);
+
+        _logger.LogInformation($"Found {forms.Count()} forms for user {userId}.");
+
+        var formSummaryDetails = new List<FormSummaryDetailsDto>();
+
+        foreach (var form in forms)
+        {
+            var signupCount = await _emailSignupRepository.GetSignupCountByFormId(form.Id);
+
+            formSummaryDetails.Add(new FormSummaryDetailsDto
+            {
+                Id = form.Id,
+                FormName = form.FormName,
+                SubmissionsCount = signupCount,
+                CreatedAt = form.CreatedAt,
+            });
+        }
+
+        return formSummaryDetails;
     }
 }

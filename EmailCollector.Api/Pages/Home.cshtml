@@ -29,8 +29,8 @@
             {
                 <tr>
                     <td>@form.FormName</td>
-                    <td>"1996-02-09"</td>
-                    <td>"12"</td>
+                    <td>@form.CreatedAt</td>
+                    <td>@form.SubmissionsCount</td>
                     <td>
                         <a asp-page="/Configurations" asp-route-formId="@form.Id" class="btn btn-primary">Configure</a>
                         <a asp-page="/Dashboard" asp-route-formId="@form.Id" class="btn btn-secondary">Dashboard</a>

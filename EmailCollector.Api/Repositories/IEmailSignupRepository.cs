@@ -11,4 +11,6 @@ public interface IEmailSignupRepository : IRepository<EmailSignup>
     Task<IEnumerable<EmailSignup>> GetByFormIdAsync(int formId);
 
     Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(int formId, DateTime rangeStart, DateTime rangeEnd);
+
+    Task<int> GetSignupCountByFormId(int formId);
 }
