@@ -11,6 +11,7 @@ namespace EmailCollector.Api.Tests.Services;
 public class FormServiceTests
 {
     private Mock<ISignupFormRepository> _signupFormRepositoryMock;
+    private Mock<IEmailSignupRepository> _emailSignupRepositoryMock;
     private Mock<ILogger<FormService>> _loggerMock;
     private IFormService _formService;
 
@@ -18,8 +19,9 @@ public class FormServiceTests
     public void Setup()
     {
         _signupFormRepositoryMock = new Mock<ISignupFormRepository>();
+        _emailSignupRepositoryMock = new Mock<IEmailSignupRepository>();
         _loggerMock = new Mock<ILogger<FormService>>();
-        _formService = new FormService(_signupFormRepositoryMock.Object, _loggerMock.Object);
+        _formService = new FormService(_signupFormRepositoryMock.Object, _emailSignupRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Test]
