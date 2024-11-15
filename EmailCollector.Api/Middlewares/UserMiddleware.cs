@@ -22,7 +22,6 @@ public class UserMiddleware
             if (!string.IsNullOrEmpty(userId))
             {
                 context.Items["UserId"] = userId;
-
             }
             _logger.LogInformation($"Authenticated User ID: {userId}");
         }

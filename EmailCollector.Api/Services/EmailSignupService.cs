@@ -44,13 +44,11 @@ public class EmailSignupService : IEmailSignupService
         _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
     }
 
-    public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId, Guid userId)
+    public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId)
     {
         var form = await _signupFormRepository.GetByIdAsync(formId);
-
-        if (form == null || form.CreatedBy != userId)
+        if (form == null)
         {
-            _logger.LogInformation("Form not found or user is not the creator.");
             return null;
         }
 

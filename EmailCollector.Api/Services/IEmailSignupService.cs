@@ -9,7 +9,7 @@ public interface IEmailSignupService
 {
     Task<SignupResultDto> SubmitEmailAsync(EmailSignupDto emailSignupDto);
 
-    Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId, Guid userId);
+    Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId);
 
     Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(int formId, DateTime? startDate, DateTime? endDate);
 

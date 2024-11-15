@@ -1,5 +1,4 @@
-﻿using EmailCollector.Api.Areas.Identity.Data;
-using EmailCollector.Domain.Entities;
+﻿using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

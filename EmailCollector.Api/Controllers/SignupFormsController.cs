@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using EmailCollector.Api.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
@@ -35,14 +37,17 @@ public class SignupFormsController : ControllerBase
     /// <response code="401">If the user is not authenticated</response>
     [HttpGet]
     [Produces("application/json")]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<ActionResult<IEnumerable<FormDto>>> GetSignupForms()
     {
         _logger.LogInformation("Getting signup forms.");
-        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
-            return Unauthorized();
+            return Unauthorized("Invalid or missing user identifier");
         }
-
+        
         return Ok(await _formService.GetFormsByUserAsync(userId));
     }
 
@@ -61,13 +66,15 @@ public class SignupFormsController : ControllerBase
     /// <response code="400">If the user is not authenticated.</response>
     [HttpGet("{id}")]
     [Produces("application/json")]
-
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<ActionResult<SignupForm>> GetSignupForm(int id)
     {
         _logger.LogInformation($"Getting signup form {id}.");
-        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
-            return BadRequest();
+            return Unauthorized("Invalid or missing user identifier");
         }
 
         var signupForm = await _formService.GetFormByIdAsync(id, userId);
@@ -108,12 +115,14 @@ public class SignupFormsController : ControllerBase
     /// <response code="400">If the user is not authenticated.</response>
     [HttpPost]
     [Produces("application/json")]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<ActionResult<FormDetailsDto>> PostSignupForm(CreateFormDto signupForm)
     {
         _logger.LogInformation("Creating signup form.");
-        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
-            return BadRequest();
+            return Unauthorized("Invalid or missing user identifier");
         }
 
         var formsDetails = await _formService.CreateFormAsync(userId, signupForm);
@@ -136,13 +145,15 @@ public class SignupFormsController : ControllerBase
     /// <response code="404">If the form is not found.</response>
     /// <response code="400">If the user is not authenticated.</response>
     [HttpDelete("{id}")]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> DeleteSignupForm(int id)
     {
         _logger.LogInformation($"Deleting signup form {id}.");
 
-        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
-            return BadRequest();
+            return Unauthorized("Invalid or missing user identifier");
         }
 
         if (await _formService.GetFormByIdAsync(id, userId) == null)
@@ -182,13 +193,15 @@ public class SignupFormsController : ControllerBase
     ///     }
     /// </remarks>
     [HttpPut("{id}")]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> PutSignupForm(int id, CreateFormDto signupForm)
     {
         _logger.LogInformation($"Updating signup form {id}.");
 
-        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
-            return BadRequest();
+            return Unauthorized("Invalid or missing user identifier");
         }
 
         if (await _formService.GetFormByIdAsync(id, userId) == null)

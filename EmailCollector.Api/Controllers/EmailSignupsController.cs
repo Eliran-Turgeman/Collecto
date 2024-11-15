@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EmailCollector.Api.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
@@ -34,23 +35,21 @@ public class EmailSignupsController : ControllerBase
     ///     
     /// </remarks>
     /// <response code="200">Returns all email signups for the form.</response>
-    /// <response code="400">If the user is not authenticated.</response>
     /// <response code="404">If the form is not found.</response>
-    [HttpGet("form/{formId}"), Authorize]
+    [HttpGet("form/{formId}")]
     [Produces("application/json")]
-    public async Task<ActionResult<IEnumerable<EmailSignupDto>>> GetFormEmailSignups(int formId)
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
+    public async Task<IActionResult> GetFormEmailSignups(int formId)
     {
         _logger.LogInformation($"Getting email signups for form {formId}.");
-        if (!Guid.TryParse(HttpContext.Items["UserId"] as string, out var userId))
-        {
-            _logger.LogError("Invalid user ID.");
-            return BadRequest();
-        }
 
-        var emailSignups = await _emailSignupService.GetSignupsByFormIdAsync(formId, userId);
+        var emailSignups = await _emailSignupService.GetSignupsByFormIdAsync(formId);
         if (emailSignups == null)
         {
-            return NotFound("Form not found.");
+            return Problem(type: "Bad Request",
+                title: "Form is not found",
+                detail: $"Form with id {formId} not found",
+                statusCode: StatusCodes.Status404NotFound);
         }
 
         _logger.LogInformation($"Found {emailSignups.Count()} signups for form {formId}.");
@@ -96,8 +95,6 @@ public class EmailSignupsController : ControllerBase
                     return NotFound(result.Message);
 
                 case EmailSignupErrorCode.EmailAlreadySignedUp:
-                    return Conflict(result.Message);
-
                 case EmailSignupErrorCode.FormNotActive:
                     return Conflict(result.Message);
             } 
@@ -106,7 +103,24 @@ public class EmailSignupsController : ControllerBase
         _logger.LogInformation($"Email signup submitted for form {emailSignup.FormId}.");
         return Ok(result.Message);
     }
-
+    
+    /// <summary>
+    /// This endpoint handles the confirmation of an email signup.
+    /// When an email is sumbitted to PostEmailSignup, we send a confirmation email.
+    /// The confirmation email contains a button that redirects to this endpoint with a valid confirmation token.
+    /// Once this endpoint identifies the confirmation token in the redis cache, we sign up the associated email
+    /// address to the correct form.
+    /// </summary>
+    ///     /// <param name="confirmationToken">confirmation token.</param>
+    /// <returns></returns>
+    /// /// <remarks>
+    /// Sample request:
+    /// 
+    ///     GET /api/EmailSignups/confirmations?confirmationToken=abcdefg
+    /// 
+    /// </remarks>
+    /// <response code="200">Confirmation token was valid, and email is added successfully</response>
+    /// <response code="400">Confirmation token is invalid or expired</response>
     [AllowAnonymous]
     [HttpGet("confirmations")]
     public async Task<IActionResult> ConfirmEmailSignup([FromQuery] string confirmationToken)
@@ -116,13 +130,22 @@ public class EmailSignupsController : ControllerBase
         switch (confirmationResult.ErrorCode)
         {
             case EmailConfirmationErrorCode.InvalidToken:
-                return BadRequest(confirmationResult.Message);
-
+                return Problem(type: "Bad Request",
+                    title: confirmationResult.Message,
+                    detail: "Invalid token, make sure you call PostEmailSignup with the email address that needs to be signed up.",
+                    statusCode: StatusCodes.Status400BadRequest);
+            
             case EmailConfirmationErrorCode.ExpiredToken:
-                return BadRequest(confirmationResult.Message);
+                return Problem(type: "Bad Request",
+                    title: confirmationResult.Message,
+                    detail: "The confirmation token is expired, please sign up to the form again.",
+                    statusCode: StatusCodes.Status400BadRequest);
 
             case EmailConfirmationErrorCode.EmailAlreadyConfirmed:
-                return Conflict(confirmationResult.Message);
+                return Problem(type: "Conflict",
+                    title: confirmationResult.Message,
+                    detail: "The email address has already been confirmed.",
+                    statusCode: StatusCodes.Status409Conflict);
         }
 
         return Ok(confirmationResult.Message);

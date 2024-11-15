@@ -28,6 +28,7 @@ public class FormService : IFormService
         {
             FormName = createFormDto.FormName,
             CreatedBy = userId,
+            Status = createFormDto.Status,
         };
 
         await _signupFormRepository.AddAsync(signupForm);

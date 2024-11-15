@@ -56,29 +56,11 @@ namespace EmailCollector.Api.Tests.Services
         {
             // Arrange
             int formId = 1;
-            Guid userId = Guid.NewGuid();
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId))
                 .ReturnsAsync((SignupForm)null);
 
             // Act
-            var result = await _emailSignupService.GetSignupsByFormIdAsync(formId, userId);
-
-            // Assert
-            Assert.That(result, Is.Null);
-        }
-
-        [Test]
-        public async Task GetSignupsByFormIdAsync_UserNotCreator_ReturnsNull()
-        {
-            // Arrange
-            int formId = 1;
-            Guid userId = Guid.NewGuid();
-            var form = new SignupForm { FormName = "test", CreatedBy = Guid.NewGuid() };
-            _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId))
-                .ReturnsAsync(form);
-
-            // Act
-            var result = await _emailSignupService.GetSignupsByFormIdAsync(formId, userId);
+            var result = await _emailSignupService.GetSignupsByFormIdAsync(formId);
 
             // Assert
             Assert.That(result, Is.Null);
@@ -102,7 +84,7 @@ namespace EmailCollector.Api.Tests.Services
                 .ReturnsAsync(signups);
 
             // Act
-            var result = await _emailSignupService.GetSignupsByFormIdAsync(formId, userId);
+            var result = await _emailSignupService.GetSignupsByFormIdAsync(formId);
 
             // Assert
             Assert.That(result, Is.Not.Null);

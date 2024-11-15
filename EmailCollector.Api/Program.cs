@@ -1,6 +1,5 @@
 using EmailCollector.Api.Data;
 using Microsoft.EntityFrameworkCore;
-using EmailCollector.Api.Areas.Identity.Data;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using EmailCollector.Api.Middlewares;
@@ -12,8 +11,11 @@ using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AspNetCoreRateLimit;
+using EmailCollector.Api.Authentication;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
+using EmailCollector.Domain.Entities;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 
@@ -33,7 +35,7 @@ builder.Services.AddControllers()
         // Serialize enums as strings
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -65,6 +67,18 @@ builder.Services.AddSwaggerGen(options =>
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+        context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+
+        var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+        context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+    };
 });
 
 builder.Services.AddScoped<ISignupFormRepository, SignupFormRepository>();
@@ -142,6 +156,8 @@ builder.Services.AddCors(options =>
                               .AllowAnyMethod()
                               .AllowAnyHeader());
 });
+
+builder.Services.AddScoped<ApiKeyAuthFilter>();
 
 builder.Services.AddRazorPages();
 

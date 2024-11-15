@@ -1,6 +1,6 @@
-using EmailCollector.Api.Areas.Identity.Data;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Services;
+using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

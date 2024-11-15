@@ -10,21 +10,19 @@ public class AllowedOriginsMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<AllowedOriginsMiddleware> _logger;
-    private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public AllowedOriginsMiddleware(RequestDelegate next, ILogger<AllowedOriginsMiddleware> logger, IFormCorsSettingsRepository formCorsSettingsRepository)
+    public AllowedOriginsMiddleware(RequestDelegate next, ILogger<AllowedOriginsMiddleware> logger )
     {
         _next = next;
         _logger = logger;
-        _formCorsSettingsRepository = formCorsSettingsRepository;
         _jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, IFormCorsSettingsRepository formCorsSettingsRepository)
     {
         if (context.Request.Path.StartsWithSegments("/api/EmailSignups") &&
             context.Request.Method.Equals("POST", StringComparison.OrdinalIgnoreCase))
@@ -48,7 +46,7 @@ public class AllowedOriginsMiddleware
 
                     if (emailSignup != null)
                     {
-                        var formCorsSettings = await _formCorsSettingsRepository.GetByIdAsync(emailSignup.FormId);
+                        var formCorsSettings = await formCorsSettingsRepository.GetByIdAsync(emailSignup.FormId);
 
                         if (formCorsSettings != null)
                         {

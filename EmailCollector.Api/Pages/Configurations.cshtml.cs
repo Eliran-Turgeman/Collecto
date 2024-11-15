@@ -1,4 +1,3 @@
-using EmailCollector.Api.Areas.Identity.Data;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services;
