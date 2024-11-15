@@ -40,14 +40,28 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Name = "x-api-key",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "ApiKeySchema"
     });
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-
+    var scheme = new OpenApiSecurityScheme
+    {
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "ApiKey"
+        },
+        In = ParameterLocation.Header
+    };
+    var requirement = new OpenApiSecurityRequirement
+    {
+        { scheme, [] }
+    };
+    options.AddSecurityRequirement(requirement);
+    
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",

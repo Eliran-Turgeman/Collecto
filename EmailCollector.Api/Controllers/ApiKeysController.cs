@@ -6,6 +6,7 @@ namespace EmailCollector.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)] // Exclude this controller from Swagger
 public class ApiKeysController : ControllerBase
 {
     private readonly IApiKeyService _apiKeyService;
