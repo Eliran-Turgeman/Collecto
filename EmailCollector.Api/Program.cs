@@ -176,7 +176,10 @@ app.UseRouting();
 app.UseCors();
 app.UseAntiforgery();
 app.UseAuthentication();
+
 app.UseMiddleware<UserMiddleware>();
+app.UseMiddleware<AllowedOriginsMiddleware>();
+
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
