@@ -16,6 +16,7 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
     public DbSet<SignupForm> SignupForms { get; set; }
     public DbSet<FormCorsSettings> FormCorsSettings { get; set; }
     public DbSet<SmtpEmailSettings> SmtpEmailSettings { get; set; }
+    public DbSet<ApiKey> ApiKeys { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,7 +51,21 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
             .HasConversion(
             v => v.ToString(), // Convert enum to string when saving
             v => (EmailMethod)Enum.Parse(typeof(EmailMethod), v));  // Convert string to enum when loading
+        
+        modelBuilder.Entity<ApiKey>(entity =>
+        {
+            entity.HasKey(e => e.Id);
 
+            entity.Property(e => e.KeyHash).IsRequired();
+
+            entity.Property(e => e.CreatedAt).IsRequired();
+
+            entity.HasOne(e => e.User)
+                .WithMany() // No navigation property in ApplicationUser
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        
         base.OnModelCreating(modelBuilder);
     }
 }

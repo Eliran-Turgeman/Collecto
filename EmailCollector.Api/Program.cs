@@ -14,6 +14,7 @@ using AspNetCoreRateLimit;
 using EmailCollector.Api.Authentication;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
+using EmailCollector.Api.Services.Users;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -91,6 +92,9 @@ builder.Services.AddSingleton<IDnsLookupService, DnsLookupService>();
 
 builder.Services.AddScoped<ISmtpEmailSettingsRepository, SmtpEmailSettingsRepository>();
 builder.Services.AddScoped<IFormCorsSettingsRepository, FormCorsSettingsRepository>();
+
+builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
+builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
 
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));

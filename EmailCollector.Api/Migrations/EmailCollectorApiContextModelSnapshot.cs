@@ -17,7 +17,41 @@ namespace EmailCollector.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
-            modelBuilder.Entity("EmailCollector.Api.Areas.Identity.Data.EmailCollectorApiUser", b =>
+            modelBuilder.Entity("EmailCollector.Domain.Entities.ApiKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("KeyHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ApiKeys");
+                });
+
+            modelBuilder.Entity("EmailCollector.Domain.Entities.EmailCollectorApiUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -311,6 +345,17 @@ namespace EmailCollector.Api.Migrations
                     b.ToTable("SmtpEmailSettings", (string)null);
                 });
 
+            modelBuilder.Entity("EmailCollector.Domain.Entities.ApiKey", b =>
+                {
+                    b.HasOne("EmailCollector.Domain.Entities.EmailCollectorApiUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EmailCollector.Domain.Entities.FormCorsSettings", b =>
                 {
                     b.HasOne("EmailCollector.Domain.Entities.SignupForm", "Form")
@@ -344,7 +389,7 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("EmailCollector.Api.Areas.Identity.Data.EmailCollectorApiUser", null)
+                    b.HasOne("EmailCollector.Domain.Entities.EmailCollectorApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -353,7 +398,7 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("EmailCollector.Api.Areas.Identity.Data.EmailCollectorApiUser", null)
+                    b.HasOne("EmailCollector.Domain.Entities.EmailCollectorApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -368,7 +413,7 @@ namespace EmailCollector.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EmailCollector.Api.Areas.Identity.Data.EmailCollectorApiUser", null)
+                    b.HasOne("EmailCollector.Domain.Entities.EmailCollectorApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -377,7 +422,7 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("EmailCollector.Api.Areas.Identity.Data.EmailCollectorApiUser", null)
+                    b.HasOne("EmailCollector.Domain.Entities.EmailCollectorApiUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

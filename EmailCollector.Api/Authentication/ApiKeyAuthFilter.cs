@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace EmailCollector.Api.Authentication;
 
-public class ApiKeyAuthFilter : IAuthorizationFilter
+public class ApiKeyAuthFilter : IAsyncAuthorizationFilter
 {
     private readonly IConfiguration _configuration;
-    private readonly IUserService _userService;
+    private readonly IApiKeyService _apiKeyService;
 
-    public ApiKeyAuthFilter(IConfiguration configuration, IUserService userService)
+    public ApiKeyAuthFilter(IConfiguration configuration, IApiKeyService apiKeyService)
     {
         _configuration = configuration;
-        _userService = userService;
+        _apiKeyService = apiKeyService;
     }
     
-    public void OnAuthorization(AuthorizationFilterContext context)
+    public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         if (!context.HttpContext.Request.Headers.TryGetValue(AuthConstants.ApiKeyHeaderName, out var apiKeyHeader))
         {
@@ -26,22 +26,10 @@ public class ApiKeyAuthFilter : IAuthorizationFilter
             return;
         }
         
-        var apiKey = _configuration.GetValue<string>(AuthConstants.ApiKeySectionName);
-        
-        // Using FixedTimeEquals instead of equals -> "This method compares the contents from two
-        // buffers for equality in a way that doesn't leak timing information,
-        // making it ideal for use within cryptographic routines."
-        // https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.cryptographicoperations.fixedtimeequals?view=net-8.0
-        if (!CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(apiKey!),
-                Encoding.UTF8.GetBytes(apiKeyHeader!)))
-        {
-            context.Result = new UnauthorizedObjectResult("Api Key is invalid");
-        };
-        
-        var user = _userService.ValidateApiKey(apiKeyHeader!);
+        var user = await _apiKeyService.ValidateApiKeyAsync(apiKeyHeader!);
         if (user == null)
         {
-            context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Result = new UnauthorizedObjectResult("Api Key is invalid");
             return;
         }
 
