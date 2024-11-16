@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
+using EmailCollector.Api.Middlewares;
 using EmailCollector.Domain.Enums;
 using EmailCollector.Api.Services;
 using Microsoft.AspNetCore.Cors;
@@ -58,7 +59,8 @@ public class EmailSignupsController : ControllerBase
     }
 
     /// <summary>
-    /// Signup for an email form.
+    /// Submit a signup for an email form - depending on your email confirmation settings,
+    /// user might need to confirm the signup first before it is registered.
     /// </summary>
     /// <param name="emailSignup">Email signup definition</param>
     /// <returns></returns>
@@ -79,6 +81,7 @@ public class EmailSignupsController : ControllerBase
     [EnableCors("AllowSpecificOrigin")]
     [HttpPost]
     [Produces("application/json")]
+    [ServiceFilter(typeof(AllowedOriginsFilter))]
     public async Task<ActionResult<EmailSignup>> PostEmailSignup([FromBody] EmailSignupDto emailSignup)
     {
         _logger.LogInformation($"Submitting email signup for form {emailSignup.FormId}.");

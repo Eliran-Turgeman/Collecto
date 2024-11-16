@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using EmailCollector.Api.Services.Users;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -9,12 +7,10 @@ namespace EmailCollector.Api.Authentication;
 
 public class ApiKeyAuthFilter : IAsyncAuthorizationFilter
 {
-    private readonly IConfiguration _configuration;
     private readonly IApiKeyService _apiKeyService;
 
-    public ApiKeyAuthFilter(IConfiguration configuration, IApiKeyService apiKeyService)
+    public ApiKeyAuthFilter(IApiKeyService apiKeyService)
     {
-        _configuration = configuration;
         _apiKeyService = apiKeyService;
     }
     

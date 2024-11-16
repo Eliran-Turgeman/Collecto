@@ -176,6 +176,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<ApiKeyAuthFilter>();
+builder.Services.AddScoped<AllowedOriginsFilter>();
 
 builder.Services.AddRazorPages();
 
@@ -204,16 +205,12 @@ app.UseSwaggerUI(c => {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmailCollectorApi");
     c.InjectStylesheet("/swagger-ui/darkMode.css");
 });
-app.MapIdentityApi<EmailCollectorApiUser>();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();
 app.UseAntiforgery();
 app.UseAuthentication();
-
-app.UseMiddleware<UserMiddleware>();
-app.UseMiddleware<AllowedOriginsMiddleware>();
-
+//middlewares go here
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
