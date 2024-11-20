@@ -1,0 +1,36 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EmailCollector.Api.Pages.ApiKeys.IndexModel
+@{
+    ViewData["Title"] = "Manage API Keys";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Key</th>
+        <th>Expiration</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var apiKey in Model.ApiKeys)
+    {
+        <tr>
+            <td>@apiKey.Name</td>
+            <td>@apiKey.CreatedAt</td>
+            <td>@(apiKey.Expiration?.ToString("g") ?? "Never")</td>
+            <td>
+                <a asp-page="./Delete" asp-route-id="@apiKey.Id">Revoke</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<p>
+    <a asp-page="./Create" class="btn btn-primary">Create New API Key</a>
+</p>

@@ -19,7 +19,7 @@ public class ApiKeyService : IApiKeyService
         _context = context;
     }
 
-    public async Task<ApiKeyCreatedDto> GenerateApiKeyAsync(string userId, string name, DateTime? expiration = null)
+    public async Task<ApiKeyCreatedDto> GenerateApiKeyAsync(Guid userId, string name, DateTime? expiration = null)
     {
         var rawKey = Guid.NewGuid().ToString("N"); // raw api key without dashes
         var hashedKey = HashApiKey(rawKey);
@@ -27,7 +27,7 @@ public class ApiKeyService : IApiKeyService
         var apiKey = new ApiKey
         {
             KeyHash = hashedKey,
-            UserId = userId,
+            UserId = userId.ToString(),
             Name = name,
             CreatedAt = DateTime.UtcNow,
             Expiration = expiration,
@@ -57,11 +57,11 @@ public class ApiKeyService : IApiKeyService
     public async Task RevokeApiKeyAsync(Guid id)
     {
         var apiKey = await _repository.GetByIdAsync(id);
-        if (apiKey != null)
+        if (apiKey == null)
         {
-            apiKey.IsRevoked = true;
-            await _repository.Update(apiKey);
+            return;
         }
+        await _repository.Remove(apiKey);
     }
 
     public async Task<IEnumerable<ApiKeyDto>> GetAllByUserIdAsync(Guid userId)
@@ -69,6 +69,7 @@ public class ApiKeyService : IApiKeyService
         var apiKeys = await _repository.GetAllByUserIdAsync(userId);
         return apiKeys.Select(k => new ApiKeyDto
         {
+            Id = k.Id,
             Name = k.Name,
             CreatedAt = k.CreatedAt,
             Expiration = k.Expiration,

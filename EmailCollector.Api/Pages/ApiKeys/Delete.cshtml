@@ -1,0 +1,26 @@
+@page "{id:guid}"
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EmailCollector.Api.Pages.ApiKeys.DeleteModel
+@{
+    ViewData["Title"] = "Revoke API Key";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Are you sure you want to revoke this API Key?</h3>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Name</dt>
+        <dd class="col-sm-10">@Model.ApiKey.Name</dd>
+
+        <dt class="col-sm-2">Expiration</dt>
+        <dd class="col-sm-10">@(Model.ApiKey.Expiration?.ToString("g") ?? "Never")</dd>
+    </dl>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="ApiKey.Id" />
+    <button type="submit" class="btn btn-danger">Revoke</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>

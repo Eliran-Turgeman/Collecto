@@ -1,0 +1,32 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EmailCollector.Api.Pages.ApiKeys.CreateModel
+@{
+    ViewData["Title"] = "Create API Key";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Input.Name"></label>
+        <input asp-for="Input.Name" class="form-control" />
+        <span asp-validation-for="Input.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.Expiration"></label>
+        <input asp-for="Input.Expiration" class="form-control" type="date" />
+        <span asp-validation-for="Input.Expiration" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@if (Model.ApiKey != null)
+{
+    <div class="alert alert-success mt-3">
+        <h4>Your new API Key:</h4>
+        <p><strong>@Model.ApiKey.ApiKey</strong></p>
+        <p>Please copy and store this key securely. You won't be able to see it again.</p>
+    </div>
+}
