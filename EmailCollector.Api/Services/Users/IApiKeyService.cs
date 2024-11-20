@@ -8,4 +8,5 @@ public interface IApiKeyService
     Task<ApiKeyCreatedDto> GenerateApiKeyAsync(string userId, string name, DateTime? expiration = null);
     Task<EmailCollectorApiUser?> ValidateApiKeyAsync(string rawKey);
     Task RevokeApiKeyAsync(Guid id);
+    Task<IEnumerable<ApiKeyDto>> GetAllByUserIdAsync(Guid userId);
 }

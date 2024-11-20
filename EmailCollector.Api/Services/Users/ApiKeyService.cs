@@ -64,6 +64,18 @@ public class ApiKeyService : IApiKeyService
         }
     }
 
+    public async Task<IEnumerable<ApiKeyDto>> GetAllByUserIdAsync(Guid userId)
+    {
+        var apiKeys = await _repository.GetAllByUserIdAsync(userId);
+        return apiKeys.Select(k => new ApiKeyDto
+        {
+            Name = k.Name,
+            CreatedAt = k.CreatedAt,
+            Expiration = k.Expiration,
+            IsRevoked = k.IsRevoked
+        });
+    }
+
     private string HashApiKey(string apiKey)
     {
         using var sha256 = SHA256.Create();

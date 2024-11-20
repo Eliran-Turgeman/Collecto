@@ -1,5 +1,6 @@
 using EmailCollector.Api.Data;
 using EmailCollector.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Api.Repositories;
 
@@ -33,5 +34,12 @@ public class ApiKeyRepository : IApiKeyRepository
     {
         _context.ApiKeys.Remove(entity);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<ApiKey>> GetAllByUserIdAsync(Guid userId)
+    {
+        return await _context.ApiKeys
+            .Where(s => s.User.Id == userId.ToString())
+            .ToListAsync();
     }
 }
