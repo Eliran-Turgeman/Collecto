@@ -384,3 +384,5 @@ prometheus/
 swagger.json
 
 .idea/
+
+Push-CollectoImage.ps1
