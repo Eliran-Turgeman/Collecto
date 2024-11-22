@@ -55,6 +55,6 @@ public class CreateModel : PageModel
 
         ModelState.Clear(); // Clear the form
 
-        return RedirectToPage("./Index");
+        return Page();
     }
 }
