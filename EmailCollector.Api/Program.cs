@@ -102,8 +102,6 @@ builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<IEmailSignupRepository, EmailSignupRepository>();
 builder.Services.AddScoped<IEmailSignupService, EmailSignupService>();
 
-builder.Services.AddSingleton<IDnsLookupService, DnsLookupService>();
-
 builder.Services.AddScoped<ISmtpEmailSettingsRepository, SmtpEmailSettingsRepository>();
 builder.Services.AddScoped<IFormCorsSettingsRepository, FormCorsSettingsRepository>();
 

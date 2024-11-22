@@ -18,7 +18,6 @@ namespace EmailCollector.Api.Tests.Services
         private Mock<IEmailSignupRepository> _emailSignupRepositoryMock;
         private Mock<ISignupFormRepository> _signupFormRepositoryMock;
         private Mock<ILogger<EmailSignupService>> _loggerMock;
-        private Mock<IDnsLookupService> _dnsLookupServiceMock;
         private IEmailSignupService _emailSignupService;
         private Mock<IDistributedCache> _signupCandidatesCacheMock;
         private Mock<IAppEmailSender> _emailSenderMock;
@@ -31,20 +30,15 @@ namespace EmailCollector.Api.Tests.Services
             _emailSignupRepositoryMock = new Mock<IEmailSignupRepository>();
             _signupFormRepositoryMock = new Mock<ISignupFormRepository>();
             _loggerMock = new Mock<ILogger<EmailSignupService>>();
-            _dnsLookupServiceMock = new Mock<IDnsLookupService>();
             _signupCandidatesCacheMock = new Mock<IDistributedCache>();
             _emailSenderMock = new Mock<IAppEmailSender>();
             _featureTogglesServiceMock = new Mock<IFeatureToggles>();
             _smtpEmailSettingsRepositoryMock = new Mock<ISmtpEmailSettingsRepository>();
-
-            // Always return true for DNS lookup
-            _dnsLookupServiceMock.Setup(service => service.HasMxRecords(It.IsAny<string>())).Returns(true);
-
+            
             _emailSignupService = new EmailSignupService(
                 _emailSignupRepositoryMock.Object,
                 _signupFormRepositoryMock.Object,
                 _loggerMock.Object,
-                _dnsLookupServiceMock.Object,
                 _signupCandidatesCacheMock.Object,
                 _emailSenderMock.Object,
                 _featureTogglesServiceMock.Object,
@@ -122,7 +116,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_FormNotFound_ReturnsFormNotFoundResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@example.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync((SignupForm)null);
             var expectedResponse = new SignupResultDto
@@ -144,7 +138,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_FormNotActive_ReturnsFormNotActiveResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@example.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Inactive, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
@@ -167,7 +161,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_ValidEmailAndForm_EmailConfirmation_Disabled_ReturnsSuccessResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@example.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Active, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
@@ -190,7 +184,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_ValidEmailAndForm_EmailConfirmation_Enabled_ReturnsSuccessResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@example.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Active, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);

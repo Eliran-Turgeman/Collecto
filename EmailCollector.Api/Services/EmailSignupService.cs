@@ -7,6 +7,7 @@ using EmailCollector.Domain.Enums;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
 using System.Text.RegularExpressions;
+using EmailCollector.Api.Services.EmailValidations;
 
 namespace EmailCollector.Api.Services;
 
@@ -15,7 +16,6 @@ public class EmailSignupService : IEmailSignupService
     private readonly IEmailSignupRepository _emailSignupRepository;
     private readonly ISignupFormRepository _signupFormRepository;
     private readonly ILogger<EmailSignupService> _logger;
-    private readonly IDnsLookupService _dnsLookupService;
     private readonly IDistributedCache _signupCandidatesCache;
     private readonly IAppEmailSender _emailSender;
     private readonly IFeatureToggles _featureTogglesService;
@@ -28,7 +28,6 @@ public class EmailSignupService : IEmailSignupService
     public EmailSignupService(IEmailSignupRepository emailSignupRepository,
         ISignupFormRepository signupFormRepository,
         ILogger<EmailSignupService> logger,
-        IDnsLookupService dnsLookupService,
         IDistributedCache signupCandidatesCache,
         IAppEmailSender emailSender,
         IFeatureToggles featureTogglesService,
@@ -37,7 +36,6 @@ public class EmailSignupService : IEmailSignupService
         _emailSignupRepository = emailSignupRepository;
         _signupFormRepository = signupFormRepository;
         _logger = logger;
-        _dnsLookupService = dnsLookupService;
         _signupCandidatesCache = signupCandidatesCache;
         _emailSender = emailSender;
         _featureTogglesService = featureTogglesService;
@@ -225,7 +223,19 @@ public class EmailSignupService : IEmailSignupService
             return false;
         }
 
-        return _dnsLookupService.HasMxRecords(email);
+        var domain = email.Split('@')[1];
+        if (BurnerEmailDetector.IsBurnerDomain(domain))
+        {
+            _logger.LogInformation("Burner email address is not supported.");
+            return false;
+        }
+
+        if (!DnsLookup.HasMxRecords(domain))
+        {
+            _logger.LogInformation("domain is not active.");
+            return false;
+        }
+        return true;
     }
 
     public async Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(int formId, DateTime? startDate, DateTime? endDate)
