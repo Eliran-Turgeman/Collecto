@@ -1,13 +1,14 @@
+using EmailCollector.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Api.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
 {
-    private readonly DbContext _context;
+    private readonly EmailCollectorApiContext _context;
     private readonly DbSet<T> _dbSet;
 
-    public Repository(DbContext context)
+    public Repository(EmailCollectorApiContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();

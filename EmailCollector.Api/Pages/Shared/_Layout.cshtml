@@ -11,14 +11,14 @@
 
     <environment include="Development">
         <link rel="stylesheet" href="~/Identity/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/Identity/css/site.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
               integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous"
               asp-fallback-href="~/Identity/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/Identity/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
@@ -57,7 +57,7 @@
     </div>
     <footer class="footer border-top pl-3 text-muted">
         <div class="container">
-        &copy; 2024 - EmailCollector.Api
+        &copy; 2024 - Collecto
             @{
                 var foundPrivacy = Url.Page("/Privacy", new { area = "" });
             }

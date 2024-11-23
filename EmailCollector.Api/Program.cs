@@ -113,6 +113,8 @@ builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddMemoryCache();

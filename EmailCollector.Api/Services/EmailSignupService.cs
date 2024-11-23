@@ -86,6 +86,23 @@ public class EmailSignupService : IEmailSignupService
                 ErrorCode = EmailSignupErrorCode.FormNotFound,
             });
         }
+        
+        if (form.RecaptchaSettings != null && emailSignupDto.RecaptchaToken != null)
+        {
+            var isValidCaptcha = await RecaptchaValidation.ValidateAsync(
+                emailSignupDto.RecaptchaToken,
+                form.RecaptchaSettings.SecretKey);
+
+            if (!isValidCaptcha)
+            {
+                return await Task.FromResult(new SignupResultDto
+                {
+                    Success = false,
+                    Message = "Captcha validation failed.",
+                    ErrorCode = EmailSignupErrorCode.RecaptchaValidationFailed
+                });
+            }
+        }
 
         var allExistingSignups = await _emailSignupRepository.GetByFormIdAsync(form.Id);
         if (allExistingSignups.Any(s => s.EmailAddress == emailSignupDto.Email))

@@ -14,4 +14,6 @@ public class EmailSignupDto
     public required string Email { get; set; }
 
     public DateTime? SignupDate { get; set; }
+    
+    public string? RecaptchaToken { get; set; }
 }

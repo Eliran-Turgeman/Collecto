@@ -41,10 +41,6 @@ html {
   }
 }
 
-.container {
-  max-width: 960px;
-}
-
 .pricing-header {
   max-width: 700px;
 }
@@ -74,10 +70,9 @@ body {
   margin-bottom: 60px;
 }
 .footer {
-  position: absolute;
+  position: relative;
   bottom: 0;
   width: 100%;
-  overflow: scroll;
-  white-space: nowrap;
-  line-height: 60px;
+  border-top: 1px solid #ddd;
+  background-color: #ffffff;
 }

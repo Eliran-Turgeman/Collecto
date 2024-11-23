@@ -6,4 +6,5 @@ public enum EmailSignupErrorCode
     FormNotFound,
     FormNotActive,
     EmailAlreadySignedUp,
+    RecaptchaValidationFailed,
 }
