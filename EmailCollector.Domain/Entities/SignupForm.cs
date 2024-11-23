@@ -20,4 +20,6 @@ public class SignupForm
     public FormCorsSettings FormCorsSettings { get; set; }
 
     public FormEmailSettings FormEmailSettings { get; set; }
+    
+    public RecaptchaFormSettings RecaptchaSettings { get; set; }
 }

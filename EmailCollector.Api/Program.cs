@@ -96,6 +96,8 @@ builder.Services.AddProblemDetails(options =>
     };
 });
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddScoped<ISignupFormRepository, SignupFormRepository>();
 builder.Services.AddScoped<IFormService, FormService>();
 

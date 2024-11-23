@@ -14,18 +14,21 @@ public class ConfigurationsPageModel : PageModel
     private readonly IFormService _formService;
     private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
     private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
+    private readonly IRepository<RecaptchaFormSettings> _recaptchaSettingsRepository;
     private readonly SignInManager<EmailCollectorApiUser> _signInManager;
     private readonly UserManager<EmailCollectorApiUser> _userManager;
 
     public ConfigurationsPageModel(IFormService formService,
         ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
         IFormCorsSettingsRepository formCorsSettingsRepository,
+        IRepository<RecaptchaFormSettings> recaptchaSettingsRepository,
         SignInManager<EmailCollectorApiUser> signInManager,
         UserManager<EmailCollectorApiUser> userManager)
     {
         _formService = formService;
         _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
         _formCorsSettingsRepository = formCorsSettingsRepository;
+        _recaptchaSettingsRepository = recaptchaSettingsRepository;
         _signInManager = signInManager;
         _userManager = userManager;
     }
@@ -40,6 +43,10 @@ public class ConfigurationsPageModel : PageModel
 
     [BindProperty]
     public FormCorsSettings CorsSettings { get; set; }
+    
+    [BindProperty]
+    public RecaptchaFormSettings RecaptchaFormSettings { get; set; }
+    
     public string ErrorMessage { get; set; } = string.Empty;
 
 
@@ -127,6 +134,26 @@ public class ConfigurationsPageModel : PageModel
 
                 await _formCorsSettingsRepository.Update(existingCorsSettings);
             }
+            
+            var existingRecaptchaSettings = await _recaptchaSettingsRepository.GetByIdAsync(FormId.Value);
+            if (existingRecaptchaSettings == null)
+            {
+                // Create new settings
+                await _recaptchaSettingsRepository.AddAsync(new RecaptchaFormSettings
+                {
+                    FormId = FormId.Value,
+                    SiteKey = RecaptchaFormSettings.SiteKey,
+                    SecretKey = RecaptchaFormSettings.SecretKey
+                });
+            }
+            else
+            {
+                // Update existing settings
+                existingRecaptchaSettings.SiteKey = RecaptchaFormSettings.SiteKey;
+                existingRecaptchaSettings.SecretKey = RecaptchaFormSettings.SecretKey;
+                
+                await _recaptchaSettingsRepository.Update(existingRecaptchaSettings);
+            }
         }
 
         return Page();
@@ -138,6 +165,7 @@ public class ConfigurationsPageModel : PageModel
         {
             SmtpEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(FormId) ?? new SmtpEmailSettings();
             CorsSettings = await _formCorsSettingsRepository.GetByIdAsync(FormId) ?? new FormCorsSettings();
+            RecaptchaFormSettings = await _recaptchaSettingsRepository.GetByIdAsync(FormId) ?? new RecaptchaFormSettings();
         }
     }
 }

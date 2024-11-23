@@ -17,6 +17,7 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
     public DbSet<FormCorsSettings> FormCorsSettings { get; set; }
     public DbSet<SmtpEmailSettings> SmtpEmailSettings { get; set; }
     public DbSet<ApiKey> ApiKeys { get; set; }
+    public DbSet<RecaptchaFormSettings> RecaptchaFormSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,7 +34,8 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
         modelBuilder.Entity<SignupForm>()
             .HasOne(f => f.FormEmailSettings)
             .WithOne(e => e.Form)
-            .HasForeignKey<FormEmailSettings>(e => e.FormId);
+            .HasForeignKey<FormEmailSettings>(e => e.FormId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<FormCorsSettings>()
             .HasKey(c => c.FormId);
@@ -41,7 +43,8 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
         modelBuilder.Entity<SignupForm>()
             .HasOne(f => f.FormCorsSettings)
             .WithOne(c => c.Form)
-            .HasForeignKey<FormCorsSettings>(c => c.FormId);
+            .HasForeignKey<FormCorsSettings>(c => c.FormId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Configure table-per-concrete class (TPC) for email settings
         modelBuilder.Entity<SmtpEmailSettings>().ToTable("SmtpEmailSettings");
@@ -65,6 +68,15 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+        
+        modelBuilder.Entity<RecaptchaFormSettings>()
+            .HasKey(r => r.FormId);
+        
+        modelBuilder.Entity<SignupForm>()
+            .HasOne(f => f.RecaptchaSettings)
+            .WithOne(c => c.Form)
+            .HasForeignKey<RecaptchaFormSettings>(c => c.FormId)
+            .OnDelete(DeleteBehavior.Cascade);
         
         base.OnModelCreating(modelBuilder);
     }

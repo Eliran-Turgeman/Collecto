@@ -170,6 +170,24 @@ namespace EmailCollector.Api.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("EmailCollector.Domain.Entities.RecaptchaFormSettings", b =>
+                {
+                    b.Property<int>("FormId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SecretKey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SiteKey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FormId");
+
+                    b.ToTable("RecaptchaFormSettings");
+                });
+
             modelBuilder.Entity("EmailCollector.Domain.Entities.SignupForm", b =>
                 {
                     b.Property<int>("Id")
@@ -378,6 +396,17 @@ namespace EmailCollector.Api.Migrations
                     b.Navigation("Form");
                 });
 
+            modelBuilder.Entity("EmailCollector.Domain.Entities.RecaptchaFormSettings", b =>
+                {
+                    b.HasOne("EmailCollector.Domain.Entities.SignupForm", "Form")
+                        .WithOne("RecaptchaSettings")
+                        .HasForeignKey("EmailCollector.Domain.Entities.RecaptchaFormSettings", "FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -444,6 +473,9 @@ namespace EmailCollector.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("FormEmailSettings")
+                        .IsRequired();
+
+                    b.Navigation("RecaptchaSettings")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
