@@ -1,0 +1,67 @@
+@page
+@model EmailCollector.Api.Pages.Forms.Create
+
+@{
+    ViewData["Title"] = "Create Form";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Input.FormName">Name</label>
+        <input asp-for="Input.FormName" class="form-control" />
+        <span asp-validation-for="Input.FormName" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.EmailFrom">Email From</label>
+        <input asp-for="Input.EmailFrom" class="form-control" />
+        <span asp-validation-for="Input.EmailFrom" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.SmtpServer">SMTP Server</label>
+        <input asp-for="Input.SmtpServer" class="form-control" />
+        <span asp-validation-for="Input.SmtpServer" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.SmtpPort">SMTP Port</label>
+        <input asp-for="Input.SmtpPort" class="form-control" />
+        <span asp-validation-for="Input.SmtpPort" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.SmtpUsername">SMTP Username</label>
+        <input asp-for="Input.SmtpUsername" class="form-control" />
+        <span asp-validation-for="Input.SmtpUsername" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.SmtpPassword">SMTP Password</label>
+        <input asp-for="Input.SmtpPassword" class="form-control" />
+        <span asp-validation-for="Input.SmtpPassword" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.AllowedOrigins">Allowed Origins</label>
+        <input asp-for="Input.AllowedOrigins" class="form-control" />
+        <span asp-validation-for="Input.AllowedOrigins" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.CaptchaSiteKey">ReCaptcha v3 Site Key</label>
+        <input asp-for="Input.CaptchaSiteKey" class="form-control" />
+        <span asp-validation-for="Input.CaptchaSiteKey" class="text-danger"></span>
+    </div>
+    <br/>
+    <div class="form-group">
+        <label asp-for="Input.CaptchaSecretKey">ReCaptcha v3 Secret Key</label>
+        <input asp-for="Input.CaptchaSecretKey" class="form-control" />
+        <span asp-validation-for="Input.CaptchaSecretKey" class="text-danger"></span>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,38 @@
+@page
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EmailCollector.Api.Pages.Forms.Index
+@{
+    ViewData["Title"] = "Manage Forms";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Date Created</th>
+        <th>Subscribers</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var form in Model.Forms)
+    {
+        <tr>
+            <td>@form.FormName</td>
+            <td>@form.CreatedAt</td>
+            <td>@form.SubmissionsCount</td>
+            <td>
+                <a asp-page="./Delete" asp-route-id="@form.Id">Delete</a>
+                <a asp-page="/Configurations" asp-route-formId="@form.Id">Configure</a>
+                <a asp-page="/Dashboard" asp-route-formId="@form.Id">Dashboard</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<p>
+    <a asp-page="./Create" class="btn btn-primary">Create New Form</a>
+</p>

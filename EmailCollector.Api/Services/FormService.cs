@@ -1,6 +1,8 @@
-﻿using EmailCollector.Api.DTOs;
+﻿using Blazorise.Extensions;
+using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Api.Repositories;
+using EmailCollector.Domain.Enums;
 
 namespace EmailCollector.Api.Services;
 
@@ -11,14 +13,23 @@ public class FormService : IFormService
 {
     private readonly ISignupFormRepository _signupFormRepository;
     private readonly IEmailSignupRepository _emailSignupRepository;
+    private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
+    private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
+    private readonly IRepository<RecaptchaFormSettings> _recaptchaFormSettingsRepository;
     private readonly ILogger<FormService> _logger;
 
     public FormService(ISignupFormRepository signupFormRepository,
         IEmailSignupRepository emailSignupRepository,
+        ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
+        IFormCorsSettingsRepository formCorsSettingsRepository,
+        IRepository<RecaptchaFormSettings> recaptchaFormSettingsRepository,
         ILogger<FormService> logger)
     {
         _signupFormRepository = signupFormRepository;
         _emailSignupRepository = emailSignupRepository;
+        _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
+        _formCorsSettingsRepository = formCorsSettingsRepository;
+        _recaptchaFormSettingsRepository = recaptchaFormSettingsRepository;
         _logger = logger;
     }
 
@@ -40,6 +51,71 @@ public class FormService : IFormService
             Id = signupForm.Id,
             FormName = signupForm.FormName,
             Status = signupForm.Status,
+        };
+    }
+    
+    public async Task<FormDetailsDto> CreateFormAsync(Guid userId, ExtendedCreateFormDto extendedCreateFormDto)
+    {
+        var form = new SignupForm
+        {
+            FormName = extendedCreateFormDto.FormName,
+            CreatedBy = userId,
+            Status = extendedCreateFormDto.Status,
+        };
+        await _signupFormRepository.AddAsync(form);
+
+        if (!extendedCreateFormDto.EmailFrom.IsNullOrEmpty() &&
+            !extendedCreateFormDto.SmtpServer.IsNullOrEmpty() &&
+            extendedCreateFormDto.SmtpPort.HasValue &&
+            !extendedCreateFormDto.SmtpUsername.IsNullOrEmpty() &&
+            !extendedCreateFormDto.SmtpPassword.IsNullOrEmpty())
+        {
+            var smtpConfig = new SmtpEmailSettings
+            {
+                EmailMethod = EmailMethod.Smtp,
+                EmailFrom = extendedCreateFormDto.EmailFrom!,
+                Form = form,
+                FormId = form.Id,
+                SmtpServer = extendedCreateFormDto.SmtpServer!,
+                SmtpPort = extendedCreateFormDto.SmtpPort!.Value,
+                SmtpUsername = extendedCreateFormDto.SmtpUsername!,
+                SmtpPassword = extendedCreateFormDto.SmtpPassword!
+            };
+            
+            await _smtpEmailSettingsRepository.AddAsync(smtpConfig);
+        }
+
+        if (!extendedCreateFormDto.AllowedOrigins.IsNullOrEmpty())
+        {
+            var corsConfig = new FormCorsSettings
+            {
+                Form = form,
+                FormId = form.Id,
+                AllowedOrigins = extendedCreateFormDto.AllowedOrigins!,
+            };
+            
+            await _formCorsSettingsRepository.AddAsync(corsConfig);
+        }
+
+        if (!extendedCreateFormDto.CaptchaSiteKey.IsNullOrEmpty() &&
+            !extendedCreateFormDto.CaptchaSecretKey.IsNullOrEmpty())
+        {
+            var recaptchaConfig = new RecaptchaFormSettings
+            {
+                Form = form,
+                FormId = form.Id,
+                SiteKey = extendedCreateFormDto.CaptchaSiteKey!,
+                SecretKey = extendedCreateFormDto.CaptchaSecretKey!,
+            };
+            
+            await _recaptchaFormSettingsRepository.AddAsync(recaptchaConfig);
+        }
+        
+        return new FormDetailsDto
+        {
+            Id = form.Id,
+            FormName = form.FormName,
+            Status = form.Status,
         };
     }
 
@@ -76,11 +152,11 @@ public class FormService : IFormService
         };
     }
 
-    public async Task DeleteFormByIdAsync(int formId, Guid userId)
+    public async Task DeleteFormByIdAsync(int formId)
     {
         var form = await _signupFormRepository.GetByIdAsync(formId);
 
-        if (form == null || form.CreatedBy != userId)
+        if (form == null)
         {
             _logger.LogInformation($"Form {formId} not found or user is not the creator.");
             return;

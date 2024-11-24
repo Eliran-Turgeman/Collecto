@@ -1,45 +1,5 @@
 ﻿@page "/"
-@model EmailCollector.Api.Pages.HomeModel
 @{
     ViewData["Title"] = "Collecto";
 }
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <div class="alert alert-danger">
-        @Model.ErrorMessage
-    </div>
-}
-
-<h1>Your Forms</h1>
-    
-@if (Model.Forms != null && Model.Forms.Any())
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Form Name</th>
-                <th>Date Created</th>
-                <th>Subscribers</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var form in Model.Forms)
-            {
-                <tr>
-                    <td>@form.FormName</td>
-                    <td>@form.CreatedAt</td>
-                    <td>@form.SubmissionsCount</td>
-                    <td>
-                        <a asp-page="/Configurations" asp-route-formId="@form.Id" class="btn btn-primary">Configure</a>
-                        <a asp-page="/Dashboard" asp-route-formId="@form.Id" class="btn btn-secondary">Dashboard</a>
-                        <form method="post" asp-page-handler="DeleteForm">
-                            <input type="hidden" name="FormId" value="@form.Id" />
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('This action is permanent. Are you sure you want to delete this form?')">Delete</button>
-                        </form>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
