@@ -5,7 +5,10 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!.Split('@')[0]</a>
+    </li>
+    <li class="nav-item">
+        <a id="form" class="nav-link text-dark" asp-page="/Forms/Index" title="Forms">Forms</a>
     </li>
     <li class="nav-item">
         <a id="config" class="nav-link text-dark" asp-page="/configurations" title="Configurations">Configurations</a>
