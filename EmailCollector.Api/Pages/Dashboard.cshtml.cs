@@ -18,6 +18,8 @@ public class DashboardModel : PageModel
 
     [BindProperty(SupportsGet = true)]
     public string FormId { get; set; }
+    
+    public Guid UserId { get; set; }
 
     [BindProperty]
     public DateTime StartDate { get; set; } = DateTime.Now.AddMonths(-1);
@@ -56,9 +58,9 @@ public class DashboardModel : PageModel
         }
 
         var currentUser = await _userManager.GetUserAsync(User);
-        var userId = new Guid(currentUser?.Id!);
+        UserId = new Guid(currentUser?.Id!);
 
-        Forms = await _formService.GetFormsByUserAsync(userId);
+        Forms = await _formService.GetFormsByUserAsync(UserId);
 
         // Ensure SelectedFormId is valid
         if (string.IsNullOrEmpty(FormId) || !int.TryParse(FormId, out var intSelectedFormId))
@@ -67,21 +69,38 @@ public class DashboardModel : PageModel
             return Page();
         }
 
-        await LoadFormData(intSelectedFormId, userId);
+        await LoadFormData(intSelectedFormId, UserId);
 
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        return RedirectToPage(new { formId = FormId });
+        var currentUser = await _userManager.GetUserAsync(User);
+        UserId = new Guid(currentUser?.Id!);
+
+        Forms = await _formService.GetFormsByUserAsync(UserId);
+        
+        if (string.IsNullOrEmpty(FormId) || !int.TryParse(FormId, out var intSelectedFormId))
+        {
+            ErrorMessage = "Please select a form.";
+            return Page();
+        }
+        await LoadFormData(intSelectedFormId, UserId);
+        return Page();
     }
 
     private async Task LoadFormData(int formId, Guid userId)
     {
         var form = await _formService.GetFormByIdAsync(formId, userId);
+        if (form == null)
+        {
+            ErrorMessage = "Form not found.";
+            return;
+        }
+        
         var emailSignupsData = await _emailSignupService.GetSignupsPerDayAsync(formId, StartDate, EndDate);
-
+        
         TotalSubscribers = emailSignupsData.Sum(s => s.Count);
         FormStatus = form.Status.ToString();
         AvgSubsPerDay = emailSignupsData.Any() ? (TotalSubscribers / emailSignupsData.Count()) : 0;
