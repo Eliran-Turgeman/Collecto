@@ -12,6 +12,9 @@ public class FormServiceTests
 {
     private Mock<ISignupFormRepository> _signupFormRepositoryMock;
     private Mock<IEmailSignupRepository> _emailSignupRepositoryMock;
+    private Mock<ISmtpEmailSettingsRepository> _smtpSettingsRepositoryMock;
+    private Mock<IFormCorsSettingsRepository> _formCorsSettingsRepositoryMock;
+    private Mock<IRepository<RecaptchaFormSettings>> _recaptchaSettingsRepositoryMock;
     private Mock<ILogger<FormService>> _loggerMock;
     private IFormService _formService;
 
@@ -20,8 +23,16 @@ public class FormServiceTests
     {
         _signupFormRepositoryMock = new Mock<ISignupFormRepository>();
         _emailSignupRepositoryMock = new Mock<IEmailSignupRepository>();
+        _smtpSettingsRepositoryMock = new Mock<ISmtpEmailSettingsRepository>();
+        _formCorsSettingsRepositoryMock = new Mock<IFormCorsSettingsRepository>();
+        _recaptchaSettingsRepositoryMock = new Mock<IRepository<RecaptchaFormSettings>>();
         _loggerMock = new Mock<ILogger<FormService>>();
-        _formService = new FormService(_signupFormRepositoryMock.Object, _emailSignupRepositoryMock.Object, _loggerMock.Object);
+        _formService = new FormService(_signupFormRepositoryMock.Object,
+            _emailSignupRepositoryMock.Object,
+            _smtpSettingsRepositoryMock.Object,
+            _formCorsSettingsRepositoryMock.Object,
+            _recaptchaSettingsRepositoryMock.Object,
+            _loggerMock.Object);
     }
 
     [Test]
@@ -151,7 +162,7 @@ public class FormServiceTests
             .ReturnsAsync(form);
 
         // Act
-        await _formService.DeleteFormByIdAsync(formId, userId);
+        await _formService.DeleteFormByIdAsync(formId);
 
         // Assert
         _signupFormRepositoryMock.Verify(repo => repo.GetByIdAsync(formId), Times.Once);
@@ -163,12 +174,11 @@ public class FormServiceTests
     {
         // Arrange
         var formId = 1;
-        var userId = Guid.NewGuid();
         _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId))
             .ReturnsAsync((SignupForm)null);
 
         // Act
-        await _formService.DeleteFormByIdAsync(formId, userId);
+        await _formService.DeleteFormByIdAsync(formId);
 
         // Assert
         _signupFormRepositoryMock.Verify(repo => repo.GetByIdAsync(formId), Times.Once);
