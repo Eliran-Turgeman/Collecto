@@ -1,79 +1,327 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
-a {
-  color: #0077cc;
-}
-
-.form-control:focus {
-    border-color: #0077cc;
-    box-shadow: 0 0 0 0.2rem #0077cc;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.btn-link.nav-link:focus {
-  outline: black auto 1px;
-}
-
+﻿/* General Elements */
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
 }
 
-.pricing-header {
-  max-width: 700px;
-}
-
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #151515; /* Dark background */
+  color: #EEEEEE; /* Light text for contrast */
   padding-bottom: 60px;
 }
+
+/* Links */
+a {
+  color: #FF4D4D; /* Vibrant red links */
+  text-decoration: none;
+}
+
+a:hover {
+  color: #FF6E6E; /* Slightly lighter red on hover */
+}
+
+/* Forms */
+.form-control {
+  background-color: #222222;
+  border: 1px solid #444444;
+  color: #EEEEEE;
+}
+
+.form-control:focus {
+  border-color: #FF4D4D;
+  box-shadow: 0 0 0 0.2rem rgba(255, 77, 77, 0.25);
+}
+
+/* Buttons */
+button, .btn-primary {
+  background-color: #FF4D4D;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover, .btn-primary:hover {
+  background-color: #FF6E6E;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #222222;
+  border-bottom: 1px solid #444444;
+}
+
+.navbar-brand {
+  color: #FF4D4D;
+}
+
+.navbar-brand:hover {
+  color: #FF6E6E;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #FF4D4D;
+  border-color: #222222;
+}
+
+.btn-link.nav-link:focus {
+  outline: black auto 1px;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  background-color: #222222; /* Slightly lighter dark tone */
+  color: #FF4D4D; /* Dark red tone for emphasis */
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #FFD6D6; /* Subtle pinkish red for text */
+}
+
+.hero .buttons a {
+  text-decoration: none;
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #FF4D4D; /* Dark red buttons */
+  color: #151515;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.hero .buttons a:hover {
+  background-color: #FF6E6E; /* Lighter red on hover */
+}
+
+/* Features Section */
+.features {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 50px auto;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+.feature {
+  background-color: #222222;
+  padding: 20px;
+  border-radius: 8px;
+  flex: 1;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feature h2 {
+  color: #FF4D4D;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  color: #FFD6D6;
+}
+
+/* About Section */
+.about {
+  margin: 50px auto;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+.about img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.about h2 {
+  color: #FF4D4D;
+  margin-bottom: 20px;
+}
+
+.about p {
+  color: #FFD6D6;
+}
+
+/* Footer */
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 60px;
-  border-top: 1px solid #ddd;
-  background-color: #ffffff;
+  border-top: 1px solid #220000;
+  background-color: #222222;
+  text-align: center;
+  color: #FFD6D6;
+  line-height: 60px;
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #444444;
+  color: #EEEEEE;
+}
+
+.table thead th {
+  background-color: #222222;
+  color: #FF4D4D;
+}
+
+/* Cards */
+.card {
+  background-color: #222222;
+  color: #EEEEEE;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: #FF4D4D;
+  color: #151515;
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+/* Shadows */
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .1);
+}
+
+
+/* General Styles */
+.form-container {
+  background-color: #222222; /* Darker background for the form */
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.form-label {
+  font-weight: bold;
+  color: #FFD6D6;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control, .form-select {
+  background-color: #1E1E1E; /* Dark background */
+  color: #EEEEEE; /* Light text for readability */
+  border: 1px solid #444444; /* Subtle border for inputs */
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+.form-control::placeholder {
+  color: #BBBBBB; /* Light gray for placeholder */
+  font-style: italic; /* To distinguish placeholder from entered text */
+}
+
+.form-control::selection {
+  background-color: #FF4D4D; /* Red background for selected text */
+  color: #FFFFFF; /* White text for contrast */
+}
+
+.form-control:focus {
+  border-color: #FF4D4D; /* Highlighted border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(255, 77, 77, 0.25); /* Subtle glow */
+  background-color: #292929; /* Slightly lighter background on focus */
+  color: #FFFFFF; /* Ensure text remains highly visible */
+}
+
+.form-control[disabled] {
+  background-color: #2A2A2A; /* Subtle dark tone for disabled fields */
+  color: #888888; /* Muted text color */
+  border-color: #444444;
+}
+
+.form-control.is-invalid {
+  border-color: #FF4D4D;
+  background-color: #2A2A2A; /* Maintain dark tone */
+  color: #FFD6D6; /* Subtle red for error text */
+}
+
+.form-control.is-invalid:focus {
+  border-color: #FF6E6E;
+  box-shadow: 0 0 0 0.2rem rgba(255, 110, 110, 0.25);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.section-title {
+  font-weight: bold;
+  color: #FF4D4D;
+  margin-bottom: 1rem;
+}
+
+.stats-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stats-card {
+  background-color: #222222;
+  border-radius: 8px;
+  color: #EEEEEE;
+  text-align: center;
+}
+
+.stats-card .card-header {
+  font-weight: bold;
+  background-color: #FF4D4D;
+  color: #151515;
+}
+
+.stats-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #FFD6D6;
+}
+
+.divider {
+  border-top: 1px solid #444444;
+  margin: 2rem 0;
+}
+
+.chart-container {
+  padding: 1.5rem;
+  background-color: #222222;
+  border-radius: 8px;
+  margin-bottom: 2rem;
 }

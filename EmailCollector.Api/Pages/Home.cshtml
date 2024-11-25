@@ -1,5 +1,57 @@
 ﻿@page "/"
 @{
-    ViewData["Title"] = "Collecto";
+    ViewData["Title"] = "Welcome to Collecto";
 }
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+<!-- Hero Section -->
+<div class="hero">
+    <h1>Welcome to Collecto</h1>
+    <p>Self-hosted, production-ready form management made simple.</p>
+    <div class="buttons">
+        <a href="/Identity/Account/Register">Create Your First Form</a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features">
+    <div class="feature">
+        <h2>API-First</h2>
+        <p>Leverage a powerful API to manage your forms with flexibility and ease.</p>
+    </div>
+    <div class="feature">
+        <h2>Spam Protection</h2>
+        <p>Advanced spam detection and email validation to keep your forms clean.</p>
+    </div>
+    <div class="feature">
+        <h2>Full Control</h2>
+        <p>Own your data, customize forms, and integrate seamlessly into your workflow.</p>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="about">
+    <h2>Why Choose Collecto?</h2>
+    <p>
+        <strong>Collecto</strong> is an <strong>open-source</strong>, self-hosted email collection solution built for developers who care about <strong>control</strong>, <strong>scalability</strong>, and <strong>security</strong>.
+        <br><br>
+        In a world where hosted services often put your data at risk, Collecto provides a solution that you <strong>own and manage</strong>.
+        <br><br>
+        Whether you're building a high-traffic product or a small project, Collecto is <strong>production-ready</strong> out of the box, capable of handling everything from basic email signup forms to complex data workflows. Built with the backend developer in mind, Collecto defends against <strong>spam</strong>, <strong>DDoS attacks</strong>, and gives you the <strong>flexibility</strong> to integrate email signup functionality into any part of your stack.
+    </p>
+    
+    <p>
+        At Collecto, we believe in empowering developers with tools that offer full control over their forms.
+        Forget unnecessary limitations or hidden fees—just powerful, scalable form management that grows with you.
+    </p>
+</div>
+</body>
+</html>

@@ -11,11 +11,11 @@
     </div>
 }
 
-<!-- Form selection -->
-<form method="post" class="mb-4 p-4 shadow-sm bg-white rounded">
-    <div class="form-group mb-3">
-        <label for="formSelect" class="form-label fw-bold">Select Form</label>
-        <select id="formSelect" name="FormId" class="form-select form-control-lg">
+<!-- Form Selection -->
+<form method="post" class="form-container">
+    <div class="form-group">
+        <label for="formSelect" class="form-label">Select Form</label>
+        <select id="formSelect" name="FormId" class="form-select">
             <option value="">-- Select Form --</option>
             @foreach (var form in Model.Forms)
             {
@@ -26,63 +26,60 @@
         </select>
     </div>
 
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label for="startDate" class="form-label fw-bold">Start Date</label>
-            <input type="date" id="startDate" name="StartDate" class="form-control form-control-lg" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+    <div class="form-row">
+        <div class="form-group">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" id="startDate" name="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
         </div>
-        <div class="col-md-6">
-            <label for="endDate" class="form-label fw-bold">End Date</label>
-            <input type="date" id="endDate" name="EndDate" class="form-control form-control-lg" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+        <div class="form-group">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" id="endDate" name="EndDate" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary btn-lg mt-3 w-100">Update</button>
+    <button type="submit" class="btn btn-primary btn-block">Update</button>
 </form>
 
 <!-- Statistics Section -->
-<h3 class="fw-bold">Form Statistics</h3>
-<div class="row g-3 mb-5">
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-header fw-bold text-center">Total Subscribers</div>
-            <div class="card-body text-center">
-                <h5 class="display-6">@Model.TotalSubscribers</h5>
+<h3 class="section-title">Form Statistics</h3>
+<div class="row stats-section">
+    <div class="col">
+        <div class="card stats-card">
+            <div class="card-header">Total Subscribers</div>
+            <div class="card-body">
+                <span class="stats-value">@Model.TotalSubscribers</span>
             </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-header fw-bold text-center">Form Status</div>
-            <div class="card-body text-center">
-                <h5 class="display-6">@Model.FormStatus</h5>
+    <div class="col">
+        <div class="card stats-card">
+            <div class="card-header">Form Status</div>
+            <div class="card-body">
+                <span class="stats-value">@Model.FormStatus</span>
             </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-header fw-bold text-center">Average Subs Per Day</div>
-            <div class="card-body text-center">
-                <h5 class="display-6">@Model.AvgSubsPerDay</h5>
+    <div class="col">
+        <div class="card stats-card">
+            <div class="card-header">Average Subs Per Day</div>
+            <div class="card-body">
+                <span class="stats-value">@Model.AvgSubsPerDay</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Spacing Between Statistics and Graphs -->
-<hr class="my-5" />
+<!-- Charts Section -->
+<hr class="divider" />
 
-<!-- Chart Container -->
-<h3 class="fw-bold mb-3">Daily Subscriptions</h3>
-<div class="p-4 shadow-sm bg-white rounded mb-5">
-    <canvas id="subsChart" width="400" height="200"></canvas>
+<h3 class="section-title">Daily Subscriptions</h3>
+<div class="chart-container">
+    <canvas id="subsChart"></canvas>
 </div>
 
-<h3 class="fw-bold mb-3">Cumulative Subscriptions</h3>
-<div class="p-4 shadow-sm bg-white rounded mb-5">
-    <canvas id="cumulativeSubsChart" width="400" height="200"></canvas>
+<h3 class="section-title">Cumulative Subscriptions</h3>
+<div class="chart-container">
+    <canvas id="cumulativeSubsChart"></canvas>
 </div>
 
 @section Scripts {
@@ -105,8 +102,8 @@
                     datasets: [{
                         label: 'Daily Subscriptions',
                         data: counts,
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: '#4793AF',
+                        backgroundColor: 'rgba(71, 147, 175, 0.2)',
                         fill: true,
                     }]
                 }
@@ -121,8 +118,8 @@
                     datasets: [{
                         label: 'Cumulative Subscriptions',
                         data: cumulativeCounts,
-                        borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: '#FF4D4D',
+                        backgroundColor: 'rgba(255, 77, 77, 0.2)',
                         fill: true,
                     }]
                 }
@@ -130,6 +127,6 @@
         }
     </script>
 
-    <!-- Add Chart.js for charting -->
+    <!-- Add Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 }
