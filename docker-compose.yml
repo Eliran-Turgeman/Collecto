@@ -5,7 +5,7 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - ./redis-data:/data
     networks:
@@ -30,6 +30,8 @@ services:
       - EmailConfiguration:Password=${EMAIL_PASSWORD?Mandatory environment variable, check your .env file}
       - ValidCorsOrigins=${VALID_CORS_ORIGINS}
       - COLLECTO_DOMAIN=${COLLECTO_DOMAIN}
+    env_file:
+      - .env
     networks:
       - email-collector-net
 
