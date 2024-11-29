@@ -66,9 +66,9 @@ public class EmailSender : IAppEmailSender, IEmailSender
                 client.Authenticate(userName, password);
                 client.Send(mailMessage);
             }
-            catch
+            catch(Exception ex)
             {
-                _logger.LogError("Failed to send email.");
+                _logger.LogError("Failed to send email. Error={}", ex.Message);
             }
             finally
             {

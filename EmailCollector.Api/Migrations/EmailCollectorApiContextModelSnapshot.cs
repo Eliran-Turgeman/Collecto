@@ -176,11 +176,9 @@ namespace EmailCollector.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SecretKey")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SiteKey")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("FormId");
