@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Domain", "Em
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailCollector.Tests", "EmailCollector.Tests\EmailCollector.Tests.csproj", "{ED099161-7E0E-4A4A-92FC-527CFADB4A50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailCollector.Payments", "EmailCollector.Payments\EmailCollector.Payments.csproj", "{01CF7B0C-70EB-4C4F-9096-14D040CB17A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED099161-7E0E-4A4A-92FC-527CFADB4A50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01CF7B0C-70EB-4C4F-9096-14D040CB17A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01CF7B0C-70EB-4C4F-9096-14D040CB17A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01CF7B0C-70EB-4C4F-9096-14D040CB17A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01CF7B0C-70EB-4C4F-9096-14D040CB17A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
