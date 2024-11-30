@@ -7,7 +7,7 @@
 Collecto is an open-source, self-hosted, lightweight, email collection service.  
 Docs available at [https://www.16elt.com/Collecto/](https://www.16elt.com/Collecto/)
 
-Latest Demo (Nov 24) : [https://youtu.be/H6m5f3WL2x0?si=GwT1bT6upA_EVIjk](https://youtu.be/H6m5f3WL2x0?si=GwT1bT6upA_EVIjk)
+Latest Demo (Nov 24) : [https://youtu.be/f2ybL9Grm5k](https://youtu.be/f2ybL9Grm5k)
 
 ## Installation
 
