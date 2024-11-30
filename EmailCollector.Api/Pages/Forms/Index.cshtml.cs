@@ -51,15 +51,15 @@ public class Index : PageModel
         Console.WriteLine("Selected Form IDs: " + string.Join(", ", selectedFormIds));
         var exportedFile = await _formService.ExportFormsAsync(selectedFormIds, Format);
 
-        var contentType = Format.ToString().ToLower() switch
+        var contentType = Format switch
         {
-            "csv" => "text/csv",
-            "json" => "application/json",
+            ExportFormat.Csv => "text/csv",
+            ExportFormat.Json => "application/json",
             _ => "application/octet-stream"
         };
 
-        var fileName = $"forms_export.{Format}";
-        //Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileName}\"");
+        var fileName = $"collecto_export.{Format.ToString().ToLower()}";
+        Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{fileName}\"");
         return File(exportedFile, contentType);
     }
 }

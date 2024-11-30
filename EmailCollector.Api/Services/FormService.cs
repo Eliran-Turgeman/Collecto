@@ -227,37 +227,33 @@ public class FormService : IFormService
     
     public async Task<byte[]> ExportFormsAsync(IEnumerable<int> formIds, ExportFormat format)
     {
-        var forms = await GetFormsSummaryDetailsAsync(formIds);
-        _logger.LogInformation($"Found {forms.Count()} forms.");
-        var formSummaryDetailsDtos = forms.ToList();
-        if (formSummaryDetailsDtos.IsNullOrEmpty())
+        var forms = await GetFormsSubmissionsData(formIds);
+        var formData = forms.ToList();
+        if (formData.IsNullOrEmpty())
         {
-            _logger.LogInformation($"No forms found.");
+            _logger.LogInformation($"No available forms to export.");
             return [];
         }
-        return await _exportService.ExportAsync(formSummaryDetailsDtos, format);
+        return await _exportService.ExportAsync(formData, format);
     }
     
     
-    private async Task<IEnumerable<FormSummaryDetailsDto>> GetFormsSummaryDetailsAsync(IEnumerable<int> formIds)
+    private async Task<IEnumerable<FormSubmissionsDataDto>> GetFormsSubmissionsData(IEnumerable<int> formIds)
     {
-        _logger.LogInformation($"Looking for {formIds.Count()} forms.");
         var forms = await _signupFormRepository.GetByIds(formIds);
-        _logger.LogInformation($"Found {forms.Count()} forms.");
         var signupForms = forms.ToList();
 
-        var formSummaryDetails = new List<FormSummaryDetailsDto>();
+        var formSummaryDetails = new List<FormSubmissionsDataDto>();
 
         foreach (var form in signupForms)
         {
-            var signupCount = await _emailSignupRepository.GetSignupCountByFormId(form.Id);
+            var signups = await _emailSignupRepository.GetByFormIdAsync(form.Id);
 
-            formSummaryDetails.Add(new FormSummaryDetailsDto
+            formSummaryDetails.Add(new FormSubmissionsDataDto
             {
                 Id = form.Id,
                 FormName = form.FormName,
-                SubmissionsCount = signupCount,
-                CreatedAt = form.CreatedAt,
+                Emails = signups.Select(s=>s.EmailAddress).ToList(),
             });
         }
 

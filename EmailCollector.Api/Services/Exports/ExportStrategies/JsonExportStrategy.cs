@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace EmailCollector.Api.Services.Exports.ExportStrategies;
 
@@ -19,6 +20,12 @@ public class JsonExportStrategy : IExportFormatStrategy
             return obj;
         });
 
-        return Encoding.UTF8.GetBytes(JsonSerializer.Serialize(exportData));
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true, // Optional: Makes the JSON more readable
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping // Avoids escaping characters like '+'
+        };
+
+        return Encoding.UTF8.GetBytes(JsonSerializer.Serialize(exportData, options));
     }
 }
