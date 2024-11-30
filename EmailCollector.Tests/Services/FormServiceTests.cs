@@ -3,6 +3,7 @@ using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
 using EmailCollector.Api.Repositories;
+using EmailCollector.Api.Services.Exports;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -15,6 +16,7 @@ public class FormServiceTests
     private Mock<ISmtpEmailSettingsRepository> _smtpSettingsRepositoryMock;
     private Mock<IFormCorsSettingsRepository> _formCorsSettingsRepositoryMock;
     private Mock<IRepository<RecaptchaFormSettings>> _recaptchaSettingsRepositoryMock;
+    private Mock<IExportService> _exportServiceMock;
     private Mock<ILogger<FormService>> _loggerMock;
     private IFormService _formService;
 
@@ -26,12 +28,14 @@ public class FormServiceTests
         _smtpSettingsRepositoryMock = new Mock<ISmtpEmailSettingsRepository>();
         _formCorsSettingsRepositoryMock = new Mock<IFormCorsSettingsRepository>();
         _recaptchaSettingsRepositoryMock = new Mock<IRepository<RecaptchaFormSettings>>();
+        _exportServiceMock = new Mock<IExportService>();
         _loggerMock = new Mock<ILogger<FormService>>();
         _formService = new FormService(_signupFormRepositoryMock.Object,
             _emailSignupRepositoryMock.Object,
             _smtpSettingsRepositoryMock.Object,
             _formCorsSettingsRepositoryMock.Object,
             _recaptchaSettingsRepositoryMock.Object,
+            _exportServiceMock.Object,
             _loggerMock.Object);
     }
 

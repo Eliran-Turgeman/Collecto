@@ -1,4 +1,5 @@
 ﻿using EmailCollector.Api.DTOs;
+using EmailCollector.Api.Services.Exports;
 
 namespace EmailCollector.Api.Services;
 
@@ -18,5 +19,7 @@ public interface IFormService
 
     Task<FormDetailsDto?> UpdateFormAsync(int formId, Guid userId, CreateFormDto createFormDto);
 
-    Task<IEnumerable<FormSummaryDetailsDto?>> GetFormsSummaryDetailsAsync(Guid userId);
+    Task<IEnumerable<FormSummaryDetailsDto>> GetFormsSummaryDetailsAsync(Guid userId);
+
+    Task<byte[]> ExportFormsAsync(IEnumerable<int> formIds, ExportFormat format);
 }

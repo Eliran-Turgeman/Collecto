@@ -2,6 +2,7 @@
 using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Api.Repositories;
+using EmailCollector.Api.Services.Exports;
 using EmailCollector.Domain.Enums;
 
 namespace EmailCollector.Api.Services;
@@ -16,6 +17,7 @@ public class FormService : IFormService
     private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
     private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
     private readonly IRepository<RecaptchaFormSettings> _recaptchaFormSettingsRepository;
+    private readonly IExportService _exportService;
     private readonly ILogger<FormService> _logger;
 
     public FormService(ISignupFormRepository signupFormRepository,
@@ -23,6 +25,7 @@ public class FormService : IFormService
         ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
         IFormCorsSettingsRepository formCorsSettingsRepository,
         IRepository<RecaptchaFormSettings> recaptchaFormSettingsRepository,
+        IExportService exportService,
         ILogger<FormService> logger)
     {
         _signupFormRepository = signupFormRepository;
@@ -30,6 +33,7 @@ public class FormService : IFormService
         _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
         _formCorsSettingsRepository = formCorsSettingsRepository;
         _recaptchaFormSettingsRepository = recaptchaFormSettingsRepository;
+        _exportService = exportService;
         _logger = logger;
     }
 
@@ -196,15 +200,55 @@ public class FormService : IFormService
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<FormSummaryDetailsDto?>> GetFormsSummaryDetailsAsync(Guid userId)
+    public async Task<IEnumerable<FormSummaryDetailsDto>> GetFormsSummaryDetailsAsync(Guid userId)
     {
         var forms = await _signupFormRepository.GetByUserIdAsync(userId);
 
-        _logger.LogInformation($"Found {forms.Count()} forms for user {userId}.");
+        var signupForms = forms.ToList();
+        _logger.LogInformation($"Found {signupForms.Count()} forms for user {userId}.");
 
         var formSummaryDetails = new List<FormSummaryDetailsDto>();
 
-        foreach (var form in forms)
+        foreach (var form in signupForms)
+        {
+            var signupCount = await _emailSignupRepository.GetSignupCountByFormId(form.Id);
+
+            formSummaryDetails.Add(new FormSummaryDetailsDto
+            {
+                Id = form.Id,
+                FormName = form.FormName,
+                SubmissionsCount = signupCount,
+                CreatedAt = form.CreatedAt,
+            });
+        }
+
+        return formSummaryDetails;
+    }
+    
+    public async Task<byte[]> ExportFormsAsync(IEnumerable<int> formIds, ExportFormat format)
+    {
+        var forms = await GetFormsSummaryDetailsAsync(formIds);
+        _logger.LogInformation($"Found {forms.Count()} forms.");
+        var formSummaryDetailsDtos = forms.ToList();
+        if (formSummaryDetailsDtos.IsNullOrEmpty())
+        {
+            _logger.LogInformation($"No forms found.");
+            return [];
+        }
+        return await _exportService.ExportAsync(formSummaryDetailsDtos, format);
+    }
+    
+    
+    private async Task<IEnumerable<FormSummaryDetailsDto>> GetFormsSummaryDetailsAsync(IEnumerable<int> formIds)
+    {
+        _logger.LogInformation($"Looking for {formIds.Count()} forms.");
+        var forms = await _signupFormRepository.GetByIds(formIds);
+        _logger.LogInformation($"Found {forms.Count()} forms.");
+        var signupForms = forms.ToList();
+
+        var formSummaryDetails = new List<FormSummaryDetailsDto>();
+
+        foreach (var form in signupForms)
         {
             var signupCount = await _emailSignupRepository.GetSignupCountByFormId(form.Id);
 

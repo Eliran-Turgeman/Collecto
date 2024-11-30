@@ -14,6 +14,8 @@ using AspNetCoreRateLimit;
 using EmailCollector.Api.Authentication;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
+using EmailCollector.Api.Services.Exports;
+using EmailCollector.Api.Services.Exports.ExportStrategies;
 using EmailCollector.Api.Services.Users;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Http.Features;
@@ -109,6 +111,12 @@ builder.Services.AddScoped<IFormCorsSettingsRepository, FormCorsSettingsReposito
 
 builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
+
+builder.Services.AddScoped(typeof(ExportMetadataResolver));
+builder.Services.AddScoped<IExportService, ExportService>();
+builder.Services.AddScoped<IExportFormatStrategy, CsvExportStrategy>();
+builder.Services.AddScoped<IExportFormatStrategy, JsonExportStrategy>();
+
 
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));

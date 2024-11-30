@@ -1,5 +1,4 @@
 @page
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EmailCollector.Api.Pages.Forms.Index
 @{
     ViewData["Title"] = "Manage Forms";
@@ -7,32 +6,67 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Date Created</th>
-        <th>Subscribers</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var form in Model.Forms)
-    {
+<form method="post" asp-page-handler="Export">
+    <table class="table">
+        <thead>
         <tr>
-            <td>@form.FormName</td>
-            <td>@form.CreatedAt</td>
-            <td>@form.SubmissionsCount</td>
-            <td>
-                <a asp-page="./Delete" asp-route-id="@form.Id">Delete</a>
-                <a asp-page="/Configurations" asp-route-formId="@form.Id">Configure</a>
-                <a asp-page="/Dashboard" asp-route-formId="@form.Id">Dashboard</a>
-            </td>
+            <th>
+                <input type="checkbox" id="selectAll" onclick="ToggleSelectAll()" />
+            </th>
+            <th>Name</th>
+            <th>Date Created</th>
+            <th>Subscribers</th>
+            <th>Actions</th>
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.FormCheckboxes.Count; i++)
+        {
+            var form = Model.FormCheckboxes.ElementAt(i);
+            <tr>
+                <td>
+                    <input type="checkbox" name="FormCheckboxes[@i].Value" 
+                           value="true" 
+                           @(form.Value ? "checked" : "") />
+                    <input type="hidden" name="FormCheckboxes[@i].Key" value="@form.Key" />
+                </td>
+                <td>@Model.Forms.First(f => f.Id == form.Key).FormName</td>
+                <td>@Model.Forms.First(f => f.Id == form.Key).CreatedAt</td>
+                <td>@Model.Forms.First(f => f.Id == form.Key).SubmissionsCount</td>
+                <td>
+                    <a asp-page="./Delete" asp-route-id="@form.Key">Delete</a>
+                    <a asp-page="/Configurations" asp-route-formId="@form.Key">Configure</a>
+                    <a asp-page="/Dashboard" asp-route-formId="@form.Key">Dashboard</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 
+    <div class="export-section">
+        <label for="exportFormat">Export Format:</label>
+        <select id="exportFormat" name="Format" class="form-select">
+            <option value="csv" selected>CSV</option>
+            <option value="json">JSON</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Export</button>
+    </div>
+</form>
+
+<br/>
+<br/>
 <p>
     <a asp-page="./Create" class="btn btn-primary">Create New Form</a>
 </p>
+
+@section Scripts {
+    <script>
+        function ToggleSelectAll() {
+            const selectAllCheckbox = document.getElementById("selectAll");
+            const checkboxes = document.querySelectorAll("input[type='checkbox'][name^='FormCheckboxes']");
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        }
+    </script>
+}

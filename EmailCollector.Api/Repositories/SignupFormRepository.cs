@@ -28,6 +28,13 @@ public class SignupFormRepository : ISignupFormRepository
             .FirstOrDefaultAsync(form => form.Id == formIdentifier); ;
     }
 
+    public async Task<IEnumerable<SignupForm>> GetByIds(IEnumerable<int> formIds)
+    {
+        return await _dbContext.SignupForms
+            .Where(form => formIds.Contains(form.Id))
+            .ToListAsync();
+    }
+
     public async Task<SignupForm?> GetByIdAsync(object id)
     {
         return await _dbContext.SignupForms.FindAsync(id);
