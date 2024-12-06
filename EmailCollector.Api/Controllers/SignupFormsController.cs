@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using EmailCollector.Api.Services;
+using EmailCollector.Api.Services.Exports;
 
 namespace EmailCollector.Api.Controllers;
 
@@ -214,5 +215,43 @@ public class SignupFormsController : ControllerBase
         _logger.LogInformation($"Updated signup form {id}.");
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Export all forms for the current user to desired format.
+    /// Supporting CSV and JSON formats.
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("export")]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
+    public async Task<IActionResult> ExportForms([FromBody] ExportFormat? exportFormat)
+    {
+        _logger.LogInformation($"Exporting forms.");
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid or missing user identifier");
+        }
+        var forms = await _formService.GetFormsByUserAsync(userId);
+        var formIds = forms.Select(f => f.Id).ToList();
+
+        var format = exportFormat ?? ExportFormat.Csv;
+
+        var fileBytes = await _formService.ExportFormsAsync(formIds, format);
+        if (fileBytes == null || fileBytes.Length == 0)
+        {
+            _logger.LogInformation("No forms were available for export or result was empty.");
+            return NotFound("No forms found to export.");
+        }
+
+        string contentType = "application/octet-stream";
+        string fileName = exportFormat switch
+        {
+            ExportFormat.Csv => "collecto_export.csv",
+            ExportFormat.Json => "collecto_export.xlsx",
+            _ => "collecto_export.txt",
+        };
+
+        return File(fileBytes, contentType, fileName);
     }
 }
