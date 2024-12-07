@@ -3,11 +3,20 @@
   Collecto
 </h1>
 
+![Docker Pulls](https://img.shields.io/docker/pulls/elirant/collecto)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Eliran-Turgeman/Collecto)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Eliran-Turgeman/Collecto/test.yml)
 
-Collecto is an open-source, self-hosted, lightweight, email collection service.  
+
+**Collecto** is an open-source, self-hosted, lightweight email collection service designed to securely gather and manage your audience's email addresses. With Collecto, you can integrate email capture forms into your websites, apps, or landing pages without relying on external SaaS platforms. Our goal is to give you full control, transparency, and ease of use right from day one.  
+
 Docs available at [https://www.16elt.com/Collecto/](https://www.16elt.com/Collecto/)
 
-Latest Demo (Nov 24) : [https://youtu.be/f2ybL9Grm5k](https://youtu.be/f2ybL9Grm5k)
+## Demo (Nov 24)
+
+https://github.com/user-attachments/assets/6c74680b-e4d4-43f0-965d-419cd78ac671
+
+
 
 ## Installation
 
