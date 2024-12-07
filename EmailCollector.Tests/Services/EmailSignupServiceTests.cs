@@ -49,7 +49,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task GetSignupsByFormIdAsync_FormNotFound_ReturnsNull()
         {
             // Arrange
-            int formId = 1;
+            Guid formId = Guid.NewGuid();
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId))
                 .ReturnsAsync((SignupForm)null);
 
@@ -64,7 +64,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task GetSignupsByFormIdAsync_FormFound_ReturnsSignups()
         {
             // Arrange
-            int formId = 1;
+            Guid formId = Guid.NewGuid();
             Guid userId = Guid.NewGuid();
             var form = new SignupForm { FormName = "test", CreatedBy = userId };
             var signups = new List<EmailSignup>
@@ -96,7 +96,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_InvalidEmail_ReturnsInvalidEmailResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "invalidemail", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "invalidemail", FormId = Guid.NewGuid() };
             var expectedResponse = new SignupResultDto
             {
                 Success = false,
@@ -116,7 +116,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_FormNotFound_ReturnsFormNotFoundResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync((SignupForm)null);
             var expectedResponse = new SignupResultDto
@@ -138,7 +138,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_FormNotActive_ReturnsFormNotActiveResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = Guid.NewGuid() };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Inactive, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
@@ -161,7 +161,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_ValidEmailAndForm_EmailConfirmation_Disabled_ReturnsSuccessResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = Guid.NewGuid() };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Active, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
@@ -184,7 +184,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task SubmitEmailAsync_ValidEmailAndForm_EmailConfirmation_Enabled_ReturnsSuccessResult()
         {
             // Arrange
-            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = 1 };
+            var emailSignupDto = new EmailSignupDto { Email = "test@gmail.com", FormId = Guid.NewGuid() };
             var form = new SignupForm { FormName = "test", Status = FormStatus.Active, CreatedBy = Guid.NewGuid() };
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(emailSignupDto.FormId))
                 .ReturnsAsync(form);
@@ -246,9 +246,9 @@ namespace EmailCollector.Api.Tests.Services
         public async Task ConfirmEmailSignupAsync_EmailAlreadyConfirmed_ReturnsEmailAlreadyConfirmedResult()
         {
             // Arrange
+            var formId = Guid.NewGuid();
             var confirmationToken = "validToken";
-            var encodedSignupCandidate = Encoding.UTF8.GetBytes("formId:1#signup:test@example.com");
-            var formId = 1;
+            var encodedSignupCandidate = Encoding.UTF8.GetBytes($"formId:{formId}#signup:test@example.com");
             var email = "test@example.com";
             var existingSignups = new List<EmailSignup>
             {
@@ -270,9 +270,9 @@ namespace EmailCollector.Api.Tests.Services
         public async Task ConfirmEmailSignupAsync_ValidToken_AddsEmailSignupAndRemovesTokenAndReturnsSuccessResult()
         {
             // Arrange
+            var formId = Guid.NewGuid();
             var confirmationToken = "validToken";
-            var encodedSignupCandidate = Encoding.UTF8.GetBytes("formId:1#signup:test@example.com");
-            var formId = 1;
+            var encodedSignupCandidate = Encoding.UTF8.GetBytes($"formId:{formId}#signup:test@example.com");
             var email = "test@example.com";
             var form = new SignupForm { Id = formId, FormName = "test", CreatedBy = Guid.NewGuid() };
             _signupCandidatesCacheMock.Setup(cache => cache.GetAsync(confirmationToken, CancellationToken.None)).ReturnsAsync(encodedSignupCandidate);
@@ -294,7 +294,7 @@ namespace EmailCollector.Api.Tests.Services
         public async Task GetSignupsPerDayAsync_FormNotFound_ThrowsArgumentException()
         {
             // Arrange
-            var formId = 1;
+            var formId = Guid.NewGuid();
             var startDate = DateTime.Now.Date;
             var endDate = DateTime.Now.Date;
             _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId)).ReturnsAsync((SignupForm)null);

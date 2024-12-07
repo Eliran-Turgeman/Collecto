@@ -68,7 +68,7 @@ public class SignupFormsController : ControllerBase
     [HttpGet("{id}")]
     [Produces("application/json")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<ActionResult<SignupForm>> GetSignupForm(int id)
+    public async Task<ActionResult<SignupForm>> GetSignupForm(Guid id)
     {
         _logger.LogInformation($"Getting signup form {id}.");
         
@@ -147,7 +147,7 @@ public class SignupFormsController : ControllerBase
     /// <response code="400">If the user is not authenticated.</response>
     [HttpDelete("{id}")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> DeleteSignupForm(int id)
+    public async Task<IActionResult> DeleteSignupForm(Guid id)
     {
         _logger.LogInformation($"Deleting signup form {id}.");
 
@@ -195,7 +195,7 @@ public class SignupFormsController : ControllerBase
     /// </remarks>
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> PutSignupForm(int id, CreateFormDto signupForm)
+    public async Task<IActionResult> PutSignupForm(Guid id, CreateFormDto signupForm)
     {
         _logger.LogInformation($"Updating signup form {id}.");
 

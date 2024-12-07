@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmailCollector.Api.Migrations
 {
     [DbContext(typeof(EmailCollectorApiContext))]
-    [Migration("20241129060330_NullableRecaptcha")]
-    partial class NullableRecaptcha
+    [Migration("20241207054049_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,9 +120,9 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("EmailCollector.Domain.Entities.EmailSignup", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
@@ -131,8 +131,8 @@ namespace EmailCollector.Api.Migrations
                     b.Property<DateTime>("SignupDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("SignupFormId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("SignupFormId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -141,8 +141,8 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("EmailCollector.Domain.Entities.FormCorsSettings", b =>
                 {
-                    b.Property<int>("FormId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("FormId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AllowedOrigins")
                         .IsRequired()
@@ -155,8 +155,8 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("EmailCollector.Domain.Entities.FormEmailSettings", b =>
                 {
-                    b.Property<int>("FormId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("FormId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EmailFrom")
                         .IsRequired()
@@ -175,8 +175,8 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("EmailCollector.Domain.Entities.RecaptchaFormSettings", b =>
                 {
-                    b.Property<int>("FormId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("FormId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecretKey")
                         .HasColumnType("TEXT");
@@ -191,9 +191,9 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("EmailCollector.Domain.Entities.SignupForm", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");

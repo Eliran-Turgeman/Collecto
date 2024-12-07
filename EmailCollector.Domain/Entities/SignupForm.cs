@@ -7,7 +7,7 @@ namespace EmailCollector.Domain.Entities;
 /// </summary>
 public class SignupForm
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public required string FormName { get; set; }
 

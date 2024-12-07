@@ -42,7 +42,7 @@ public class EmailSignupService : IEmailSignupService
         _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
     }
 
-    public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId)
+    public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(Guid formId)
     {
         var form = await _signupFormRepository.GetByIdAsync(formId);
         if (form == null)
@@ -193,7 +193,7 @@ public class EmailSignupService : IEmailSignupService
 
         _logger.LogInformation($"Confirming email address {emailPart} for form {formIdPart}.");
 
-        if (formIdPart == string.Empty || emailPart == string.Empty || !int.TryParse(formIdPart, out var formId))
+        if (formIdPart == string.Empty || emailPart == string.Empty || !Guid.TryParse(formIdPart, out var formId))
         {
             return await Task.FromResult(new ConfirmEmailResultDto
             {
@@ -255,7 +255,7 @@ public class EmailSignupService : IEmailSignupService
         return true;
     }
 
-    public async Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(int formId, DateTime? startDate, DateTime? endDate)
+    public async Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(Guid formId, DateTime? startDate, DateTime? endDate)
     {
         var form = await _signupFormRepository.GetByIdAsync(formId);
 

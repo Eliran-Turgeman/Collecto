@@ -9,7 +9,7 @@ public interface ISignupFormRepository : IRepository<SignupForm>
 {
     Task<IEnumerable<SignupForm>> GetByUserIdAsync(Guid userId);
 
-    Task<SignupForm?> GetByFormIdentifierAsync(int formIdentifier, Guid userId);
+    Task<SignupForm?> GetByFormIdentifierAsync(Guid formIdentifier, Guid userId);
     
-    Task<IEnumerable<SignupForm>> GetByIds(IEnumerable<int> formIds);
+    Task<IEnumerable<SignupForm>> GetByIds(IEnumerable<Guid> formIds);
 }

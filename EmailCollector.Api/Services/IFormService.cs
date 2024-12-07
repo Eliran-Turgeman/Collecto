@@ -13,13 +13,13 @@ public interface IFormService
 
     Task<IEnumerable<FormDto>> GetFormsByUserAsync(Guid userId);
 
-    Task<FormDetailsDto?> GetFormByIdAsync(int formId, Guid userId);
+    Task<FormDetailsDto?> GetFormByIdAsync(Guid formId, Guid userId);
 
-    Task DeleteFormByIdAsync(int formId);
+    Task DeleteFormByIdAsync(Guid formId);
 
-    Task<FormDetailsDto?> UpdateFormAsync(int formId, Guid userId, CreateFormDto createFormDto);
+    Task<FormDetailsDto?> UpdateFormAsync(Guid formId, Guid userId, CreateFormDto createFormDto);
 
     Task<IEnumerable<FormSummaryDetailsDto>> GetFormsSummaryDetailsAsync(Guid userId);
 
-    Task<byte[]> ExportFormsAsync(IEnumerable<int> formIds, ExportFormat format);
+    Task<byte[]> ExportFormsAsync(IEnumerable<Guid> formIds, ExportFormat format);
 }

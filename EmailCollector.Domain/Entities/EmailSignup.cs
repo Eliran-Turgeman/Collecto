@@ -5,11 +5,11 @@
 /// </summary>
 public class EmailSignup
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public required string EmailAddress { get; set; }
 
-    public int SignupFormId { get; set; }
+    public Guid SignupFormId { get; set; }
 
     public DateTime SignupDate { get; set; } = DateTime.UtcNow;
 }

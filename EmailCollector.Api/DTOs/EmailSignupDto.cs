@@ -8,7 +8,7 @@ namespace EmailCollector.Api.DTOs;
 public class EmailSignupDto
 {
     [Required]
-    public int FormId { get; set; }
+    public Guid FormId { get; set; }
 
     [Required]
     public required string Email { get; set; }

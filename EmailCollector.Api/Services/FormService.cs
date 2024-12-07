@@ -136,7 +136,7 @@ public class FormService : IFormService
         });
     }
 
-    public async Task<FormDetailsDto?> GetFormByIdAsync(int formId, Guid userId)
+    public async Task<FormDetailsDto?> GetFormByIdAsync(Guid formId, Guid userId)
     {
         var form = await _signupFormRepository.GetByFormIdentifierAsync(formId, userId);
 
@@ -156,7 +156,7 @@ public class FormService : IFormService
         };
     }
 
-    public async Task DeleteFormByIdAsync(int formId)
+    public async Task DeleteFormByIdAsync(Guid formId)
     {
         var form = await _signupFormRepository.GetByIdAsync(formId);
 
@@ -169,7 +169,7 @@ public class FormService : IFormService
         await _signupFormRepository.Remove(form);
     }
 
-    public async Task<FormDetailsDto?> UpdateFormAsync(int formId, Guid userId, CreateFormDto createFormDto)
+    public async Task<FormDetailsDto?> UpdateFormAsync(Guid formId, Guid userId, CreateFormDto createFormDto)
     {
         var form = await _signupFormRepository.GetByFormIdentifierAsync(formId, userId);
 
@@ -225,7 +225,7 @@ public class FormService : IFormService
         return formSummaryDetails;
     }
     
-    public async Task<byte[]> ExportFormsAsync(IEnumerable<int> formIds, ExportFormat format)
+    public async Task<byte[]> ExportFormsAsync(IEnumerable<Guid> formIds, ExportFormat format)
     {
         var forms = await GetFormsSubmissionsData(formIds);
         var formData = forms.ToList();
@@ -238,7 +238,7 @@ public class FormService : IFormService
     }
     
     
-    private async Task<IEnumerable<FormSubmissionsDataDto>> GetFormsSubmissionsData(IEnumerable<int> formIds)
+    private async Task<IEnumerable<FormSubmissionsDataDto>> GetFormsSubmissionsData(IEnumerable<Guid> formIds)
     {
         var forms = await _signupFormRepository.GetByIds(formIds);
         var signupForms = forms.ToList();

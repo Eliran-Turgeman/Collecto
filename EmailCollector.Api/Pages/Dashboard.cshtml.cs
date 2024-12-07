@@ -63,13 +63,13 @@ public class DashboardModel : PageModel
         Forms = await _formService.GetFormsByUserAsync(UserId);
 
         // Ensure SelectedFormId is valid
-        if (string.IsNullOrEmpty(FormId) || !int.TryParse(FormId, out var intSelectedFormId))
+        if (string.IsNullOrEmpty(FormId) || !Guid.TryParse(FormId, out var guidSelectedFormId))
         {
             ErrorMessage = "Please select a form.";
             return Page();
         }
 
-        await LoadFormData(intSelectedFormId, UserId);
+        await LoadFormData(guidSelectedFormId, UserId);
 
         return Page();
     }
@@ -81,16 +81,16 @@ public class DashboardModel : PageModel
 
         Forms = await _formService.GetFormsByUserAsync(UserId);
         
-        if (string.IsNullOrEmpty(FormId) || !int.TryParse(FormId, out var intSelectedFormId))
+        if (string.IsNullOrEmpty(FormId) || !Guid.TryParse(FormId, out var guidSelectedFormId))
         {
             ErrorMessage = "Please select a form.";
             return Page();
         }
-        await LoadFormData(intSelectedFormId, UserId);
+        await LoadFormData(guidSelectedFormId, UserId);
         return Page();
     }
 
-    private async Task LoadFormData(int formId, Guid userId)
+    private async Task LoadFormData(Guid formId, Guid userId)
     {
         var form = await _formService.GetFormByIdAsync(formId, userId);
         if (form == null)

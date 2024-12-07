@@ -40,7 +40,7 @@ public class EmailSignupsController : ControllerBase
     [HttpGet("form/{formId}")]
     [Produces("application/json")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> GetFormEmailSignups(int formId)
+    public async Task<IActionResult> GetFormEmailSignups(Guid formId)
     {
         _logger.LogInformation($"Getting email signups for form {formId}.");
 

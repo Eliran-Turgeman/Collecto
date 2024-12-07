@@ -1,4 +1,4 @@
-﻿@page "/configurations/{formId:int?}"
+﻿@page "/configurations/{formId:Guid?}"
 @model EmailCollector.Api.Pages.ConfigurationsPageModel
 
 @{
@@ -13,61 +13,6 @@
 }
 
 <h1>Form Configurations</h1>
-@* <style> *@
-@*     body { *@
-@*         font-family: Arial, sans-serif; *@
-@*         margin: 20px; *@
-@*     } *@
-@* *@
-@*     h1, h2 { *@
-@*         margin-bottom: 15px; *@
-@*         font-weight: 600; *@
-@*     } *@
-@* *@
-@*     .form-group { *@
-@*         margin-bottom: 15px; *@
-@*     } *@
-@* *@
-@*     .form-control { *@
-@*         width: 100%; *@
-@*         padding: 8px; *@
-@*         margin-top: 5px; *@
-@*         border: 1px solid #ccc; *@
-@*         border-radius: 4px; *@
-@*     } *@
-@* *@
-@*     .section { *@
-@*         padding: 15px; *@
-@*         background-color: #f9f9f9; *@
-@*         border: 1px solid #ddd; *@
-@*         border-radius: 4px; *@
-@*     } *@
-@* *@
-@*     .btn { *@
-@*         padding: 10px 15px; *@
-@*         font-size: 16px; *@
-@*         cursor: pointer; *@
-@*         border-radius: 4px; *@
-@*     } *@
-@* *@
-@*     .btn-primary { *@
-@*         background-color: #007bff; *@
-@*         color: white; *@
-@*         border: none; *@
-@*     } *@
-@* *@
-@*     .btn-success { *@
-@*         background-color: #28a745; *@
-@*         color: white; *@
-@*         border: none; *@
-@*     } *@
-@* *@
-@*     hr { *@
-@*         margin: 30px 0; *@
-@*         border: 0; *@
-@*         border-top: 1px solid #ddd; *@
-@*     } *@
-@* </style> *@
 
 <!-- Form selection -->
 <form method="post">

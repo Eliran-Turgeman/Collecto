@@ -35,9 +35,7 @@ public class Create : PageModel
         var userId = new Guid(currentUser?.Id!);
         
         Form = await _formService.CreateFormAsync(userId, Input);
-        
-        ModelState.Clear(); // Clear the form
 
-        return Page();
+        return RedirectToPage("./Index");
     }
 }

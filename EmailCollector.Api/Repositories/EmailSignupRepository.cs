@@ -26,7 +26,7 @@ public class EmailSignupRepository : IEmailSignupRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<EmailSignup>> GetByFormIdAsync(int formId)
+    public async Task<IEnumerable<EmailSignup>> GetByFormIdAsync(Guid formId)
     {
         return await _dbContext.EmailSignups
             .Where(signup => signup.SignupFormId == formId)
@@ -50,7 +50,7 @@ public class EmailSignupRepository : IEmailSignupRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(int formId, DateTime rangeStart, DateTime rangeEnd)
+    public async Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(Guid formId, DateTime rangeStart, DateTime rangeEnd)
     {
         // Fetch the signups grouped by date
         var signups = await _dbContext.EmailSignups
@@ -71,7 +71,7 @@ public class EmailSignupRepository : IEmailSignupRepository
     /// </summary>
     /// <param name="formId">The form identifer</param>
     /// <returns>Count of all-time signups for form id specified</returns>
-    public async Task<int> GetSignupCountByFormId(int formId)
+    public async Task<int> GetSignupCountByFormId(Guid formId)
     {
         return await _dbContext.EmailSignups
             .Where(signup => signup.SignupFormId == formId)

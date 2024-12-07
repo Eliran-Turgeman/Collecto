@@ -8,9 +8,9 @@ namespace EmailCollector.Api.Repositories;
 /// </summary>
 public interface IEmailSignupRepository : IRepository<EmailSignup>
 {
-    Task<IEnumerable<EmailSignup>> GetByFormIdAsync(int formId);
+    Task<IEnumerable<EmailSignup>> GetByFormIdAsync(Guid formId);
 
-    Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(int formId, DateTime rangeStart, DateTime rangeEnd);
+    Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(Guid formId, DateTime rangeStart, DateTime rangeEnd);
 
-    Task<int> GetSignupCountByFormId(int formId);
+    Task<int> GetSignupCountByFormId(Guid formId);
 }

@@ -9,9 +9,9 @@ public interface IEmailSignupService
 {
     Task<SignupResultDto> SubmitEmailAsync(EmailSignupDto emailSignupDto);
 
-    Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(int formId);
+    Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(Guid formId);
 
-    Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(int formId, DateTime? startDate, DateTime? endDate);
+    Task<IEnumerable<SignupStatsDto>> GetSignupsPerDayAsync(Guid formId, DateTime? startDate, DateTime? endDate);
 
     Task<ConfirmEmailResultDto> ConfirmEmailSignupAsync(string confirmationToken);
 }

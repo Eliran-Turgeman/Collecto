@@ -34,7 +34,7 @@ public class ConfigurationsPageModel : PageModel
     }
 
     [BindProperty(SupportsGet = true)]
-    public int? FormId { get; set; }
+    public Guid? FormId { get; set; }
 
     public IEnumerable<FormDto> Forms { get; set; } = new List<FormDto>();
     
@@ -78,7 +78,7 @@ public class ConfigurationsPageModel : PageModel
 
         var currentUser = await _userManager.GetUserAsync(User);
         var userId = new Guid(currentUser?.Id!);
-
+        var formId = Guid.Parse(FormId.Value.ToString());
         Forms = await _formService.GetFormsByUserAsync(userId);
 
         if (action == "load" && FormId.HasValue)
@@ -95,7 +95,7 @@ public class ConfigurationsPageModel : PageModel
                 // Create new settings
                 await _smtpEmailSettingsRepository.AddAsync(new SmtpEmailSettings
                 {
-                    FormId = FormId.Value,
+                    FormId = formId,
                     EmailMethod = EmailMethod.Smtp,
                     EmailFrom = SmtpEmailSettings.EmailFrom,
                     SmtpServer = SmtpEmailSettings.SmtpServer,
@@ -123,7 +123,7 @@ public class ConfigurationsPageModel : PageModel
                 // Create new settings
                 await _formCorsSettingsRepository.AddAsync(new FormCorsSettings
                 {
-                    FormId = FormId.Value,
+                    FormId = formId,
                     AllowedOrigins = CorsSettings.AllowedOrigins,
                 });
             }
@@ -141,7 +141,7 @@ public class ConfigurationsPageModel : PageModel
                 // Create new settings
                 await _recaptchaSettingsRepository.AddAsync(new RecaptchaFormSettings
                 {
-                    FormId = FormId.Value,
+                    FormId = formId,
                     SiteKey = RecaptchaFormSettings.SiteKey,
                     SecretKey = RecaptchaFormSettings.SecretKey
                 });

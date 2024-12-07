@@ -11,7 +11,7 @@ public class FormSummaryDetailsDto : IExportable
     /// The unique identifier for the form.
     /// </summary>
     [ExportField("Form ID")]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// The name of the form.

@@ -17,7 +17,7 @@ public class Index : PageModel
     public Guid UserId { get; set; }
     
     [BindProperty]
-    public List<KeyValuePair<int, bool>> FormCheckboxes { get; set; } = [];
+    public List<KeyValuePair<Guid, bool>> FormCheckboxes { get; set; } = [];
 
     [BindProperty]
     public ExportFormat Format { get; set; } = ExportFormat.Csv;
@@ -37,7 +37,7 @@ public class Index : PageModel
         Forms = await _formService.GetFormsSummaryDetailsAsync(UserId);
         
         FormCheckboxes = Forms
-            .Select(form => new KeyValuePair<int, bool>(form.Id, false))
+            .Select(form => new KeyValuePair<Guid, bool>(form.Id, false))
             .ToList();
     }
     
@@ -48,7 +48,6 @@ public class Index : PageModel
             .Select(kvp => kvp.Key)
             .ToList();
         
-        Console.WriteLine("Selected Form IDs: " + string.Join(", ", selectedFormIds));
         var exportedFile = await _formService.ExportFormsAsync(selectedFormIds, Format);
 
         var contentType = Format switch

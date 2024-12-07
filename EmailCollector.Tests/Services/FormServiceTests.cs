@@ -48,7 +48,7 @@ public class FormServiceTests
         {
             FormName = "Test Form",
         };
-        var expectedFormId = 1;
+        var expectedFormId = Guid.NewGuid();
         var expectedFormName = "Test Form";
         var signupForm = new SignupForm
         {
@@ -83,9 +83,9 @@ public class FormServiceTests
         var userId = Guid.NewGuid();
         var forms = new List<SignupForm>
             {
-                new SignupForm { Id = 1, FormName = "Form 1", CreatedBy = userId },
-                new SignupForm { Id = 2, FormName = "Form 2", CreatedBy = userId },
-                new SignupForm { Id = 3, FormName = "Form 3", CreatedBy = userId },
+                new SignupForm { Id = Guid.NewGuid(), FormName = "Form 1", CreatedBy = userId },
+                new SignupForm { Id = Guid.NewGuid(), FormName = "Form 2", CreatedBy = userId },
+                new SignupForm { Id = Guid.NewGuid(), FormName = "Form 3", CreatedBy = userId },
             };
         _signupFormRepositoryMock.Setup(repo => repo.GetByUserIdAsync(userId))
             .ReturnsAsync(forms);
@@ -109,11 +109,11 @@ public class FormServiceTests
     public async Task GetFormByIdAsync_ShouldReturnFormDetailsDto_WhenFormExistsAndUserIsCreator()
     {
         // Arrange
-        var formId = 1;
+        var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var form = new SignupForm
         {
-            Id = 1,
+            Id = formId,
             FormName = "Test Form",
             CreatedBy = userId,
         };
@@ -137,7 +137,7 @@ public class FormServiceTests
     public async Task GetFormByIdAsync_ShouldReturnNull_WhenFormDoesNotExistOrUserIsNotCreator()
     {
         // Arrange
-        var formId = 1;
+        var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
         _signupFormRepositoryMock.Setup(repo => repo.GetByFormIdentifierAsync(formId, userId))
             .ReturnsAsync((SignupForm)null);
@@ -154,11 +154,11 @@ public class FormServiceTests
     public async Task DeleteFormByIdAsync_ShouldDeleteForm_WhenFormExistsAndUserIsCreator()
     {
         // Arrange
-        var formId = 1;
+        var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var form = new SignupForm
         {
-            Id = 1,
+            Id = formId,
             FormName = "Test Form",
             CreatedBy = userId,
         };
@@ -177,7 +177,7 @@ public class FormServiceTests
     public async Task DeleteFormByIdAsync_ShouldNotDeleteForm_WhenFormDoesNotExistOrUserIsNotCreator()
     {
         // Arrange
-        var formId = 1;
+        var formId = Guid.NewGuid();
         _signupFormRepositoryMock.Setup(repo => repo.GetByIdAsync(formId))
             .ReturnsAsync((SignupForm)null);
 
@@ -193,7 +193,7 @@ public class FormServiceTests
     public async Task UpdateFormAsync_ShouldUpdateFormAndReturnFormDetailsDto_WhenFormExistsAndUserIsCreator()
     {
         // Arrange
-        var formId = 1;
+        var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var createFormDto = new CreateFormDto
         {
@@ -202,7 +202,7 @@ public class FormServiceTests
         };
         var form = new SignupForm
         {
-            Id = 1,
+            Id = formId,
             FormName = "Test Form",
             CreatedBy = userId,
         };
@@ -227,7 +227,7 @@ public class FormServiceTests
     public async Task UpdateFormAsync_ShouldReturnNull_WhenFormDoesNotExistOrUserIsNotCreator()
     {
         // Arrange
-        var formId = 1;
+        var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var createFormDto = new CreateFormDto
         {

@@ -23,7 +23,7 @@ public class Delete : PageModel
     [BindProperty]
     public FormDto Form { get; set; }
     
-    public async Task<IActionResult> OnGetAsync(int id)
+    public async Task<IActionResult> OnGetAsync(Guid id)
     {
         var currentUser = await _userManager.GetUserAsync(User);
         var userId = new Guid(currentUser?.Id!);

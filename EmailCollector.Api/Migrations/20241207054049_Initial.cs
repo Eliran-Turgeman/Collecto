@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EmailCollector.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class UsersAspNet : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,6 +51,35 @@ namespace EmailCollector.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmailSignups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    EmailAddress = table.Column<string>(type: "TEXT", nullable: false),
+                    SignupFormId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SignupDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailSignups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SignupForms",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    FormName = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Status = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SignupForms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -67,6 +96,29 @@ namespace EmailCollector.Api.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApiKeys",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    KeyHash = table.Column<string>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Expiration = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApiKeys", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ApiKeys_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -96,8 +148,8 @@ namespace EmailCollector.Api.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
+                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -141,8 +193,8 @@ namespace EmailCollector.Api.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    LoginProvider = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     Value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -155,6 +207,88 @@ namespace EmailCollector.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "FormCorsSettings",
+                columns: table => new
+                {
+                    FormId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    AllowedOrigins = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormCorsSettings", x => x.FormId);
+                    table.ForeignKey(
+                        name: "FK_FormCorsSettings_SignupForms_FormId",
+                        column: x => x.FormId,
+                        principalTable: "SignupForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FormEmailSettings",
+                columns: table => new
+                {
+                    FormId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    EmailMethod = table.Column<string>(type: "TEXT", nullable: false),
+                    EmailFrom = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormEmailSettings", x => x.FormId);
+                    table.ForeignKey(
+                        name: "FK_FormEmailSettings_SignupForms_FormId",
+                        column: x => x.FormId,
+                        principalTable: "SignupForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecaptchaFormSettings",
+                columns: table => new
+                {
+                    FormId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SiteKey = table.Column<string>(type: "TEXT", nullable: true),
+                    SecretKey = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecaptchaFormSettings", x => x.FormId);
+                    table.ForeignKey(
+                        name: "FK_RecaptchaFormSettings_SignupForms_FormId",
+                        column: x => x.FormId,
+                        principalTable: "SignupForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SmtpEmailSettings",
+                columns: table => new
+                {
+                    FormId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    SmtpServer = table.Column<string>(type: "TEXT", nullable: false),
+                    SmtpPort = table.Column<int>(type: "INTEGER", nullable: false),
+                    SmtpUsername = table.Column<string>(type: "TEXT", nullable: false),
+                    SmtpPassword = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SmtpEmailSettings", x => x.FormId);
+                    table.ForeignKey(
+                        name: "FK_SmtpEmailSettings_FormEmailSettings_FormId",
+                        column: x => x.FormId,
+                        principalTable: "FormEmailSettings",
+                        principalColumn: "FormId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiKeys_UserId",
+                table: "ApiKeys",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -198,6 +332,9 @@ namespace EmailCollector.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ApiKeys");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -213,10 +350,28 @@ namespace EmailCollector.Api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "EmailSignups");
+
+            migrationBuilder.DropTable(
+                name: "FormCorsSettings");
+
+            migrationBuilder.DropTable(
+                name: "RecaptchaFormSettings");
+
+            migrationBuilder.DropTable(
+                name: "SmtpEmailSettings");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "FormEmailSettings");
+
+            migrationBuilder.DropTable(
+                name: "SignupForms");
         }
     }
 }
