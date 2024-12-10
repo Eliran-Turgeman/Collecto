@@ -14,6 +14,7 @@ using AspNetCoreRateLimit;
 using EmailCollector.Api.Authentication;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
+using EmailCollector.Api.NotificationHandlers;
 using EmailCollector.Api.Services.Exports;
 using EmailCollector.Api.Services.Exports.ExportStrategies;
 using EmailCollector.Api.Services.Users;
@@ -85,6 +86,9 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SendEmailOnSignupHandler).Assembly));
+
 
 builder.Services.AddProblemDetails(options =>
 {

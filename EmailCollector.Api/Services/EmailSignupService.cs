@@ -8,6 +8,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
 using System.Text.RegularExpressions;
 using EmailCollector.Api.Services.EmailValidations;
+using EmailCollector.Domain.Notifications;
+using MediatR;
 
 namespace EmailCollector.Api.Services;
 
@@ -20,6 +22,8 @@ public class EmailSignupService : IEmailSignupService
     private readonly IAppEmailSender _emailSender;
     private readonly IFeatureToggles _featureTogglesService;
     private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
+    private readonly IMediator _mediator;
+
 
     private static readonly Regex EmailRegex = new Regex(
         @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
@@ -31,7 +35,8 @@ public class EmailSignupService : IEmailSignupService
         IDistributedCache signupCandidatesCache,
         IAppEmailSender emailSender,
         IFeatureToggles featureTogglesService,
-        ISmtpEmailSettingsRepository smtpEmailSettingsRepository)
+        ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
+        IMediator mediator)
     {
         _emailSignupRepository = emailSignupRepository;
         _signupFormRepository = signupFormRepository;
@@ -40,6 +45,7 @@ public class EmailSignupService : IEmailSignupService
         _emailSender = emailSender;
         _featureTogglesService = featureTogglesService;
         _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
+        _mediator = mediator;
     }
 
     public async Task<IEnumerable<EmailSignupDto>?> GetSignupsByFormIdAsync(Guid formId)
@@ -223,6 +229,12 @@ public class EmailSignupService : IEmailSignupService
 
         await _emailSignupRepository.AddAsync(emailSignup);
         await _signupCandidatesCache.RemoveAsync(confirmationToken);
+        
+        await _mediator.Publish(new EmailAddedSuccessfullyNotification
+        {
+            EmailAddress = emailPart,
+            SignupFormId = formId
+        });
 
         return await Task.FromResult(new ConfirmEmailResultDto
         {

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Text;
+using MediatR;
 
 namespace EmailCollector.Api.Tests.Services
 {
@@ -23,6 +24,7 @@ namespace EmailCollector.Api.Tests.Services
         private Mock<IAppEmailSender> _emailSenderMock;
         private Mock<IFeatureToggles> _featureTogglesServiceMock;
         private Mock<ISmtpEmailSettingsRepository> _smtpEmailSettingsRepositoryMock;
+        private Mock<IMediator> _mediatorMock;
 
         [SetUp]
         public void Setup()
@@ -34,6 +36,7 @@ namespace EmailCollector.Api.Tests.Services
             _emailSenderMock = new Mock<IAppEmailSender>();
             _featureTogglesServiceMock = new Mock<IFeatureToggles>();
             _smtpEmailSettingsRepositoryMock = new Mock<ISmtpEmailSettingsRepository>();
+            _mediatorMock = new Mock<IMediator>();
             
             _emailSignupService = new EmailSignupService(
                 _emailSignupRepositoryMock.Object,
@@ -42,7 +45,8 @@ namespace EmailCollector.Api.Tests.Services
                 _signupCandidatesCacheMock.Object,
                 _emailSenderMock.Object,
                 _featureTogglesServiceMock.Object,
-                _smtpEmailSettingsRepositoryMock.Object);
+                _smtpEmailSettingsRepositoryMock.Object,
+                _mediatorMock.Object);
         }
 
         [Test]
