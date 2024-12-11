@@ -3,6 +3,7 @@ using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,21 +16,18 @@ public class ConfigurationsPageModel : PageModel
     private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
     private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
     private readonly IRepository<RecaptchaFormSettings> _recaptchaSettingsRepository;
-    private readonly SignInManager<EmailCollectorApiUser> _signInManager;
     private readonly UserManager<EmailCollectorApiUser> _userManager;
 
     public ConfigurationsPageModel(IFormService formService,
         ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
         IFormCorsSettingsRepository formCorsSettingsRepository,
         IRepository<RecaptchaFormSettings> recaptchaSettingsRepository,
-        SignInManager<EmailCollectorApiUser> signInManager,
         UserManager<EmailCollectorApiUser> userManager)
     {
         _formService = formService;
         _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
         _formCorsSettingsRepository = formCorsSettingsRepository;
         _recaptchaSettingsRepository = recaptchaSettingsRepository;
-        _signInManager = signInManager;
         _userManager = userManager;
     }
 
@@ -46,17 +44,13 @@ public class ConfigurationsPageModel : PageModel
     
     [BindProperty]
     public RecaptchaFormSettings RecaptchaFormSettings { get; set; }
-    
-    public string ErrorMessage { get; set; } = string.Empty;
-
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (!_signInManager.IsSignedIn(User))
-        {
-            ErrorMessage = "Please log in to view your forms dashboard.";
-            return Page();
-        }
+        // if (!_signInManager.IsSignedIn(User))
+        // {
+        //     return RedirectToPage("/Account/Login", new { area = "Identity" });
+        // }
 
         var currentUser = await _userManager.GetUserAsync(User);
         var userId = new Guid(currentUser?.Id!);
@@ -70,11 +64,10 @@ public class ConfigurationsPageModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(string action)
     {
-        if (!_signInManager.IsSignedIn(User))
-        {
-            ErrorMessage = "Please log in to view your forms dashboard.";
-            return Page();
-        }
+        // if (!_signInManager.IsSignedIn(User))
+        // {
+        //     return RedirectToPage("/Account/Login", new { area = "Identity" });
+        // }
 
         var currentUser = await _userManager.GetUserAsync(User);
         var userId = new Guid(currentUser?.Id!);

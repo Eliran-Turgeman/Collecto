@@ -9,7 +9,6 @@ namespace EmailCollector.Api.Pages;
 
 public class DashboardModel : PageModel
 {
-    private readonly SignInManager<EmailCollectorApiUser> _signInManager;
     private readonly UserManager<EmailCollectorApiUser> _userManager;
     private readonly IFormService _formService;
     private readonly IEmailSignupService _emailSignupService;
@@ -37,12 +36,10 @@ public class DashboardModel : PageModel
 
     public string ErrorMessage { get; set; } = string.Empty;
 
-    public DashboardModel(SignInManager<EmailCollectorApiUser> signInManager,
-        UserManager<EmailCollectorApiUser> userManager,
+    public DashboardModel(UserManager<EmailCollectorApiUser> userManager,
         IFormService formService,
         IEmailSignupService emailSignupService)
     {
-        _signInManager = signInManager;
         _userManager = userManager;
         _formService = formService;
         _emailSignupService = emailSignupService;
@@ -51,12 +48,6 @@ public class DashboardModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (!_signInManager.IsSignedIn(User))
-        {
-            ErrorMessage = "Please log in to view your forms dashboard.";
-            return Page();
-        }
-
         var currentUser = await _userManager.GetUserAsync(User);
         UserId = new Guid(currentUser?.Id!);
 
