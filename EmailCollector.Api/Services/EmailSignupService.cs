@@ -21,7 +21,7 @@ public class EmailSignupService : IEmailSignupService
     private readonly IDistributedCache _signupCandidatesCache;
     private readonly IAppEmailSender _emailSender;
     private readonly IFeatureToggles _featureTogglesService;
-    private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
+    private readonly IRepository<SmtpEmailSettings> _smtpEmailSettingsRepository;
     private readonly IMediator _mediator;
 
 
@@ -35,7 +35,7 @@ public class EmailSignupService : IEmailSignupService
         IDistributedCache signupCandidatesCache,
         IAppEmailSender emailSender,
         IFeatureToggles featureTogglesService,
-        ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
+        IRepository<SmtpEmailSettings> smtpEmailSettingsRepository,
         IMediator mediator)
     {
         _emailSignupRepository = emailSignupRepository;

@@ -116,7 +116,6 @@ builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<IEmailSignupRepository, EmailSignupRepository>();
 builder.Services.AddScoped<IEmailSignupService, EmailSignupService>();
 
-builder.Services.AddScoped<ISmtpEmailSettingsRepository, SmtpEmailSettingsRepository>();
 builder.Services.AddScoped<IFormCorsSettingsRepository, FormCorsSettingsRepository>();
 
 builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();

@@ -1,5 +1,6 @@
 using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services.EmailSender;
+using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Notifications;
 using MediatR;
 
@@ -9,13 +10,13 @@ public class SendEmailOnSignupHandler : INotificationHandler<EmailAddedSuccessfu
 {
     private readonly IAppEmailSender _emailSender;
     private readonly ISignupFormRepository _signupFormRepository;
-    private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
+    private readonly IRepository<SmtpEmailSettings> _smtpEmailSettingsRepository;
     private readonly ILogger<SendEmailOnSignupHandler> _logger;
 
     public SendEmailOnSignupHandler(IAppEmailSender emailSender,
         ILogger<SendEmailOnSignupHandler> logger,
         ISignupFormRepository signupFormRepository,
-        ISmtpEmailSettingsRepository smtpEmailSettingsRepository)
+        IRepository<SmtpEmailSettings> smtpEmailSettingsRepository)
     {
         _emailSender = emailSender;
         _logger = logger;

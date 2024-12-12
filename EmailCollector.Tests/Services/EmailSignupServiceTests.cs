@@ -23,7 +23,7 @@ namespace EmailCollector.Api.Tests.Services
         private Mock<IDistributedCache> _signupCandidatesCacheMock;
         private Mock<IAppEmailSender> _emailSenderMock;
         private Mock<IFeatureToggles> _featureTogglesServiceMock;
-        private Mock<ISmtpEmailSettingsRepository> _smtpEmailSettingsRepositoryMock;
+        private Mock<IRepository<SmtpEmailSettings>> _smtpEmailSettingsRepositoryMock;
         private Mock<IMediator> _mediatorMock;
 
         [SetUp]
@@ -35,7 +35,7 @@ namespace EmailCollector.Api.Tests.Services
             _signupCandidatesCacheMock = new Mock<IDistributedCache>();
             _emailSenderMock = new Mock<IAppEmailSender>();
             _featureTogglesServiceMock = new Mock<IFeatureToggles>();
-            _smtpEmailSettingsRepositoryMock = new Mock<ISmtpEmailSettingsRepository>();
+            _smtpEmailSettingsRepositoryMock = new Mock<IRepository<SmtpEmailSettings>>();
             _mediatorMock = new Mock<IMediator>();
             
             _emailSignupService = new EmailSignupService(

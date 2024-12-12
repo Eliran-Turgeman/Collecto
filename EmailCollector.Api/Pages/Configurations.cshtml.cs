@@ -13,13 +13,13 @@ namespace EmailCollector.Api.Pages;
 public class ConfigurationsPageModel : PageModel
 {
     private readonly IFormService _formService;
-    private readonly ISmtpEmailSettingsRepository _smtpEmailSettingsRepository;
+    private readonly IRepository<SmtpEmailSettings> _smtpEmailSettingsRepository;
     private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
     private readonly IRepository<RecaptchaFormSettings> _recaptchaSettingsRepository;
     private readonly UserManager<EmailCollectorApiUser> _userManager;
 
     public ConfigurationsPageModel(IFormService formService,
-        ISmtpEmailSettingsRepository smtpEmailSettingsRepository,
+        IRepository<SmtpEmailSettings> smtpEmailSettingsRepository,
         IFormCorsSettingsRepository formCorsSettingsRepository,
         IRepository<RecaptchaFormSettings> recaptchaSettingsRepository,
         UserManager<EmailCollectorApiUser> userManager)
