@@ -15,7 +15,7 @@ public class FormService : IFormService
     private readonly ISignupFormRepository _signupFormRepository;
     private readonly IEmailSignupRepository _emailSignupRepository;
     private readonly IRepository<SmtpEmailSettings> _smtpEmailSettingsRepository;
-    private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
+    private readonly IRepository<FormCorsSettings> _formCorsSettingsRepository;
     private readonly IRepository<RecaptchaFormSettings> _recaptchaFormSettingsRepository;
     private readonly IExportService _exportService;
     private readonly ILogger<FormService> _logger;
@@ -23,7 +23,7 @@ public class FormService : IFormService
     public FormService(ISignupFormRepository signupFormRepository,
         IEmailSignupRepository emailSignupRepository,
         IRepository<SmtpEmailSettings> smtpEmailSettingsRepository,
-        IFormCorsSettingsRepository formCorsSettingsRepository,
+        IRepository<FormCorsSettings> formCorsSettingsRepository,
         IRepository<RecaptchaFormSettings> recaptchaFormSettingsRepository,
         IExportService exportService,
         ILogger<FormService> logger)

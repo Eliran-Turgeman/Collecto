@@ -14,7 +14,7 @@ public class FormServiceTests
     private Mock<ISignupFormRepository> _signupFormRepositoryMock;
     private Mock<IEmailSignupRepository> _emailSignupRepositoryMock;
     private Mock<IRepository<SmtpEmailSettings>> _smtpSettingsRepositoryMock;
-    private Mock<IFormCorsSettingsRepository> _formCorsSettingsRepositoryMock;
+    private Mock<IRepository<FormCorsSettings>> _formCorsSettingsRepositoryMock;
     private Mock<IRepository<RecaptchaFormSettings>> _recaptchaSettingsRepositoryMock;
     private Mock<IExportService> _exportServiceMock;
     private Mock<ILogger<FormService>> _loggerMock;
@@ -26,7 +26,7 @@ public class FormServiceTests
         _signupFormRepositoryMock = new Mock<ISignupFormRepository>();
         _emailSignupRepositoryMock = new Mock<IEmailSignupRepository>();
         _smtpSettingsRepositoryMock = new Mock<IRepository<SmtpEmailSettings>>();
-        _formCorsSettingsRepositoryMock = new Mock<IFormCorsSettingsRepository>();
+        _formCorsSettingsRepositoryMock = new Mock<IRepository<FormCorsSettings>>();
         _recaptchaSettingsRepositoryMock = new Mock<IRepository<RecaptchaFormSettings>>();
         _exportServiceMock = new Mock<IExportService>();
         _loggerMock = new Mock<ILogger<FormService>>();

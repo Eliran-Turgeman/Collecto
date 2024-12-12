@@ -14,13 +14,13 @@ public class ConfigurationsPageModel : PageModel
 {
     private readonly IFormService _formService;
     private readonly IRepository<SmtpEmailSettings> _smtpEmailSettingsRepository;
-    private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
+    private readonly IRepository<FormCorsSettings> _formCorsSettingsRepository;
     private readonly IRepository<RecaptchaFormSettings> _recaptchaSettingsRepository;
     private readonly UserManager<EmailCollectorApiUser> _userManager;
 
     public ConfigurationsPageModel(IFormService formService,
         IRepository<SmtpEmailSettings> smtpEmailSettingsRepository,
-        IFormCorsSettingsRepository formCorsSettingsRepository,
+        IRepository<FormCorsSettings> formCorsSettingsRepository,
         IRepository<RecaptchaFormSettings> recaptchaSettingsRepository,
         UserManager<EmailCollectorApiUser> userManager)
     {

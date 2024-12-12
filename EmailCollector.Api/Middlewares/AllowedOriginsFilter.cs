@@ -11,12 +11,12 @@ namespace EmailCollector.Api.Middlewares;
 public class AllowedOriginsFilter : IAsyncAuthorizationFilter
 {
     private readonly ILogger<AllowedOriginsFilter> _logger;
-    private readonly IFormCorsSettingsRepository _formCorsSettingsRepository;
+    private readonly IRepository<FormCorsSettings> _formCorsSettingsRepository;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public AllowedOriginsFilter(
         ILogger<AllowedOriginsFilter> logger,
-        IFormCorsSettingsRepository formCorsSettingsRepository)
+        IRepository<FormCorsSettings> formCorsSettingsRepository)
     {
         _logger = logger;
         _formCorsSettingsRepository = formCorsSettingsRepository;
