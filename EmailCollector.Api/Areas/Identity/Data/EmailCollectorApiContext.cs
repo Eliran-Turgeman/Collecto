@@ -17,8 +17,11 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
     public DbSet<FormCorsSettings> FormCorsSettings { get; set; }
     public DbSet<SmtpEmailSettings> SmtpEmailSettings { get; set; }
     public DbSet<ApiKey> ApiKeys { get; set; }
+    
     public DbSet<RecaptchaFormSettings> RecaptchaFormSettings { get; set; }
-
+    
+    public DbSet<CustomEmailTemplates> CustomEmailTemplates { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SignupForm>()
@@ -77,6 +80,18 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
             .WithOne(c => c.Form)
             .HasForeignKey<RecaptchaFormSettings>(c => c.FormId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<SignupForm>()
+            .HasMany(s => s.CustomEmailTemplates)
+            .WithOne(et => et.Form)
+            .HasForeignKey(et => et.FormId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<CustomEmailTemplates>()
+            .Property(f => f.Event)
+            .HasConversion(
+                v => v.ToString(), // Convert enum to string when saving
+                v => (TemplateEvent)Enum.Parse(typeof(TemplateEvent), v));  // Convert string to enum when loading
         
         base.OnModelCreating(modelBuilder);
     }

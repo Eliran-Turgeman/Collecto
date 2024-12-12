@@ -51,6 +51,43 @@ namespace EmailCollector.Api.Migrations
                     b.ToTable("ApiKeys");
                 });
 
+            modelBuilder.Entity("EmailCollector.Domain.Entities.CustomEmailTemplates", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Event")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("FormId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TemplateBodyUri")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TemplateSubject")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormId");
+
+                    b.ToTable("CustomEmailTemplates");
+                });
+
             modelBuilder.Entity("EmailCollector.Domain.Entities.EmailCollectorApiUser", b =>
                 {
                     b.Property<string>("Id")
@@ -372,6 +409,17 @@ namespace EmailCollector.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("EmailCollector.Domain.Entities.CustomEmailTemplates", b =>
+                {
+                    b.HasOne("EmailCollector.Domain.Entities.SignupForm", "Form")
+                        .WithMany("CustomEmailTemplates")
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Form");
+                });
+
             modelBuilder.Entity("EmailCollector.Domain.Entities.FormCorsSettings", b =>
                 {
                     b.HasOne("EmailCollector.Domain.Entities.SignupForm", "Form")
@@ -467,6 +515,8 @@ namespace EmailCollector.Api.Migrations
 
             modelBuilder.Entity("EmailCollector.Domain.Entities.SignupForm", b =>
                 {
+                    b.Navigation("CustomEmailTemplates");
+
                     b.Navigation("FormCorsSettings")
                         .IsRequired();
 
