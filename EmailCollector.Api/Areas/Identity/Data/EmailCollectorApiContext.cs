@@ -20,7 +20,7 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
     
     public DbSet<RecaptchaFormSettings> RecaptchaFormSettings { get; set; }
     
-    public DbSet<CustomEmailTemplates> CustomEmailTemplates { get; set; }
+    public DbSet<CustomEmailTemplate> CustomEmailTemplates { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -87,7 +87,7 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
             .HasForeignKey(et => et.FormId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        modelBuilder.Entity<CustomEmailTemplates>()
+        modelBuilder.Entity<CustomEmailTemplate>()
             .Property(f => f.Event)
             .HasConversion(
                 v => v.ToString(), // Convert enum to string when saving

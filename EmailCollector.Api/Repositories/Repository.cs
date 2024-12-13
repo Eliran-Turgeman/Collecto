@@ -37,4 +37,31 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet.Remove(entity);
         await _context.SaveChangesAsync();
     }
+
+    public async Task Upsert(T entity)
+    {
+        // Determine the primary key
+        var key = _context.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties
+            .Select(p => p.Name).FirstOrDefault();
+
+        if (key == null)
+            throw new InvalidOperationException("Entity does not have a primary key.");
+
+        var keyValue = typeof(T).GetProperty(key)?.GetValue(entity);
+
+        if (keyValue == null)
+            throw new InvalidOperationException("Entity primary key value is null.");
+
+        var existingEntity = await GetByIdAsync(keyValue);
+
+        if (existingEntity == null)
+        {
+            await AddAsync(entity);
+        }
+        else
+        {
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

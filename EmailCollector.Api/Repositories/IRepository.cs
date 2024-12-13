@@ -12,4 +12,6 @@ public interface IRepository<T> where T : class
     Task Update(T entity);
 
     Task Remove(T entity);
+    
+    Task Upsert(T entity);
 }

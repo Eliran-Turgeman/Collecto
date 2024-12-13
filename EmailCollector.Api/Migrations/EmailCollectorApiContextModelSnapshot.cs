@@ -51,7 +51,7 @@ namespace EmailCollector.Api.Migrations
                     b.ToTable("ApiKeys");
                 });
 
-            modelBuilder.Entity("EmailCollector.Domain.Entities.CustomEmailTemplates", b =>
+            modelBuilder.Entity("EmailCollector.Domain.Entities.CustomEmailTemplate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,8 @@ namespace EmailCollector.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FormId");
+                    b.HasIndex(new[] { "FormId", "Event" }, "IX_CustomEmailTemplate_FormId_Event_Unique")
+                        .IsUnique();
 
                     b.ToTable("CustomEmailTemplates");
                 });
@@ -409,7 +410,7 @@ namespace EmailCollector.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EmailCollector.Domain.Entities.CustomEmailTemplates", b =>
+            modelBuilder.Entity("EmailCollector.Domain.Entities.CustomEmailTemplate", b =>
                 {
                     b.HasOne("EmailCollector.Domain.Entities.SignupForm", "Form")
                         .WithMany("CustomEmailTemplates")

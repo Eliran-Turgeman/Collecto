@@ -1,8 +1,10 @@
 using EmailCollector.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Domain.Entities;
 
-public class CustomEmailTemplates
+[Index(nameof(FormId), nameof(Event), IsUnique = true, Name = "IX_CustomEmailTemplate_FormId_Event_Unique")]
+public class CustomEmailTemplate
 {
     public Guid Id { get; set; }
     public Guid FormId { get; set; }

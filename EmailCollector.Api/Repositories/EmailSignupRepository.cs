@@ -5,25 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Api.Repositories;
 
-public class EmailSignupRepository : IEmailSignupRepository
+public class EmailSignupRepository : Repository<EmailSignup>, IEmailSignupRepository
 {
     private readonly EmailCollectorApiContext _dbContext;
-    private readonly ILogger<EmailSignupRepository> _logger;
-    private readonly ISignupFormRepository _signupFormRepository;
 
-    public EmailSignupRepository(EmailCollectorApiContext dbContenxt,
-        ILogger<EmailSignupRepository> logger,
-        ISignupFormRepository signupFormRepository)
+    public EmailSignupRepository(EmailCollectorApiContext dbContenxt) : base(dbContenxt)
     {
         _dbContext = dbContenxt;
-        _logger = logger;
-        _signupFormRepository = signupFormRepository;
-    }
-
-    public async Task AddAsync(EmailSignup entity)
-    {
-        _dbContext.EmailSignups.Add(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<EmailSignup>> GetByFormIdAsync(Guid formId)
@@ -31,23 +19,6 @@ public class EmailSignupRepository : IEmailSignupRepository
         return await _dbContext.EmailSignups
             .Where(signup => signup.SignupFormId == formId)
             .ToListAsync();
-    }
-
-    public Task<EmailSignup?> GetByIdAsync(object id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task Remove(EmailSignup entity)
-    {
-        _dbContext.EmailSignups.Remove(entity);
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task Update(EmailSignup entity)
-    {
-        _dbContext.EmailSignups.Update(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<SignupStatsDto>> GetSignupsByFormIdAndDateRangeAsync(Guid formId, DateTime rangeStart, DateTime rangeEnd)

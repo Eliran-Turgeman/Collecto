@@ -1,0 +1,42 @@
+@page
+@model EmailCollector.Api.Pages.CustomEmailTemplates.Create
+
+@{
+    ViewData["Title"] = "Create Custom Email Template";
+}
+
+<h1>Create Custom Email Template</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.FormId" class="control-label"></label>
+        <select asp-for="CustomEmailTemplate.FormId" class="form-control" asp-items="Model.FormOptions">
+            <option value="">-- Select Form --</option>
+        </select>
+        <span asp-validation-for="CustomEmailTemplate.FormId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.Event" class="control-label"></label>
+        <select asp-for="CustomEmailTemplate.Event" class="form-control" asp-items="Model.EventOptions">
+            <option value="">-- Select Event --</option>
+        </select>
+        <span asp-validation-for="CustomEmailTemplate.Event" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.TemplateSubject" class="control-label"></label>
+        <input asp-for="CustomEmailTemplate.TemplateSubject" class="form-control" />
+        <span asp-validation-for="CustomEmailTemplate.TemplateSubject" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.TemplateBody" class="control-label"></label>
+        <textarea asp-for="CustomEmailTemplate.TemplateBody" class="form-control" rows="10"></textarea>
+        <span asp-validation-for="CustomEmailTemplate.TemplateBody" class="text-danger"></span>
+        <small class="form-text text-muted">Enter the HTML content for the email template.</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

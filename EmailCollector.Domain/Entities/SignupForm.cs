@@ -23,5 +23,5 @@ public class SignupForm
     
     public RecaptchaFormSettings RecaptchaSettings { get; set; }
     
-    public IEnumerable<CustomEmailTemplates> CustomEmailTemplates { get; set; }
+    public IEnumerable<CustomEmailTemplate> CustomEmailTemplates { get; set; }
 }

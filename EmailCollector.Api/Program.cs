@@ -14,7 +14,9 @@ using AspNetCoreRateLimit;
 using EmailCollector.Api.Authentication;
 using EmailCollector.Api.Services.EmailSender;
 using EmailCollector.Api.Configurations;
+using EmailCollector.Api.Extensions;
 using EmailCollector.Api.NotificationHandlers;
+using EmailCollector.Api.Services.CustomEmailTemplates;
 using EmailCollector.Api.Services.Exports;
 using EmailCollector.Api.Services.Exports.ExportStrategies;
 using EmailCollector.Api.Services.Users;
@@ -123,6 +125,11 @@ builder.Services.AddScoped(typeof(ExportMetadataResolver));
 builder.Services.AddScoped<IExportService, ExportService>();
 builder.Services.AddScoped<IExportFormatStrategy, CsvExportStrategy>();
 builder.Services.AddScoped<IExportFormatStrategy, JsonExportStrategy>();
+
+builder.Services.AddScoped<ICustomEmailTemplatesService, CustomEmailTemplatesService>();
+builder.Services.AddScoped<IFormRelatedRepository<CustomEmailTemplate>, FormRelatedRepository<CustomEmailTemplate>>();
+
+builder.Services.AddTemplateStorageProvider(builder.Configuration);
 
 
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>

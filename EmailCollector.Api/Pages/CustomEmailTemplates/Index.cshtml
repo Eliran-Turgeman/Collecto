@@ -1,0 +1,57 @@
+@page
+@model EmailCollector.Api.Pages.CustomEmailTemplates.Index
+
+@{
+    ViewData["Title"] = "Custom Email Templates";
+}
+<h1>Custom Email Templates</h1>
+
+<p>
+    <a asp-page="./Create" class="btn btn-primary">Create New Template</a>
+</p>
+
+@foreach (var formGroup in Model.CustomEmailTemplates)
+{
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>@formGroup.FormName</h5>
+    </div>
+    <div class="card-body">
+        @if (formGroup.Templates.Any())
+        {
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Event</th>
+                <th>Subject</th>
+                <th>Is Active</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var template in formGroup.Templates)
+            {
+            <tr>
+                <td>@template.Event.ToString().Replace("_", " ")</td>
+                <td>@template.TemplateSubject</td>
+                <td>@(template.IsActive ? "Yes" : "No")</td>
+                <td>@template.CreatedAt.ToString("g")</td>
+                <td>@template.UpdatedAt.ToString("g")</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@template.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-page="./Delete" asp-route-id="@template.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+        }
+        else
+        {
+        <p class="text-muted">No templates available for this form.</p>
+        }
+    </div>
+</div>
+}
