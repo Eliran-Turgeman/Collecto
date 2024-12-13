@@ -34,8 +34,8 @@
                 <td>@Model.Forms.First(f => f.Id == form.Key).CreatedAt</td>
                 <td>@Model.Forms.First(f => f.Id == form.Key).SubmissionsCount</td>
                 <td>
-                    <a asp-page="./Delete" asp-route-id="@form.Key">Delete</a>
-                    <a asp-page="/Configurations" asp-route-formId="@form.Key">Configure</a>
+                    <a asp-page="./Delete" asp-route-id="@form.Key">Delete</a> •
+                    <a asp-page="/Configurations" asp-route-formId="@form.Key">Configure</a> •
                     <a asp-page="/Dashboard" asp-route-formId="@form.Key">Dashboard</a>
                 </td>
             </tr>
