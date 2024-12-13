@@ -1,3 +1,4 @@
+using Duende.IdentityServer.Extensions;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services;
@@ -47,11 +48,6 @@ public class ConfigurationsPageModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        // if (!_signInManager.IsSignedIn(User))
-        // {
-        //     return RedirectToPage("/Account/Login", new { area = "Identity" });
-        // }
-
         var currentUser = await _userManager.GetUserAsync(User);
         var userId = new Guid(currentUser?.Id!);
 
@@ -64,11 +60,6 @@ public class ConfigurationsPageModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(string action)
     {
-        // if (!_signInManager.IsSignedIn(User))
-        // {
-        //     return RedirectToPage("/Account/Login", new { area = "Identity" });
-        // }
-
         var currentUser = await _userManager.GetUserAsync(User);
         var userId = new Guid(currentUser?.Id!);
         var formId = Guid.Parse(FormId.Value.ToString());
@@ -79,74 +70,73 @@ public class ConfigurationsPageModel : PageModel
             return RedirectToPage(new { formId = FormId });
         }
 
-        else if (action == "save" && FormId.HasValue)
+        if (action != "save" || !FormId.HasValue) return Page();
+        // Save the email settings
+        var existingEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(FormId.Value);
+        if (existingEmailSettings == null)
         {
-            // Save the email settings
-            var existingEmailSettings = await _smtpEmailSettingsRepository.GetByIdAsync(FormId.Value);
-            if (existingEmailSettings == null)
+            // Create new settings
+            await _smtpEmailSettingsRepository.AddAsync(new SmtpEmailSettings
             {
-                // Create new settings
-                await _smtpEmailSettingsRepository.AddAsync(new SmtpEmailSettings
-                {
-                    FormId = formId,
-                    EmailMethod = EmailMethod.Smtp,
-                    EmailFrom = SmtpEmailSettings.EmailFrom,
-                    SmtpServer = SmtpEmailSettings.SmtpServer,
-                    SmtpPort = SmtpEmailSettings.SmtpPort,
-                    SmtpUsername = SmtpEmailSettings.SmtpUsername,
-                    SmtpPassword = SmtpEmailSettings.SmtpPassword,
-                });
-            }
-            else
-            {
-                // Update existing settings
-                existingEmailSettings.EmailFrom = SmtpEmailSettings.EmailFrom;
-                existingEmailSettings.SmtpServer = SmtpEmailSettings.SmtpServer;
-                existingEmailSettings.SmtpPort = SmtpEmailSettings.SmtpPort;
-                existingEmailSettings.SmtpUsername = SmtpEmailSettings.SmtpUsername;
-                existingEmailSettings.SmtpPassword = SmtpEmailSettings.SmtpPassword;
+                FormId = formId,
+                EmailMethod = EmailMethod.Smtp,
+                EmailFrom = SmtpEmailSettings.EmailFrom,
+                SmtpServer = SmtpEmailSettings.SmtpServer,
+                SmtpPort = SmtpEmailSettings.SmtpPort,
+                SmtpUsername = SmtpEmailSettings.SmtpUsername,
+                SmtpPassword = SmtpEmailSettings.SmtpPassword,
+            });
+        }
+        else
+        {
+            // Update existing settings
+            existingEmailSettings.EmailFrom = SmtpEmailSettings.EmailFrom;
+            existingEmailSettings.SmtpServer = SmtpEmailSettings.SmtpServer;
+            existingEmailSettings.SmtpPort = SmtpEmailSettings.SmtpPort;
+            existingEmailSettings.SmtpUsername = SmtpEmailSettings.SmtpUsername;
+            existingEmailSettings.SmtpPassword = SmtpEmailSettings.SmtpPassword.IsNullOrEmpty() ?
+                existingEmailSettings.SmtpPassword : SmtpEmailSettings.SmtpPassword;
 
-                await _smtpEmailSettingsRepository.Update(existingEmailSettings);
-            }
+            await _smtpEmailSettingsRepository.Update(existingEmailSettings);
+        }
 
-            // Save the CORS settings
-            var existingCorsSettings = await _formCorsSettingsRepository.GetByIdAsync(FormId.Value);
-            if (existingCorsSettings == null)
+        // Save the CORS settings
+        var existingCorsSettings = await _formCorsSettingsRepository.GetByIdAsync(FormId.Value);
+        if (existingCorsSettings == null)
+        {
+            // Create new settings
+            await _formCorsSettingsRepository.AddAsync(new FormCorsSettings
             {
-                // Create new settings
-                await _formCorsSettingsRepository.AddAsync(new FormCorsSettings
-                {
-                    FormId = formId,
-                    AllowedOrigins = CorsSettings.AllowedOrigins,
-                });
-            }
-            else
-            {
-                // Update existing settings
-                existingCorsSettings.AllowedOrigins = CorsSettings.AllowedOrigins;
+                FormId = formId,
+                AllowedOrigins = CorsSettings.AllowedOrigins,
+            });
+        }
+        else
+        {
+            // Update existing settings
+            existingCorsSettings.AllowedOrigins = CorsSettings.AllowedOrigins;
 
-                await _formCorsSettingsRepository.Update(existingCorsSettings);
-            }
+            await _formCorsSettingsRepository.Update(existingCorsSettings);
+        }
             
-            var existingRecaptchaSettings = await _recaptchaSettingsRepository.GetByIdAsync(FormId.Value);
-            if (existingRecaptchaSettings == null)
+        var existingRecaptchaSettings = await _recaptchaSettingsRepository.GetByIdAsync(FormId.Value);
+        if (existingRecaptchaSettings == null)
+        {
+            // Create new settings
+            await _recaptchaSettingsRepository.AddAsync(new RecaptchaFormSettings
             {
-                // Create new settings
-                await _recaptchaSettingsRepository.AddAsync(new RecaptchaFormSettings
-                {
-                    FormId = formId,
-                    SiteKey = RecaptchaFormSettings.SiteKey,
-                    SecretKey = RecaptchaFormSettings.SecretKey
-                });
-            }
-            else
-            {
-                // Update existing settings
-                existingRecaptchaSettings.SiteKey = RecaptchaFormSettings.SiteKey;
-                existingRecaptchaSettings.SecretKey = RecaptchaFormSettings.SecretKey;
+                FormId = formId,
+                SiteKey = RecaptchaFormSettings.SiteKey,
+                SecretKey = RecaptchaFormSettings.SecretKey
+            });
+        }
+        else
+        {
+            // Update existing settings
+            existingRecaptchaSettings.SiteKey = RecaptchaFormSettings.SiteKey;
+            existingRecaptchaSettings.SecretKey = RecaptchaFormSettings.SecretKey;
                 
-                await _recaptchaSettingsRepository.Update(existingRecaptchaSettings);
-            }
+            await _recaptchaSettingsRepository.Update(existingRecaptchaSettings);
         }
 
         return Page();
