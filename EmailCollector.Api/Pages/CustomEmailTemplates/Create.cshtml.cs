@@ -42,10 +42,11 @@ public class Create : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        PopulateEventOptions();
+        await PopulateFormOptions();
+        
         if (!ModelState.IsValid)
         {
-            PopulateEventOptions();
-            await PopulateFormOptions();
             return Page();
         }
 
@@ -61,6 +62,20 @@ public class Create : PageModel
             TemplateBody = CustomEmailTemplate.TemplateBody,
         };
 
+        var existingTemplate = await _emailTemplatesService.GetCustomEmailTemplateByFormIdAndEvent(
+            CustomEmailTemplate.FormId,
+            CustomEmailTemplate.Event);
+
+        if (existingTemplate != null)
+        {
+            var formName = FormOptions
+                .Where(f => f.Value == existingTemplate.FormId.ToString())
+                .Select(f => f.Text).FirstOrDefault();
+            
+            ModelState.AddModelError("TemplateExists", $"Custom email template already exists for form {formName} and event {CustomEmailTemplate.Event}");
+            return Page();
+        }
+        
         await _emailTemplatesService.SaveCustomEmailTemplate(templateToSave);
 
         return RedirectToPage("./Index");

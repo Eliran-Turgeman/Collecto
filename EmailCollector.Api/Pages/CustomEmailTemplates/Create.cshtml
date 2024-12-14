@@ -24,7 +24,7 @@
     </div>
     <div class="form-group">
         <label asp-for="CustomEmailTemplate.TemplateSubject" class="control-label"></label>
-        <input asp-for="CustomEmailTemplate.TemplateSubject" class="form-control" />
+        <input asp-for="CustomEmailTemplate.TemplateSubject" class="form-control"/>
         <span asp-validation-for="CustomEmailTemplate.TemplateSubject" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -33,8 +33,12 @@
         <span asp-validation-for="CustomEmailTemplate.TemplateBody" class="text-danger"></span>
         <small class="form-text text-muted">Enter the HTML content for the email template.</small>
     </div>
+    <br/>
+    @Html.ValidationMessage("TemplateExists")
+    <br/>
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+
 </form>
 
 @section Scripts {

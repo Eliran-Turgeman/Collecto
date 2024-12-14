@@ -3,6 +3,8 @@ using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services.CustomEmailTemplates.StorageProviders;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Api.Services.CustomEmailTemplates;
 
@@ -120,7 +122,7 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
             TemplateBodyUri = newUri,
             UpdatedAt = DateTime.UtcNow
         };
-
+        
         await _customEmailTemplatesRepository.AddAsync(templateEntity);
     }
 }
