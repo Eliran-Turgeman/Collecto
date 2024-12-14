@@ -4,4 +4,5 @@ public interface ITemplateStorageProvider
 {
     Task<string> GetTemplateBodyAsync(string uri);
     Task<string> SaveTemplateBodyAsync(string templateBody, string currentUri = null);
+    void DeleteTemplateBodyAsync(string uri);
 }

@@ -56,4 +56,10 @@ public class FileSystemTemplateStorageProvider : ITemplateStorageProvider
 
         return fileName;
     }
+
+    public void DeleteTemplateBodyAsync(string uri)
+    {
+        var filePath = Path.Combine(_baseDirectory, uri);
+        File.Delete(filePath);
+    }
 }

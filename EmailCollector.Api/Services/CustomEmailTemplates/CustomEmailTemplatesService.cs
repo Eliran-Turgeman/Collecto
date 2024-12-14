@@ -106,32 +106,55 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
         if (customEmailTemplateDto == null)
             throw new ArgumentNullException(nameof(customEmailTemplateDto));
 
-        string newUri = await _templateStorageProvider.SaveTemplateBodyAsync(customEmailTemplateDto.TemplateBody, 
-            customEmailTemplateDto.TemplateBodyUri);
-
-        var templateEntity = new CustomEmailTemplate
+        // Check if the entity already exists
+        var existingEntity = await _customEmailTemplatesRepository.GetByIdAsync(customEmailTemplateDto.Id);
+        if (existingEntity != null)
         {
-            Id = customEmailTemplateDto.Id == Guid.Empty ? Guid.NewGuid() : customEmailTemplateDto.Id,
-            CreatedAt = customEmailTemplateDto.Id == Guid.Empty ? DateTime.UtcNow : customEmailTemplateDto.CreatedAt,
-            Event = customEmailTemplateDto.Event,
-            FormId = customEmailTemplateDto.FormId,
-            IsActive = customEmailTemplateDto.IsActive,
-            TemplateSubject = customEmailTemplateDto.TemplateSubject,
-            TemplateBodyUri = newUri,
-            UpdatedAt = DateTime.UtcNow
-        };
+            // Update existing entity
+            existingEntity.Event = customEmailTemplateDto.Event;
+            existingEntity.TemplateSubject = customEmailTemplateDto.TemplateSubject;
+            existingEntity.TemplateBodyUri = await _templateStorageProvider.SaveTemplateBodyAsync(
+                customEmailTemplateDto.TemplateBody, 
+                customEmailTemplateDto.TemplateBodyUri
+            );
+            existingEntity.IsActive = customEmailTemplateDto.IsActive;
+            existingEntity.UpdatedAt = DateTime.UtcNow;
+
+            await _customEmailTemplatesRepository.Update(existingEntity);
+        }
+        else
+        {
+            // Create new entity
+            var newEntity = new CustomEmailTemplate
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                Event = customEmailTemplateDto.Event,
+                FormId = customEmailTemplateDto.FormId,
+                IsActive = customEmailTemplateDto.IsActive,
+                TemplateSubject = customEmailTemplateDto.TemplateSubject,
+                TemplateBodyUri = await _templateStorageProvider.SaveTemplateBodyAsync(
+                    customEmailTemplateDto.TemplateBody, 
+                    customEmailTemplateDto.TemplateBodyUri
+                ),
+                UpdatedAt = DateTime.UtcNow
+            };
         
-        await _customEmailTemplatesRepository.AddAsync(templateEntity);
+            await _customEmailTemplatesRepository.AddAsync(newEntity);
+        }
     }
 
     public async Task DeleteCustomEmailTemplate(Guid templateId)
     {
         await _customEmailTemplatesRepository.RemoveById(templateId);
+        _templateStorageProvider.DeleteTemplateBodyAsync(templateId.ToString());
     }
 
     public async Task<CustomEmailTemplateDto> GetCustomEmailTemplateById(Guid id)
     {
         var entity = await _customEmailTemplatesRepository.GetByIdAsync(id);
+        var templateBody = await _templateStorageProvider.GetTemplateBodyAsync(entity.TemplateBodyUri);
+
         return new CustomEmailTemplateDto
         {
             Id = entity.Id,
@@ -141,6 +164,7 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
             IsActive = entity.IsActive,
             TemplateSubject = entity.TemplateSubject,
             TemplateBodyUri = entity.TemplateBodyUri,
+            TemplateBody = templateBody,
             UpdatedAt = entity.UpdatedAt
         };
     }

@@ -16,6 +16,7 @@ services:
       - "80:80"
     volumes:
       - ./EmailCollector.Api/Data:/app/data
+      - ./CustomEmailTemplates:/app/CustomEmailTemplates
     depends_on:
       - redis
     environment:

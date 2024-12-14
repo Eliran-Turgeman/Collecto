@@ -4,6 +4,7 @@ using EmailCollector.Api.Services;
 using EmailCollector.Api.Services.CustomEmailTemplates;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -49,7 +50,10 @@ public class Create : PageModel
         {
             return Page();
         }
-
+        
+        var sanitizer = new HtmlSanitizer();
+        CustomEmailTemplate.TemplateBody = sanitizer.Sanitize(CustomEmailTemplate.TemplateBody);
+        
         var templateToSave = new CustomEmailTemplateDto
         {
             Id = Guid.NewGuid(),

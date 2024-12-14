@@ -1,0 +1,49 @@
+@page "{id:guid}"
+@model EmailCollector.Api.Pages.CustomEmailTemplates.Edit
+
+@{
+ViewData["Title"] = "Edit Custom Email Template";
+}
+
+<h1>Edit Custom Email Template</h1>
+
+<form method="post">
+    <input type="hidden" asp-for="CustomEmailTemplate.FormId" />
+
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.FormId" class="control-label">Form</label>
+        <select asp-for="CustomEmailTemplate.FormId" class="form-control" asp-items="Model.FormOptions" disabled>
+            <option value="">-- Select Form --</option>
+        </select>
+        <span asp-validation-for="CustomEmailTemplate.FormId" class="text-danger"></span>
+        <small class="form-text text-muted">Form cannot be changed.</small>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.Event" class="control-label">Event</label>
+        <select asp-for="CustomEmailTemplate.Event" class="form-control" asp-items="Model.EventOptions">
+            <option value="">-- Select Event --</option>
+        </select>
+        <span asp-validation-for="CustomEmailTemplate.Event" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.TemplateSubject" class="control-label">Subject</label>
+        <input asp-for="CustomEmailTemplate.TemplateSubject" class="form-control" />
+        <span asp-validation-for="CustomEmailTemplate.TemplateSubject" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CustomEmailTemplate.TemplateBody" class="control-label">HTML Content</label>
+        <textarea asp-for="CustomEmailTemplate.TemplateBody" class="form-control" rows="10"></textarea>
+        <span asp-validation-for="CustomEmailTemplate.TemplateBody" class="text-danger"></span>
+        <small class="form-text text-muted">Enter the HTML content for the email template.</small>
+    </div>
+    <div class="form-group form-check">
+        <input asp-for="CustomEmailTemplate.IsActive" class="form-check-input" />
+        <label asp-for="CustomEmailTemplate.IsActive" class="form-check-label">Is Active</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
