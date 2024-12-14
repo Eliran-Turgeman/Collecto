@@ -9,4 +9,6 @@ public interface ICustomEmailTemplatesService
     Task<Dictionary<Guid, IEnumerable<CustomEmailTemplateDto>>> GetCustomEmailTemplatesByFormIds(IEnumerable<Guid> formIds);
     Task<CustomEmailTemplateDto?> GetCustomEmailTemplateByFormIdAndEvent(Guid formId, TemplateEvent templateEvent);
     Task SaveCustomEmailTemplate(CustomEmailTemplateDto customEmailTemplateDto);
+    Task DeleteCustomEmailTemplate(Guid templateId);
+    Task <CustomEmailTemplateDto> GetCustomEmailTemplateById(Guid id);
 }

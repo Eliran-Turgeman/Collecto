@@ -64,4 +64,14 @@ public class Repository<T> : IRepository<T> where T : class
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task RemoveById(object id)
+    {
+        var entity = await GetByIdAsync(id);
+        if (entity == null)
+        {
+            return;
+        }
+        await Remove(entity);
+    }
 }

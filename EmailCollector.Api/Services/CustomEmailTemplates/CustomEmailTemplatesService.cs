@@ -3,8 +3,6 @@ using EmailCollector.Api.Repositories;
 using EmailCollector.Api.Services.CustomEmailTemplates.StorageProviders;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 
 namespace EmailCollector.Api.Services.CustomEmailTemplates;
 
@@ -124,5 +122,26 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
         };
         
         await _customEmailTemplatesRepository.AddAsync(templateEntity);
+    }
+
+    public async Task DeleteCustomEmailTemplate(Guid templateId)
+    {
+        await _customEmailTemplatesRepository.RemoveById(templateId);
+    }
+
+    public async Task<CustomEmailTemplateDto> GetCustomEmailTemplateById(Guid id)
+    {
+        var entity = await _customEmailTemplatesRepository.GetByIdAsync(id);
+        return new CustomEmailTemplateDto
+        {
+            Id = entity.Id,
+            CreatedAt = entity.CreatedAt,
+            Event = entity.Event,
+            FormId = entity.FormId,
+            IsActive = entity.IsActive,
+            TemplateSubject = entity.TemplateSubject,
+            TemplateBodyUri = entity.TemplateBodyUri,
+            UpdatedAt = entity.UpdatedAt
+        };
     }
 }
