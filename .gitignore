@@ -386,3 +386,5 @@ swagger.json
 .idea/
 
 Push-CollectoImage.ps1
+
+CustomEmailTemplates/
