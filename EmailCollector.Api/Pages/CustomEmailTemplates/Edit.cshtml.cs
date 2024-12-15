@@ -121,9 +121,7 @@ public class Edit : PageModel
             UpdatedAt = DateTime.UtcNow
         };
 
-        Console.WriteLine("saving");
         await _emailTemplatesService.SaveCustomEmailTemplate(updatedDto);
-        Console.WriteLine("saved");
         return RedirectToPage("./Index");
     }
 
