@@ -13,7 +13,6 @@ services:
     build:
       context: .
       dockerfile: EmailCollector.Api/Dockerfile
-    container_name: collecto
     ports:
       - "5001:8080"
     volumes:
@@ -67,6 +66,20 @@ services:
     volumes:
       - ./EmailCollector.Api/Data:/app/data
       - ./dbeaver-data:/opt/cloudbeaver/workspace
+    networks:
+      - email-collector-net
+
+  nginx:
+    image: nginx:latest
+    container_name: reverse-proxy
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - api
     networks:
       - email-collector-net
 

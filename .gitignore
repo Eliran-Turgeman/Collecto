@@ -380,7 +380,6 @@ ngrok2/
 grafana/
 
 prometheus/
-/nginx/nginx.conf
 swagger.json
 
 .idea/
@@ -388,3 +387,5 @@ swagger.json
 Push-CollectoImage.ps1
 
 CustomEmailTemplates/
+
+nginx/certs/
