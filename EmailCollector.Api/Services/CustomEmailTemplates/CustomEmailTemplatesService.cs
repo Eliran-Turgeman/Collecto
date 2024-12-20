@@ -6,12 +6,19 @@ using EmailCollector.Domain.Enums;
 
 namespace EmailCollector.Api.Services.CustomEmailTemplates;
 
+/// <summary>
+/// Service for managing custom email templates, including CRUD operations and template storage.
+/// </summary>
 public class CustomEmailTemplatesService : ICustomEmailTemplatesService
 {
     private IFormRelatedRepository<CustomEmailTemplate> _customEmailTemplatesRepository;
     private readonly ITemplateStorageProvider _templateStorageProvider;
 
-
+    /// <summary>
+    /// Initializes a new instance of the CustomEmailTemplatesService class.
+    /// </summary>
+    /// <param name="customEmailTemplatesRepository">Repository for managing custom email templates</param>
+    /// <param name="templateStorageProvider">Provider for template storage operations</param>
     public CustomEmailTemplatesService(IFormRelatedRepository<CustomEmailTemplate> customEmailTemplatesRepository,
         ITemplateStorageProvider templateStorageProvider)
     {
@@ -19,6 +26,11 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
         _templateStorageProvider = templateStorageProvider;
     }
     
+    /// <summary>
+    /// Retrieves all custom email templates associated with a specific form.
+    /// </summary>
+    /// <param name="formId">The ID of the form to get templates for</param>
+    /// <returns>A collection of custom email templates</returns>
     public async Task<IEnumerable<CustomEmailTemplateDto>> GetCustomEmailTemplatesByFormId(Guid formId)
     {
         var customEmailTemplates = await _customEmailTemplatesRepository.GetByFormId(formId);
@@ -45,6 +57,11 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
         return templates;
     }
 
+    /// <summary>
+    /// Retrieves custom email templates for multiple forms, organized by form ID.
+    /// </summary>
+    /// <param name="formIds">Collection of form IDs to get templates for</param>
+    /// <returns>Dictionary mapping form IDs to their associated templates</returns>
     public async Task<Dictionary<Guid, IEnumerable<CustomEmailTemplateDto>>> GetCustomEmailTemplatesByFormIds(IEnumerable<Guid> formIds)
     {
         if (formIds == null)
@@ -94,6 +111,12 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
         return dtoDictionary;
     }
 
+    /// <summary>
+    /// Retrieves a specific email template for a form and event type.
+    /// </summary>
+    /// <param name="formId">The ID of the form</param>
+    /// <param name="templateEvent">The event type of the template</param>
+    /// <returns>The matching email template, or null if not found</returns>
     public async Task<CustomEmailTemplateDto?> GetCustomEmailTemplateByFormIdAndEvent(Guid formId, TemplateEvent templateEvent)
     {
         var templatesForForm = await GetCustomEmailTemplatesByFormId(formId);
@@ -101,6 +124,11 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
             .FirstOrDefault(t => t.Event == templateEvent);
     }
 
+    /// <summary>
+    /// Creates or updates a custom email template.
+    /// </summary>
+    /// <param name="customEmailTemplateDto">The template data to save</param>
+    /// <exception cref="ArgumentNullException">Thrown when customEmailTemplateDto is null</exception>
     public async Task SaveCustomEmailTemplate(CustomEmailTemplateDto customEmailTemplateDto)
     {
         if (customEmailTemplateDto == null)
@@ -144,15 +172,28 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
         }
     }
 
+    /// <summary>
+    /// Deletes a custom email template and its associated template body.
+    /// </summary>
+    /// <param name="templateId">The ID of the template to delete</param>
     public async Task DeleteCustomEmailTemplate(Guid templateId)
     {
         await _customEmailTemplatesRepository.RemoveById(templateId);
         _templateStorageProvider.DeleteTemplateBodyAsync(templateId.ToString());
     }
 
+    /// <summary>
+    /// Retrieves a custom email template by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the template to retrieve</param>
+    /// <returns>The email template with the specified ID</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when no template exists with the specified ID</exception>
     public async Task<CustomEmailTemplateDto> GetCustomEmailTemplateById(Guid id)
     {
         var entity = await _customEmailTemplatesRepository.GetByIdAsync(id);
+        if (entity == null)
+            throw new KeyNotFoundException($"Template with ID {id} not found");
+
         var templateBody = await _templateStorageProvider.GetTemplateBodyAsync(entity.TemplateBodyUri);
 
         return new CustomEmailTemplateDto
