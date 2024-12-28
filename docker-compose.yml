@@ -2,8 +2,6 @@ services:
   redis:
     image: redis:latest
     container_name: redis
-    ports:
-      - "127.0.0.1:6379:6379"
     volumes:
       - ./redis-data:/data
     networks:
@@ -11,17 +9,17 @@ services:
 
   api:
     image: elirant/collecto:latest
-    container_name: collecto
     ports:
-      - "80:80"
+      - "8080:8080"
     volumes:
       - ./EmailCollector.Api/Data:/app/data
       - ./CustomEmailTemplates:/app/CustomEmailTemplates
     depends_on:
       - redis
+      - letsencrypt
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://*:80
+      - ASPNETCORE_URLS=http://*:8080
       - Redis__ConnectionString=redis:6379
       - EmailConfiguration:From=${EMAIL_FROM?Mandatory environment variable, check your .env file}
       - EmailConfiguration:SmtpServer=${EMAIL_SMTP_SERVER?Mandatory environment variable, check your .env file}
@@ -29,10 +27,82 @@ services:
       - EmailConfiguration:Password=${EMAIL_PASSWORD?Mandatory environment variable, check your .env file}
       - ValidCorsOrigins=${VALID_CORS_ORIGINS}
       - COLLECTO_DOMAIN=${COLLECTO_DOMAIN}
-    env_file:
-      - .env
+      - VIRTUAL_HOST=trycollecto.com
+      - LETSENCRYPT_HOST=trycollecto.com
+      - LETSENCRYPT_EMAIL=trycollecto@gmail.com
+      - VIRTUAL_PORT=8080
     networks:
       - email-collector-net
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/data:/prometheus
+    networks:
+      - email-collector-net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - email-collector-net
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - "8083:8978"
+    environment:
+      - CB_DB_SQLITE=true  # Enable SQLite support
+    volumes:
+      - ./EmailCollector.Api/Data:/app/data
+      - ./dbeaver-data:/opt/cloudbeaver/workspace
+    networks:
+      - email-collector-net
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./data/certs:/etc/nginx/certs:rw
+      - ./data/vhost.d:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
+    environment:
+      - TRUST_DOWNSTREAM_PROXY=true
+    networks:
+      - email-collector-net
+    restart: unless-stopped
+
+  letsencrypt:
+    image: nginxproxy/acme-companion
+    container_name: letsencrypt
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+      - DEFAULT_EMAIL=trycollecto@gmail.com
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data/certs:/etc/nginx/certs:rw
+      - ./data/vhost.d:/etc/nginx/vhost.d
+      - ./data/html:/usr/share/nginx/html
+      - ./data/acme.sh:/etc/acme.sh
+    depends_on:
+      - nginx-proxy
+    networks:
+      - email-collector-net
+    restart: unless-stopped
+
 
 networks:
   email-collector-net:
@@ -45,3 +115,9 @@ volumes:
       o: bind
       type: none
       device: ./data
+  grafana: 
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./grafana
