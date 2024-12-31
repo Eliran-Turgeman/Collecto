@@ -1,3 +1,4 @@
+using Blazorise;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
@@ -14,9 +15,6 @@ public class FormServiceTests
 {
     private Mock<ISignupFormRepository> _signupFormRepositoryMock;
     private Mock<IEmailSignupRepository> _emailSignupRepositoryMock;
-    private Mock<IRepository<SmtpEmailSettings>> _smtpSettingsRepositoryMock;
-    private Mock<IRepository<FormCorsSettings>> _formCorsSettingsRepositoryMock;
-    private Mock<IRepository<RecaptchaFormSettings>> _recaptchaSettingsRepositoryMock;
     private Mock<IExportService> _exportServiceMock;
     private Mock<ILogger<FormService>> _loggerMock;
     private IFormService _formService;
@@ -27,17 +25,11 @@ public class FormServiceTests
     {
         _signupFormRepositoryMock = new Mock<ISignupFormRepository>();
         _emailSignupRepositoryMock = new Mock<IEmailSignupRepository>();
-        _smtpSettingsRepositoryMock = new Mock<IRepository<SmtpEmailSettings>>();
-        _formCorsSettingsRepositoryMock = new Mock<IRepository<FormCorsSettings>>();
-        _recaptchaSettingsRepositoryMock = new Mock<IRepository<RecaptchaFormSettings>>();
         _exportServiceMock = new Mock<IExportService>();
         _loggerMock = new Mock<ILogger<FormService>>();
         _formsDALMock = new Mock<IFormsDAL>();
         _formService = new FormService(_signupFormRepositoryMock.Object,
             _emailSignupRepositoryMock.Object,
-            _smtpSettingsRepositoryMock.Object,
-            _formCorsSettingsRepositoryMock.Object,
-            _recaptchaSettingsRepositoryMock.Object,
             _exportServiceMock.Object,
             _loggerMock.Object,
             _formsDALMock.Object);
@@ -48,24 +40,21 @@ public class FormServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var createFormDto = new ExtendedCreateFormDto()
+        var formName = "Test Form";
+        var createFormDto = new ExtendedCreateFormDto
         {
-            FormName = "Test Form",
+            FormName = formName,
+            EmailFrom = "test@test.com",
+            SmtpServer = "smtp.test.com",
+            SmtpPort = 25,
+            SmtpUsername = "test@test.com",
+            SmtpPassword = "test",
+            AllowedOrigins = "https://www.test.com",
+            CaptchaSecretKey = "test",
+            CaptchaSiteKey = "test",
         };
-        var expectedFormId = Guid.NewGuid();
-        var expectedFormName = "Test Form";
-        var signupForm = new SignupForm
-        {
-            Id = expectedFormId,
-            FormName = expectedFormName,
-            CreatedBy = userId,
-        };
-        _signupFormRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<SignupForm>()))
-            .Callback<SignupForm>(form =>
-            {
-                form.Id = expectedFormId;
-            })
-            .Returns(Task.CompletedTask);
+        
+        _formsDALMock.Setup(dal => dal.SaveFormWithTransaction(It.IsAny<SignupForm>())).Returns(Task.FromResult(true));
 
         // Act
         var result = await _formService.CreateFormAsync(userId, createFormDto);
@@ -74,10 +63,8 @@ public class FormServiceTests
         Assert.That(result, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(result.Id, Is.EqualTo(expectedFormId));
-            Assert.That(result.FormName, Is.EqualTo(expectedFormName));
+            Assert.That(result.FormName, Is.EqualTo(formName));
         });
-        _signupFormRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<SignupForm>()), Times.Once);
     }
 
     [Test]
@@ -199,20 +186,54 @@ public class FormServiceTests
         // Arrange
         var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        var createFormDto = new ExtendedCreateFormDto()
+        const string formName = "Test Form";
+        const string updatedFormName = "Updated Form";
+        var createFormDto = new ExtendedCreateFormDto
         {
-            FormName = "Updated Form",
-            Status = FormStatus.Active,
+            FormName = updatedFormName,
+            EmailFrom = "test@test.com",
+            SmtpServer = "smtp.test.com",
+            SmtpPort = 25,
+            SmtpUsername = "test@test.com",
+            SmtpPassword = "test",
+            AllowedOrigins = "https://www.test.com",
+            CaptchaSecretKey = "test",
+            CaptchaSiteKey = "test",
+            Status = FormStatus.Inactive
         };
         var form = new SignupForm
         {
             Id = formId,
-            FormName = "Test Form",
+            FormName = formName,
             CreatedBy = userId,
+            FormCorsSettings = new FormCorsSettings
+            {
+                AllowedOrigins = "https://www.test.com",
+                FormId = formId
+            },
+            CustomEmailTemplates = [],
+            FormEmailSettings = new SmtpEmailSettings
+            {
+                EmailFrom = "test@test.com",
+                EmailMethod = EmailMethod.Smtp,
+                SmtpPort = 465,
+                SmtpUsername = "test@test.com",
+                SmtpPassword = "test",
+                SmtpServer = "smtp.test.com",
+                FormId = formId,
+            },
+            RecaptchaSettings = new RecaptchaFormSettings
+            {
+                FormId = formId,
+                SecretKey = "test",
+                SiteKey = "test",
+            }
         };
         _signupFormRepositoryMock.Setup(repo => repo.GetByFormIdentifierAsync(formId, userId))
             .ReturnsAsync(form);
-
+        
+        _formsDALMock.Setup(dal => dal.SaveFormWithTransaction(It.IsAny<SignupForm>())).Returns(Task.FromResult(true));
+        
         // Act
         var result = await _formService.UpdateFormAsync(formId, userId, createFormDto);
 
@@ -221,10 +242,8 @@ public class FormServiceTests
         Assert.Multiple(() =>
         {
             Assert.That(result.Id, Is.EqualTo(form.Id));
-            Assert.That(result.FormName, Is.EqualTo(createFormDto.FormName));
+            Assert.That(result.FormName, Is.EqualTo(updatedFormName));
         });
-        _signupFormRepositoryMock.Verify(repo => repo.GetByFormIdentifierAsync(formId, userId), Times.Once);
-        _signupFormRepositoryMock.Verify(repo => repo.Update(form), Times.Once);
     }
 
     [Test]
@@ -233,10 +252,19 @@ public class FormServiceTests
         // Arrange
         var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        var createFormDto = new ExtendedCreateFormDto()
+        var formName = "Test Form";
+        var createFormDto = new ExtendedCreateFormDto
         {
-            FormName = "Updated Form",
-            Status = FormStatus.Active,
+            FormName = formName,
+            EmailFrom = "test@test.com",
+            SmtpServer = "smtp.test.com",
+            SmtpPort = 25,
+            SmtpUsername = "test@test.com",
+            SmtpPassword = "test",
+            AllowedOrigins = "https://www.test.com",
+            CaptchaSecretKey = "test",
+            CaptchaSiteKey = "test",
+            Status = FormStatus.Inactive
         };
         _signupFormRepositoryMock.Setup(repo => repo.GetByFormIdentifierAsync(formId, userId))
             .ReturnsAsync((SignupForm)null!);

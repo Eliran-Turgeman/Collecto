@@ -16,27 +16,18 @@ public class FormService : IFormService
 {
     private readonly ISignupFormRepository _signupFormRepository;
     private readonly IEmailSignupRepository _emailSignupRepository;
-    private readonly IRepository<SmtpEmailSettings> _smtpEmailSettingsRepository;
-    private readonly IRepository<FormCorsSettings> _formCorsSettingsRepository;
-    private readonly IRepository<RecaptchaFormSettings> _recaptchaFormSettingsRepository;
     private readonly IExportService _exportService;
     private readonly ILogger<FormService> _logger;
     private readonly IFormsDAL _formsDAL;
 
     public FormService(ISignupFormRepository signupFormRepository,
         IEmailSignupRepository emailSignupRepository,
-        IRepository<SmtpEmailSettings> smtpEmailSettingsRepository,
-        IRepository<FormCorsSettings> formCorsSettingsRepository,
-        IRepository<RecaptchaFormSettings> recaptchaFormSettingsRepository,
         IExportService exportService,
         ILogger<FormService> logger,
         IFormsDAL formsDAL)
     {
         _signupFormRepository = signupFormRepository;
         _emailSignupRepository = emailSignupRepository;
-        _smtpEmailSettingsRepository = smtpEmailSettingsRepository;
-        _formCorsSettingsRepository = formCorsSettingsRepository;
-        _recaptchaFormSettingsRepository = recaptchaFormSettingsRepository;
         _exportService = exportService;
         _logger = logger;
         _formsDAL = formsDAL;
@@ -46,6 +37,7 @@ public class FormService : IFormService
     {
         var form = new SignupForm
         {
+            Id = Guid.NewGuid(),
             FormName = extendedCreateFormDto.FormName,
             CreatedBy = userId,
             Status = extendedCreateFormDto.Status,
@@ -152,7 +144,6 @@ public class FormService : IFormService
 
         form.FormName = createFormDto.FormName;
         form.Status = createFormDto.Status;
-        _logger.LogInformation($"Form={JsonSerializer.Serialize(form, new JsonSerializerOptions { WriteIndented = true })}");
 
         form.FormCorsSettings.AllowedOrigins = createFormDto.AllowedOrigins ?? form.FormCorsSettings.AllowedOrigins;
         form.FormEmailSettings.EmailFrom = createFormDto.EmailFrom ?? form.FormEmailSettings.EmailFrom;
