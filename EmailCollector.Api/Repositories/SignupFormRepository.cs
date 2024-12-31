@@ -16,8 +16,13 @@ public class SignupFormRepository :  Repository<SignupForm>, ISignupFormReposito
     public async Task<SignupForm?> GetByFormIdentifierAsync(Guid formIdentifier, Guid userId)
     {
         return await _dbContext.SignupForms
+            .AsNoTracking()
             .Where(form => form.CreatedBy == userId)
-            .FirstOrDefaultAsync(form => form.Id == formIdentifier); ;
+            .Include(form => form.FormCorsSettings)
+            .Include(form => form.FormEmailSettings)
+            .Include(form => form.CustomEmailTemplates)
+            .Include(form => form.RecaptchaSettings)
+            .FirstOrDefaultAsync(form => form.Id == formIdentifier);
     }
 
     public async Task<IEnumerable<SignupForm>> GetByIds(IEnumerable<Guid> formIds)

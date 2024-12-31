@@ -3,6 +3,7 @@ using EmailCollector.Api.Services;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Domain.Enums;
 using EmailCollector.Api.Repositories;
+using EmailCollector.Api.Repositories.DAL;
 using EmailCollector.Api.Services.Exports;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,6 +20,7 @@ public class FormServiceTests
     private Mock<IExportService> _exportServiceMock;
     private Mock<ILogger<FormService>> _loggerMock;
     private IFormService _formService;
+    private Mock<IFormsDAL> _formsDALMock;
 
     [SetUp]
     public void Setup()
@@ -30,13 +32,15 @@ public class FormServiceTests
         _recaptchaSettingsRepositoryMock = new Mock<IRepository<RecaptchaFormSettings>>();
         _exportServiceMock = new Mock<IExportService>();
         _loggerMock = new Mock<ILogger<FormService>>();
+        _formsDALMock = new Mock<IFormsDAL>();
         _formService = new FormService(_signupFormRepositoryMock.Object,
             _emailSignupRepositoryMock.Object,
             _smtpSettingsRepositoryMock.Object,
             _formCorsSettingsRepositoryMock.Object,
             _recaptchaSettingsRepositoryMock.Object,
             _exportServiceMock.Object,
-            _loggerMock.Object);
+            _loggerMock.Object,
+            _formsDALMock.Object);
     }
 
     [Test]
@@ -44,7 +48,7 @@ public class FormServiceTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var createFormDto = new CreateFormDto
+        var createFormDto = new ExtendedCreateFormDto()
         {
             FormName = "Test Form",
         };
@@ -195,7 +199,7 @@ public class FormServiceTests
         // Arrange
         var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        var createFormDto = new CreateFormDto
+        var createFormDto = new ExtendedCreateFormDto()
         {
             FormName = "Updated Form",
             Status = FormStatus.Active,
@@ -229,13 +233,13 @@ public class FormServiceTests
         // Arrange
         var formId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        var createFormDto = new CreateFormDto
+        var createFormDto = new ExtendedCreateFormDto()
         {
             FormName = "Updated Form",
             Status = FormStatus.Active,
         };
         _signupFormRepositoryMock.Setup(repo => repo.GetByFormIdentifierAsync(formId, userId))
-            .ReturnsAsync((SignupForm)null);
+            .ReturnsAsync((SignupForm)null!);
 
         // Act
         var result = await _formService.UpdateFormAsync(formId, userId, createFormDto);

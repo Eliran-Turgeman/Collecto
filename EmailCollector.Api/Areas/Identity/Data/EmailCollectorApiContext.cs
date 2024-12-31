@@ -2,6 +2,7 @@
 using EmailCollector.Domain.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EmailCollector.Api.Data;
 
@@ -29,7 +30,10 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
             .HasConversion(
             v => v.ToString(), // Convert enum to string when saving
             v => (FormStatus)Enum.Parse(typeof(FormStatus), v));  // Convert string to enum when loading
-
+        
+        modelBuilder.Entity<SignupForm>()
+            .Navigation(f => f.FormCorsSettings)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         modelBuilder.Entity<FormEmailSettings>()
             .HasKey(c => c.FormId);
@@ -94,5 +98,11 @@ public class EmailCollectorApiContext : IdentityDbContext<EmailCollectorApiUser>
                 v => (TemplateEvent)Enum.Parse(typeof(TemplateEvent), v));  // Convert string to enum when loading
         
         base.OnModelCreating(modelBuilder);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
     }
 }

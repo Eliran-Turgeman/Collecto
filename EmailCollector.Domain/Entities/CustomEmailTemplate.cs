@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using EmailCollector.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ public class CustomEmailTemplate
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
+    [JsonIgnore]
     public SignupForm Form { get; set; }
 
 }

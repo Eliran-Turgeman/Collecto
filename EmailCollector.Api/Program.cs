@@ -38,6 +38,7 @@ builder.Services.AddCache();
 builder.Services.AddRateLimiting(builder.Configuration);
 builder.Services.AddFeatureToggle(builder.Configuration);
 builder.Services.AddApiOptions(builder.Configuration);
+builder.Services.AddSwagger();
 
 builder.Services.AddDbContext<EmailCollectorApiContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EmailCollectorDB") ?? throw new InvalidOperationException("Connection string 'EmailCollectorDB' not found.")));

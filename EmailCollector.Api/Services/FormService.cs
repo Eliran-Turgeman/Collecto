@@ -1,7 +1,9 @@
-﻿using Blazorise.Extensions;
+﻿using System.Text.Json;
+using Blazorise.Extensions;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Api.Repositories;
+using EmailCollector.Api.Repositories.DAL;
 using EmailCollector.Api.Services.Exports;
 using EmailCollector.Domain.Enums;
 
@@ -19,6 +21,7 @@ public class FormService : IFormService
     private readonly IRepository<RecaptchaFormSettings> _recaptchaFormSettingsRepository;
     private readonly IExportService _exportService;
     private readonly ILogger<FormService> _logger;
+    private readonly IFormsDAL _formsDAL;
 
     public FormService(ISignupFormRepository signupFormRepository,
         IEmailSignupRepository emailSignupRepository,
@@ -26,7 +29,8 @@ public class FormService : IFormService
         IRepository<FormCorsSettings> formCorsSettingsRepository,
         IRepository<RecaptchaFormSettings> recaptchaFormSettingsRepository,
         IExportService exportService,
-        ILogger<FormService> logger)
+        ILogger<FormService> logger,
+        IFormsDAL formsDAL)
     {
         _signupFormRepository = signupFormRepository;
         _emailSignupRepository = emailSignupRepository;
@@ -35,27 +39,7 @@ public class FormService : IFormService
         _recaptchaFormSettingsRepository = recaptchaFormSettingsRepository;
         _exportService = exportService;
         _logger = logger;
-    }
-
-    public async Task<FormDetailsDto> CreateFormAsync(Guid userId, CreateFormDto createFormDto)
-    {
-        var signupForm = new SignupForm
-        {
-            FormName = createFormDto.FormName,
-            CreatedBy = userId,
-            Status = createFormDto.Status,
-        };
-
-        await _signupFormRepository.AddAsync(signupForm);
-
-        _logger.LogInformation($"Created form {signupForm.Id} for user {userId}.");
-
-        return new FormDetailsDto
-        {
-            Id = signupForm.Id,
-            FormName = signupForm.FormName,
-            Status = signupForm.Status,
-        };
+        _formsDAL = formsDAL;
     }
     
     public async Task<FormDetailsDto> CreateFormAsync(Guid userId, ExtendedCreateFormDto extendedCreateFormDto)
@@ -66,54 +50,40 @@ public class FormService : IFormService
             CreatedBy = userId,
             Status = extendedCreateFormDto.Status,
         };
-        await _signupFormRepository.AddAsync(form);
-
-        if (!extendedCreateFormDto.EmailFrom.IsNullOrEmpty() &&
-            !extendedCreateFormDto.SmtpServer.IsNullOrEmpty() &&
-            extendedCreateFormDto.SmtpPort.HasValue &&
-            !extendedCreateFormDto.SmtpUsername.IsNullOrEmpty() &&
-            !extendedCreateFormDto.SmtpPassword.IsNullOrEmpty())
+        
+        var smtpConfig = new SmtpEmailSettings
         {
-            var smtpConfig = new SmtpEmailSettings
-            {
-                EmailMethod = EmailMethod.Smtp,
-                EmailFrom = extendedCreateFormDto.EmailFrom!,
-                Form = form,
-                FormId = form.Id,
-                SmtpServer = extendedCreateFormDto.SmtpServer!,
-                SmtpPort = extendedCreateFormDto.SmtpPort!.Value,
-                SmtpUsername = extendedCreateFormDto.SmtpUsername!,
-                SmtpPassword = extendedCreateFormDto.SmtpPassword!
-            };
-            
-            await _smtpEmailSettingsRepository.AddAsync(smtpConfig);
-        }
+            EmailMethod = EmailMethod.Smtp,
+            EmailFrom = extendedCreateFormDto.EmailFrom!,
+            Form = form,
+            FormId = form.Id,
+            SmtpServer = extendedCreateFormDto.SmtpServer!,
+            SmtpPort = extendedCreateFormDto.SmtpPort!.Value,
+            SmtpUsername = extendedCreateFormDto.SmtpUsername!,
+            SmtpPassword = extendedCreateFormDto.SmtpPassword!
+        };
 
-        if (!extendedCreateFormDto.AllowedOrigins.IsNullOrEmpty())
+        var corsConfig = new FormCorsSettings
         {
-            var corsConfig = new FormCorsSettings
-            {
-                Form = form,
-                FormId = form.Id,
-                AllowedOrigins = extendedCreateFormDto.AllowedOrigins!,
-            };
-            
-            await _formCorsSettingsRepository.AddAsync(corsConfig);
-        }
-
-        if (!extendedCreateFormDto.CaptchaSiteKey.IsNullOrEmpty() &&
-            !extendedCreateFormDto.CaptchaSecretKey.IsNullOrEmpty())
+            Form = form,
+            FormId = form.Id,
+            AllowedOrigins = extendedCreateFormDto.AllowedOrigins!,
+        };
+        
+        var recaptchaConfig = new RecaptchaFormSettings
         {
-            var recaptchaConfig = new RecaptchaFormSettings
-            {
-                Form = form,
-                FormId = form.Id,
-                SiteKey = extendedCreateFormDto.CaptchaSiteKey!,
-                SecretKey = extendedCreateFormDto.CaptchaSecretKey!,
-            };
-            
-            await _recaptchaFormSettingsRepository.AddAsync(recaptchaConfig);
-        }
+            Form = form,
+            FormId = form.Id,
+            SiteKey = extendedCreateFormDto.CaptchaSiteKey!,
+            SecretKey = extendedCreateFormDto.CaptchaSecretKey!,
+        };
+        
+        form.FormEmailSettings = smtpConfig;
+        form.FormCorsSettings = corsConfig;
+        form.RecaptchaSettings = recaptchaConfig;
+        form.CustomEmailTemplates = [];
+        
+        await _formsDAL.SaveFormWithTransaction(form);
         
         return new FormDetailsDto
         {
@@ -127,9 +97,10 @@ public class FormService : IFormService
     {
         var forms = await _signupFormRepository.GetByUserIdAsync(userId);
 
-        _logger.LogInformation($"Found {forms.Count()} forms for user {userId}.");
+        var signupForms = forms as SignupForm[] ?? forms.ToArray();
+        _logger.LogInformation($"Found {signupForms.Count()} forms for user {userId}.");
 
-        return forms.Select(form => new FormDto
+        return signupForms.Select(form => new FormDto
         {
             Id = form.Id,
             FormName = form.FormName,
@@ -169,7 +140,7 @@ public class FormService : IFormService
         await _signupFormRepository.Remove(form);
     }
 
-    public async Task<FormDetailsDto?> UpdateFormAsync(Guid formId, Guid userId, CreateFormDto createFormDto)
+    public async Task<FormDetailsDto?> UpdateFormAsync(Guid formId, Guid userId, ExtendedCreateFormDto createFormDto)
     {
         var form = await _signupFormRepository.GetByFormIdentifierAsync(formId, userId);
 
@@ -181,8 +152,22 @@ public class FormService : IFormService
 
         form.FormName = createFormDto.FormName;
         form.Status = createFormDto.Status;
+        _logger.LogInformation($"Form={JsonSerializer.Serialize(form, new JsonSerializerOptions { WriteIndented = true })}");
 
-        await _signupFormRepository.Update(form);
+        form.FormCorsSettings.AllowedOrigins = createFormDto.AllowedOrigins ?? form.FormCorsSettings.AllowedOrigins;
+        form.FormEmailSettings.EmailFrom = createFormDto.EmailFrom ?? form.FormEmailSettings.EmailFrom;
+        form.RecaptchaSettings.SecretKey = createFormDto.CaptchaSecretKey ?? form.RecaptchaSettings.SecretKey;
+        form.RecaptchaSettings.SiteKey = createFormDto.CaptchaSiteKey ?? form.RecaptchaSettings.SiteKey;
+        
+        if (form.FormEmailSettings is SmtpEmailSettings currentSmtpEmailSettings)
+        {
+            currentSmtpEmailSettings.SmtpServer = createFormDto.SmtpServer ?? currentSmtpEmailSettings.SmtpServer;
+            currentSmtpEmailSettings.SmtpPort = createFormDto.SmtpPort ?? currentSmtpEmailSettings.SmtpPort;
+            currentSmtpEmailSettings.SmtpUsername = createFormDto.SmtpUsername ?? currentSmtpEmailSettings.SmtpUsername;
+            currentSmtpEmailSettings.SmtpPassword = createFormDto.SmtpPassword ?? currentSmtpEmailSettings.SmtpPassword;
+        }
+
+        await _formsDAL.SaveFormWithTransaction(form);
 
         _logger.LogInformation($"Updated form {formId}.");
 
@@ -205,7 +190,7 @@ public class FormService : IFormService
         var forms = await _signupFormRepository.GetByUserIdAsync(userId);
 
         var signupForms = forms.ToList();
-        _logger.LogInformation($"Found {signupForms.Count()} forms for user {userId}.");
+        _logger.LogInformation($"Found {signupForms.Count} forms for user {userId}.");
 
         var formSummaryDetails = new List<FormSummaryDetailsDto>();
 
@@ -229,12 +214,10 @@ public class FormService : IFormService
     {
         var forms = await GetFormsSubmissionsData(formIds);
         var formData = forms.ToList();
-        if (formData.IsNullOrEmpty())
-        {
-            _logger.LogInformation($"No available forms to export.");
-            return [];
-        }
-        return await _exportService.ExportAsync(formData, format);
+        if (!formData.IsNullOrEmpty()) return await _exportService.ExportAsync(formData, format);
+        
+        _logger.LogInformation($"No available forms to export.");
+        return [];
     }
     
     

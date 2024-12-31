@@ -22,7 +22,7 @@ public class JsonExportStrategy : IExportFormatStrategy
 
         var options = new JsonSerializerOptions
         {
-            WriteIndented = true, // Optional: Makes the JSON more readable
+            WriteIndented = true,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping // Avoids escaping characters like '+'
         };
 

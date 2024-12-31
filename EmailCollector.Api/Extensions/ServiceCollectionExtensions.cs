@@ -5,6 +5,7 @@ using EmailCollector.Api.Configurations;
 using EmailCollector.Api.Data;
 using EmailCollector.Api.Middlewares;
 using EmailCollector.Api.Repositories;
+using EmailCollector.Api.Repositories.DAL;
 using EmailCollector.Api.Services;
 using EmailCollector.Api.Services.CustomEmailTemplates;
 using EmailCollector.Api.Services.CustomEmailTemplates.StorageProviders;
@@ -95,6 +96,8 @@ public static class ServiceCollectionExtensions
              var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
              options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
          });
+        
+        services.AddEndpointsApiExplorer();
     }
 
     public static void AddForms(this IServiceCollection services)
@@ -113,6 +116,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICustomEmailTemplatesService, CustomEmailTemplatesService>();
         services.AddScoped<IFormRelatedRepository<CustomEmailTemplate>, FormRelatedRepository<CustomEmailTemplate>>();
 
+        services.AddScoped<IFormsDAL, FormsDAL>();
     }
 
     public static void AddApiKey(this IServiceCollection services)
@@ -208,8 +212,11 @@ public static class ServiceCollectionExtensions
             };
         });
         
-        services.AddEndpointsApiExplorer();
-        services.AddSwagger();
-
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                // Serialize enums as strings
+                options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using EmailCollector.Api.Services;
 using EmailCollector.Api.Services.Exports;
 
@@ -117,7 +116,7 @@ public class SignupFormsController : ControllerBase
     [HttpPost]
     [Produces("application/json")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<ActionResult<FormDetailsDto>> PostSignupForm(CreateFormDto signupForm)
+    public async Task<ActionResult<FormDetailsDto>> PostSignupForm(ExtendedCreateFormDto signupForm)
     {
         _logger.LogInformation("Creating signup form.");
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -195,7 +194,7 @@ public class SignupFormsController : ControllerBase
     /// </remarks>
     [HttpPut("{id}")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> PutSignupForm(Guid id, CreateFormDto signupForm)
+    public async Task<IActionResult> PutSignupForm(Guid id, ExtendedCreateFormDto signupForm)
     {
         _logger.LogInformation($"Updating signup form {id}.");
 

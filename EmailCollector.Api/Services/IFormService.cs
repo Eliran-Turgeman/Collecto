@@ -8,7 +8,6 @@ namespace EmailCollector.Api.Services;
 /// </summary>
 public interface IFormService
 {
-    Task<FormDetailsDto> CreateFormAsync(Guid userId, CreateFormDto createFormDto);
     Task<FormDetailsDto> CreateFormAsync(Guid userId, ExtendedCreateFormDto extendedCreateFormDto);
 
     Task<IEnumerable<FormDto>> GetFormsByUserAsync(Guid userId);
@@ -17,7 +16,7 @@ public interface IFormService
 
     Task DeleteFormByIdAsync(Guid formId);
 
-    Task<FormDetailsDto?> UpdateFormAsync(Guid formId, Guid userId, CreateFormDto createFormDto);
+    Task<FormDetailsDto?> UpdateFormAsync(Guid formId, Guid userId, ExtendedCreateFormDto createFormDto);
 
     Task<IEnumerable<FormSummaryDetailsDto>> GetFormsSummaryDetailsAsync(Guid userId);
 
