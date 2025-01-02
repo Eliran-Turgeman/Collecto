@@ -2,7 +2,6 @@
 using EmailCollector.Api.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using EmailCollector.Api.DTOs;
 using EmailCollector.Api.Services;
 using EmailCollector.Api.Services.Exports;
@@ -11,7 +10,6 @@ namespace EmailCollector.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class SignupFormsController : ControllerBase
 {
     private readonly IFormService _formService;
