@@ -217,13 +217,14 @@ public class SignupFormsController : ControllerBase
     }
 
     /// <summary>
-    /// Export all forms for the current user to desired format.
-    /// Supporting CSV and JSON formats.
+    /// Export all user's forms.
     /// </summary>
-    /// <returns></returns>
-    [HttpPost("export")]
+    /// <param name="exportFormat">export format</param>
+    /// <returns>file containing the exported data</returns>
+    /// <exception cref="ArgumentException"></exception>
+    [HttpGet("export")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> ExportForms([FromBody] ExportFormat? exportFormat)
+    public async Task<IActionResult> ExportForms([FromQuery] ExportFormat exportFormat = ExportFormat.Csv)
     {
         _logger.LogInformation($"Exporting forms.");
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -233,22 +234,58 @@ public class SignupFormsController : ControllerBase
         }
         var forms = await _formService.GetFormsByUserAsync(userId);
         var formIds = forms.Select(f => f.Id).ToList();
-
-        var format = exportFormat ?? ExportFormat.Csv;
-
-        var fileBytes = await _formService.ExportFormsAsync(formIds, format);
+        
+        var fileBytes = await _formService.ExportFormsAsync(formIds, exportFormat);
         if (fileBytes == null || fileBytes.Length == 0)
         {
             _logger.LogInformation("No forms were available for export or result was empty.");
             return NotFound("No forms found to export.");
         }
 
-        string contentType = "application/octet-stream";
-        string fileName = exportFormat switch
+        const string contentType = "application/octet-stream";
+        var fileName = exportFormat switch
         {
             ExportFormat.Csv => "collecto_export.csv",
             ExportFormat.Json => "collecto_export.xlsx",
-            _ => "collecto_export.txt",
+            // should not get there, since ExportFormat is type validated OOTB.
+            _ => throw new ArgumentException("Unsupported export format")
+        };
+
+        return File(fileBytes, contentType, fileName);
+    }
+
+    /// <summary>
+    /// Exports a single form.
+    /// </summary>
+    /// <param name="formId">form to export</param>
+    /// <param name="exportFormat">export format</param>
+    /// <returns>file containing the exported data</returns>
+    /// <exception cref="ArgumentException"></exception>
+    [HttpGet("{id}/export")]
+    [ServiceFilter(typeof(ApiKeyAuthFilter))]
+    public async Task<IActionResult> ExportForm(Guid formId, [FromQuery] ExportFormat exportFormat = ExportFormat.Csv)
+    {
+        _logger.LogInformation($"Exporting form {formId}.");
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid or missing user identifier");
+        }
+        
+        var fileBytes = await _formService.ExportFormsAsync([formId], exportFormat);
+        if (fileBytes == null || fileBytes.Length == 0)
+        {
+            _logger.LogInformation("No forms were available for export or result was empty.");
+            return NotFound("No forms found to export.");
+        }
+
+        const string contentType = "application/octet-stream";
+        var fileName = exportFormat switch
+        {
+            ExportFormat.Csv => "collecto_export.csv",
+            ExportFormat.Json => "collecto_export.xlsx",
+            // should not get there, since ExportFormat is type validated OOTB.
+            _ => throw new ArgumentException("Unsupported export format")
         };
 
         return File(fileBytes, contentType, fileName);
