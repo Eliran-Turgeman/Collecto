@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using EmailCollector.Api.Authentication;
+using EmailCollector.Api.Controllers.RouteConsts;
 using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using EmailCollector.Api.DTOs;
@@ -8,16 +9,21 @@ using EmailCollector.Api.Services.Exports;
 
 namespace EmailCollector.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route(Routes.SignupFormsControllerBase)]
 [ApiController]
 public class SignupFormsController : ControllerBase
 {
     private readonly IFormService _formService;
+    private readonly IEmailSignupService _emailSignupService;
+
     private readonly ILogger<SignupFormsController> _logger;
 
-    public SignupFormsController(IFormService formService, ILogger<SignupFormsController> logger)
+    public SignupFormsController(IFormService formService,
+        IEmailSignupService emailSignupService,
+        ILogger<SignupFormsController> logger)
     {
         _formService = formService;
+        _emailSignupService = emailSignupService;
         _logger = logger;
     }
 
@@ -62,7 +68,7 @@ public class SignupFormsController : ControllerBase
     /// <response code="200">Returns the signup form matching the id.</response>
     /// <response code="404">If the signup form is not found.</response>
     /// <response code="400">If the user is not authenticated.</response>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [Produces("application/json")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<ActionResult<SignupForm>> GetSignupForm(Guid id)
@@ -142,7 +148,7 @@ public class SignupFormsController : ControllerBase
     /// <response code="204">If the form is deleted successfully.</response>
     /// <response code="404">If the form is not found.</response>
     /// <response code="400">If the user is not authenticated.</response>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> DeleteSignupForm(Guid id)
     {
@@ -190,7 +196,7 @@ public class SignupFormsController : ControllerBase
     ///         "Status": "Active"
     ///     }
     /// </remarks>
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
     public async Task<IActionResult> PutSignupForm(Guid id, ExtendedCreateFormDto signupForm)
     {
@@ -213,79 +219,38 @@ public class SignupFormsController : ControllerBase
 
         return NoContent();
     }
-
+    
     /// <summary>
-    /// Export all user's forms.
+    /// Get email signups for a specific form.
     /// </summary>
-    /// <param name="exportFormat">export format</param>
-    /// <returns>file containing the exported data</returns>
-    /// <exception cref="ArgumentException"></exception>
-    [HttpGet("export")]
+    /// <param name="formId">Form id to get email signups for.</param>
+    /// <returns>All emails signups for formId.</returns>
+    /// <remarks>
+    /// Sample request:
+    /// 
+    ///     GET /api/EmailSignups/form/5
+    ///     
+    /// </remarks>
+    /// <response code="200">Returns all email signups for the form.</response>
+    /// <response code="404">If the form is not found.</response>
+    [HttpGet("{formId:guid}" + Routes.GetSubmissions)]
+    [Produces("application/json")]
     [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> ExportForms([FromQuery] ExportFormat exportFormat = ExportFormat.Csv)
+    public async Task<IActionResult> GetFormEmailSignups(Guid formId)
     {
-        _logger.LogInformation($"Exporting forms.");
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        _logger.LogInformation($"Getting email signups for form {formId}.");
+
+        var emailSignups = await _emailSignupService.GetSignupsByFormIdAsync(formId);
+        if (emailSignups == null)
         {
-            return Unauthorized("Invalid or missing user identifier");
-        }
-        var forms = await _formService.GetFormsByUserAsync(userId);
-        var formIds = forms.Select(f => f.Id).ToList();
-        
-        var fileBytes = await _formService.ExportFormsAsync(formIds, exportFormat);
-        if (fileBytes == null || fileBytes.Length == 0)
-        {
-            _logger.LogInformation("No forms were available for export or result was empty.");
-            return NotFound("No forms found to export.");
+            return Problem(type: "Bad Request",
+                title: "Form is not found",
+                detail: $"Form with id {formId} not found",
+                statusCode: StatusCodes.Status404NotFound);
         }
 
-        const string contentType = "application/octet-stream";
-        var fileName = exportFormat switch
-        {
-            ExportFormat.Csv => "collecto_export.csv",
-            ExportFormat.Json => "collecto_export.xlsx",
-            // should not get there, since ExportFormat is type validated OOTB.
-            _ => throw new ArgumentException("Unsupported export format")
-        };
+        _logger.LogInformation($"Found {emailSignups.Count()} signups for form {formId}.");
 
-        return File(fileBytes, contentType, fileName);
-    }
-
-    /// <summary>
-    /// Exports a single form.
-    /// </summary>
-    /// <param name="formId">form to export</param>
-    /// <param name="exportFormat">export format</param>
-    /// <returns>file containing the exported data</returns>
-    /// <exception cref="ArgumentException"></exception>
-    [HttpGet("{id}/export")]
-    [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> ExportForm(Guid formId, [FromQuery] ExportFormat exportFormat = ExportFormat.Csv)
-    {
-        _logger.LogInformation($"Exporting form {formId}.");
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            return Unauthorized("Invalid or missing user identifier");
-        }
-        
-        var fileBytes = await _formService.ExportFormsAsync([formId], exportFormat);
-        if (fileBytes == null || fileBytes.Length == 0)
-        {
-            _logger.LogInformation("No forms were available for export or result was empty.");
-            return NotFound("No forms found to export.");
-        }
-
-        const string contentType = "application/octet-stream";
-        var fileName = exportFormat switch
-        {
-            ExportFormat.Csv => "collecto_export.csv",
-            ExportFormat.Json => "collecto_export.xlsx",
-            // should not get there, since ExportFormat is type validated OOTB.
-            _ => throw new ArgumentException("Unsupported export format")
-        };
-
-        return File(fileBytes, contentType, fileName);
+        return Ok(emailSignups);
     }
 }

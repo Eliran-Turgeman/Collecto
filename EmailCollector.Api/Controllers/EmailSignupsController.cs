@@ -1,4 +1,5 @@
 ﻿using EmailCollector.Api.Authentication;
+using EmailCollector.Api.Controllers.RouteConsts;
 using Microsoft.AspNetCore.Mvc;
 using EmailCollector.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace EmailCollector.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route(Routes.EmailSignupsControllerBase)]
 [ApiController]
 public class EmailSignupsController : ControllerBase
 {
@@ -24,39 +25,7 @@ public class EmailSignupsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get email signups for a specific form.
-    /// </summary>
-    /// <param name="formId">Form id to get email signups for.</param>
-    /// <returns>All emails signups for formId.</returns>
-    /// <remarks>
-    /// Sample request:
-    /// 
-    ///     GET /api/EmailSignups/form/5
-    ///     
-    /// </remarks>
-    /// <response code="200">Returns all email signups for the form.</response>
-    /// <response code="404">If the form is not found.</response>
-    [HttpGet("form/{formId}")]
-    [Produces("application/json")]
-    [ServiceFilter(typeof(ApiKeyAuthFilter))]
-    public async Task<IActionResult> GetFormEmailSignups(Guid formId)
-    {
-        _logger.LogInformation($"Getting email signups for form {formId}.");
-
-        var emailSignups = await _emailSignupService.GetSignupsByFormIdAsync(formId);
-        if (emailSignups == null)
-        {
-            return Problem(type: "Bad Request",
-                title: "Form is not found",
-                detail: $"Form with id {formId} not found",
-                statusCode: StatusCodes.Status404NotFound);
-        }
-
-        _logger.LogInformation($"Found {emailSignups.Count()} signups for form {formId}.");
-
-        return Ok(emailSignups);
-    }
+    
 
     /// <summary>
     /// Submit a signup for an email form - depending on your email confirmation settings,
@@ -125,7 +94,7 @@ public class EmailSignupsController : ControllerBase
     /// <response code="200">Confirmation token was valid, and email is added successfully</response>
     /// <response code="400">Confirmation token is invalid or expired</response>
     [AllowAnonymous]
-    [HttpGet("confirmations")]
+    [HttpGet(Routes.Confirmations)]
     public async Task<IActionResult> ConfirmEmailSignup([FromQuery] string confirmationToken)
     {
         var confirmationResult = await _emailSignupService.ConfirmEmailSignupAsync(confirmationToken);

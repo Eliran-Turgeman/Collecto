@@ -129,7 +129,7 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
     /// </summary>
     /// <param name="customEmailTemplateDto">The template data to save</param>
     /// <exception cref="ArgumentNullException">Thrown when customEmailTemplateDto is null</exception>
-    public async Task SaveCustomEmailTemplate(CustomEmailTemplateDto customEmailTemplateDto)
+    public async Task<Guid> SaveCustomEmailTemplate(CustomEmailTemplateDto customEmailTemplateDto)
     {
         if (customEmailTemplateDto == null)
             throw new ArgumentNullException(nameof(customEmailTemplateDto));
@@ -149,6 +149,7 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
             existingEntity.UpdatedAt = DateTime.UtcNow;
 
             await _customEmailTemplatesRepository.Update(existingEntity);
+            return existingEntity.Id;
         }
         else
         {
@@ -169,6 +170,7 @@ public class CustomEmailTemplatesService : ICustomEmailTemplatesService
             };
         
             await _customEmailTemplatesRepository.AddAsync(newEntity);
+            return newEntity.Id;
         }
     }
 
